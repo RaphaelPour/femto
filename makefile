@@ -1,12 +1,8 @@
 all:
-	cd src
-	gcc -Wall -pedantic femto.c -o ../bin/femto
-	cd ..
+	gcc src/femto.c -Wall -pedantic -o bin/femto
 
 debug:
-	cd src
-	gcc -Wall -pedantic -g femto.c -o ../bin/femto_dbg
-	cd ..
+	gcc src/femto.c -Wall -pedantic -g -o bin/femto_dbg
 
 clean:
-	rm bin/*
+	rm -r bin/*
