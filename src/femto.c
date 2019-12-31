@@ -16,17 +16,23 @@ int main(int argc, char *argv[])
     // Load file (if exist)
     char *content = NULL;
 
-    size_t file_size = fe_read_file(filename, content);
+    size_t file_size = fe_read_file(filename, &content);
 
     printf("Read %lu bytes\n", file_size);
+
+    printf("File content ---\n%s\n---\n",content);
 
     // Get terminal info (buffer resolution)
     // Print file on screen
 
+
+    // Free resources
+    free(content);
+
     return EXIT_SUCCESS;
 }
 
-size_t fe_read_file(char *filename, char *content)
+size_t fe_read_file(char *filename, char **content)
 {
     FILE *file_handle = fopen(filename, "r");
     size_t file_size = 0;
@@ -68,7 +74,7 @@ size_t fe_read_file(char *filename, char *content)
     //
     
     // Allocate memory for the files content
-    content = (char*) malloc(sizeof(char) * file_size );
+    *content = (char*) malloc(sizeof(char) * file_size );
 
     if(content == NULL)
     {
@@ -76,7 +82,7 @@ size_t fe_read_file(char *filename, char *content)
         exit(EXIT_FAILURE);
     }
 
-    size_t read_bytes = fread(content,1,file_size, file_handle);
+    size_t read_bytes = fread(*content,1,file_size, file_handle);
 
     // Regarding to fread(3) an error occured if the return value is less than the
     // item count. In our case, the item count is the count of bytes (=file size)
