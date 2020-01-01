@@ -25,11 +25,34 @@ int main(int argc, char *argv[])
     // Get terminal info (buffer resolution)
     // Print file on screen
 
+    printf("Write file to test.txt\n");
+    fe_write_file("test.txt", content, file_size);
 
     // Free resources
     free(content);
 
     return EXIT_SUCCESS;
+}
+
+void fe_write_file(char *filename, char *content, size_t length)
+{
+    FILE *file_handle = fopen(filename, "w");
+    
+    if(file_handle == NULL)
+    {
+        perror("open file for write");
+        exit(EXIT_FAILURE);
+    }
+
+    size_t bytes_written = fwrite(content, 1, length, file_handle);
+
+    if(bytes_written<length)
+    {
+        printf("Error writing file\n");
+        exit(EXIT_FAILURE);
+    }
+
+    fclose(file_handle);
 }
 
 size_t fe_read_file(char *filename, char **content)
@@ -42,7 +65,7 @@ size_t fe_read_file(char *filename, char **content)
     //       handle this (content will still be a null pointer)
     if(file_handle == NULL)
     {
-        perror("open file");
+        perror("open file for read");
         exit(EXIT_FAILURE);
     }
 
