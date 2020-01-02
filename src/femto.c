@@ -28,11 +28,20 @@ int main(int argc, char *argv[])
     printf("Write file to test.txt\n");
     fe_write_file("test.txt", content, file_size);
 
+    // Set terminal mode to raw in order to disable unwanted behaviour
+    fe_enable_raw_mode();
+
+    // Restore old terminal mode
+    fe_disable_raw_mode();
     // Free resources
     free(content);
 
     return EXIT_SUCCESS;
 }
+
+//
+// FILE IO
+//
 
 void fe_write_file(char *filename, char *content, size_t length)
 {
@@ -119,4 +128,16 @@ size_t fe_read_file(char *filename, char **content)
     fclose(file_handle);
 
     return file_size;
+}
+
+//
+// CURSOR POSITIONING
+//
+
+void fe_enable_raw_mode()
+{
+}
+
+void fe_disable_raw_mode()
+{
 }
