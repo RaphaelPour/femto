@@ -7,6 +7,4 @@
 
 #include "file_io.h"
 
-void fe_enable_raw_mode();
-void fe_disable_raw_mode();
 #endif // FEMTO_H
