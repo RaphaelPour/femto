@@ -6,6 +6,7 @@
 
 #include "../src/file_io.h"
 
+#define TEST_SUITE_NAME(name) printf("---- %s\n",name);
 #define TEST_SKIP puts("\e[33m   SKIP\e[0m");return;
 #define TEST_ALL_OK puts("\n\e[32mALL OK\e[0m\n");
 #define TEST_OK puts("\e[32m   OK\e[0m");
@@ -93,11 +94,16 @@ void test_save_file()
     TEST_OK
 }
 
-int main(int argc, char *argv[])
+void test_suite_file_io()
 {
+    TEST_SUITE_NAME("FileIO");
     test_load_file();
     test_save_file();
+}
 
+int main(int argc, char *argv[])
+{
+    test_suite_file_io();
     TEST_ALL_OK
     return EXIT_SUCCESS;
 }
