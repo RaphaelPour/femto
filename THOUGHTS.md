@@ -1,8 +1,8 @@
 # Todos
 
-- [ ] Add unit test runner
-- [ ] Cover file io (with temp files?)
 - [x] Add simple file read/write functions
+- [x] Add unit test runner
+- [x] Cover file io (with temp files?)
 - [ ] Add terminal functions to enable/disable raw terminal mode
 - [ ] Handle key strokes
 - [ ] Render text to screen
