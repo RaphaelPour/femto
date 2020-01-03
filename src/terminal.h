@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <termios.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 //
 // terminos(2)
@@ -106,5 +107,7 @@ static struct termios original_termios;
 
 void fe_enable_raw_mode();
 void fe_disable_raw_mode();
+
+struct winsize fe_terminal_size();
 
 #endif

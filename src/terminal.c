@@ -46,6 +46,10 @@ void fe_enable_raw_mode()
             ISIG      // disable signals
             );
 
+    // Special Control Character
+    raw.c_cc[VMIN] = 0;
+    raw.c_cc[VTIME] = 0;
+
     if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1)
     {
         perror("Enable raw mode in terminal");
@@ -61,4 +65,17 @@ void fe_disable_raw_mode()
         puts("Oops, we are still in raw mode.. Sorry!");
         exit(EXIT_FAILURE);
    }
+}
+
+struct winsize fe_terminal_size()
+{
+    struct winsize ts;
+
+    if(ioctl(STDIN_FILENO, TIOCGWINSZ, &ts) == -1)
+    {
+        perror("Get terminal size");
+        exit(EXIT_FAILURE);
+    }
+    
+    return ts;
 }
