@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 #include "../src/file_io.h"
 #include "../src/terminal.h"
@@ -105,7 +106,7 @@ void test_suite_file_io()
 
 void test_enable_and_disable_raw_mode_without_error()
 {
-    TEST_IT_NAME("enables and disables raw mode without error");
+    TEST_IT_NAME("enables and disables raw mode without an error");
 
     fe_enable_raw_mode();
     fe_disable_raw_mode();
@@ -113,11 +114,25 @@ void test_enable_and_disable_raw_mode_without_error()
     TEST_OK
 }
 
+void test_get_terminal_size_without_error()
+{
+    TEST_IT_NAME("gets terminal size without an error");
+
+    struct winsize s = fe_terminal_size();
+
+    assert(s.ws_row>0 && "Rows are empty");
+    assert(s.ws_col>0 && "Cols are empty");
+
+    TEST_OK
+    
+    printf("\tNOTE: %d rows and %d cols\n", s.ws_row, s.ws_col);
+}
 void test_suite_terminal()
 {
     TEST_SUITE_NAME("Terminal");
 
     test_enable_and_disable_raw_mode_without_error();
+    test_get_terminal_size_without_error();
 }
 
 int main(int argc, char *argv[])
