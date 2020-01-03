@@ -67,15 +67,21 @@ void fe_disable_raw_mode()
    }
 }
 
-struct winsize fe_terminal_size()
+terminal_size fe_terminal_size()
 {
-    struct winsize ts;
+    struct winsize ws;
 
-    if(ioctl(STDIN_FILENO, TIOCGWINSZ, &ts) == -1)
+    if(ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == -1)
     {
         perror("Get terminal size");
         exit(EXIT_FAILURE);
     }
     
+    terminal_size ts;
+    ts.rows = ws.ws_row;
+    ts.cols = ws.ws_col;
+
     return ts;
 }
+
+

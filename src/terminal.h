@@ -102,12 +102,28 @@
 // VSTATUS       STATUS               ^T
 
 
+// Terminal size struct
+
+typedef struct terminal_size
+{
+    union{
+        unsigned cols;
+        unsigned width;
+    };
+    union{
+        unsigned rows;
+        unsigned height;
+    };
+}terminal_size;
+
 // Store the original termios in order to restore it on exit
 static struct termios original_termios;
 
 void fe_enable_raw_mode();
 void fe_disable_raw_mode();
 
-struct winsize fe_terminal_size();
+terminal_size fe_terminal_size();
+
+
 
 #endif

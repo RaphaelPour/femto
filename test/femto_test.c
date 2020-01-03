@@ -118,14 +118,14 @@ void test_get_terminal_size_without_error()
 {
     TEST_IT_NAME("gets terminal size without an error");
 
-    struct winsize s = fe_terminal_size();
+    terminal_size s = fe_terminal_size();
 
-    assert(s.ws_row>0 && "Rows are empty");
-    assert(s.ws_col>0 && "Cols are empty");
+    assert(s.rows>0 && "Rows are empty");
+    assert(s.cols>0 && "Cols are empty");
 
     TEST_OK
     
-    printf("\tNOTE: %d rows and %d cols\n", s.ws_row, s.ws_col);
+    printf("\tNOTE: %d rows and %d cols\n", s.rows, s.cols);
 }
 void test_suite_terminal()
 {
