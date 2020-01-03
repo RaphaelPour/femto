@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <termios.h>
 
 #include "file_io.h"
+#include "terminal.h"
 
 #endif // FEMTO_H
