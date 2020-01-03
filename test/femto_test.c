@@ -5,11 +5,13 @@
 #include <unistd.h>
 
 #include "../src/file_io.h"
+#include "../src/terminal.h"
 
 #define TEST_SUITE_NAME(name) printf("---- %s\n",name);
 #define TEST_SKIP puts("\e[33m   SKIP\e[0m");return;
 #define TEST_ALL_OK puts("\n\e[32mALL OK\e[0m\n");
 #define TEST_OK puts("\e[32m   OK\e[0m");
+#define TEST_FAIL puts("\e31m    FAIL\e[0m");
 #define TEST_IT_NAME(name) printf("it %s ",name);
 
 void test_load_file()
@@ -101,9 +103,27 @@ void test_suite_file_io()
     test_save_file();
 }
 
+void test_enable_and_disable_raw_mode_without_error()
+{
+    TEST_IT_NAME("enables and disables raw mode without error");
+
+    fe_enable_raw_mode();
+    fe_disable_raw_mode();
+
+    TEST_OK
+}
+
+void test_suite_terminal()
+{
+    TEST_SUITE_NAME("Terminal");
+
+    test_enable_and_disable_raw_mode_without_error();
+}
+
 int main(int argc, char *argv[])
 {
     test_suite_file_io();
+    test_suite_terminal();
     TEST_ALL_OK
     return EXIT_SUCCESS;
 }
