@@ -84,4 +84,37 @@ terminal_size fe_terminal_size()
     return ts;
 }
 
+position fe_get_cursor_position()
+{
+    char buf[32] = {0};
+    position p = {{0},{0}};
 
+    // Query the current cursor position
+    static const char *position_query = "\x1b[6n";
+
+    if(write(STDIN_FILENO, position_query, strlen(position_query)) != 4)
+    {
+        perror("Querying cursor position");
+        exit(EXIT_FAILURE);
+    }
+
+    
+    unsigned i = 0;
+    // Reading the response with the coordinates of the cursor
+    while( i < sizeof(buf)-1)
+    {
+        if(read(STDOUT_FILENO, buf+i,1) != 1) break;
+        if(buf[i] == 'R') break;
+        i++;
+    }
+
+    buf[i] = '\0';
+    
+    if(sscanf(buf, "\x27[%u;%uR", &p.x, &p.y) == 0)
+    {
+        perror("Parsing cursor position");
+        exit(EXIT_FAILURE);
+    }
+
+    return p;
+}

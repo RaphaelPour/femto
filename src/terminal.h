@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -116,6 +117,19 @@ typedef struct terminal_size
     };
 }terminal_size;
 
+typedef struct position
+{
+    union{
+        unsigned x;
+        unsigned col;
+    };
+    union{
+        unsigned y;
+        unsigned row;
+    };
+}position;
+
+
 // Store the original termios in order to restore it on exit
 static struct termios original_termios;
 
@@ -123,6 +137,7 @@ void fe_enable_raw_mode();
 void fe_disable_raw_mode();
 
 terminal_size fe_terminal_size();
+position fe_get_cursor_position();
 
 
 
