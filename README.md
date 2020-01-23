@@ -1,6 +1,6 @@
 # Femto
 
-Tiny texit-editor with minimal featureset which works with standard libs.
+Tiny texit-editor with minimal featureset written in Vanilla C.
 
 ## Features
 

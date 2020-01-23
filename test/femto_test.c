@@ -3,13 +3,16 @@
 #include <assert.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/ioctl.h>
 
 #include "../src/file_io.h"
+#include "../src/terminal.h"
 
 #define TEST_SUITE_NAME(name) printf("---- %s\n",name);
 #define TEST_SKIP puts("\e[33m   SKIP\e[0m");return;
 #define TEST_ALL_OK puts("\n\e[32mALL OK\e[0m\n");
 #define TEST_OK puts("\e[32m   OK\e[0m");
+#define TEST_FAIL puts("\e31m    FAIL\e[0m");
 #define TEST_IT_NAME(name) printf("it %s ",name);
 
 void test_load_file()
@@ -101,9 +104,79 @@ void test_suite_file_io()
     test_save_file();
 }
 
+void test_enable_and_disable_raw_mode_without_error()
+{
+    TEST_IT_NAME("enables and disables raw mode without an error");
+
+    fe_enable_raw_mode();
+    fe_disable_raw_mode();
+
+    TEST_OK
+}
+
+void test_get_terminal_size_without_error()
+{
+    TEST_IT_NAME("gets terminal size without an error");
+
+    terminal_size s = fe_terminal_size();
+
+    assert(s.rows>0 && "Rows are empty");
+    assert(s.cols>0 && "Cols are empty");
+
+    TEST_OK
+    
+    printf("\tNOTE: %d rows and %d cols\n", s.rows, s.cols);
+}
+
+void test_get_cursor_position_without_error()
+{
+    TEST_IT_NAME("gets the cursor position without an error");
+
+    fe_enable_raw_mode();
+    position p = fe_get_cursor_position();
+    fe_disable_raw_mode();
+
+    assert(p.x == 0 && "X position is wrong");
+    assert(p.y == 0 && "Y position is wrong");
+
+    TEST_OK
+}
+
+void test_set_and_get_cursor_position_without_error()
+{
+    TEST_IT_NAME("sets and gets a random cursor position without an error");
+
+    fe_enable_raw_mode();
+    
+    // Set random cursor position
+    position p = fe_get_cursor_position();
+
+    // Get current cursor position
+    fe_disable_raw_mode();
+
+
+    // Check if the cursor posistion is right
+    assert(p.x == 0 && "X position is wrong");
+    assert(p.y == 0 && "Y position is wrong");
+
+    TEST_OK
+}
+
+void test_suite_terminal()
+{
+    TEST_SUITE_NAME("Terminal");
+
+    test_enable_and_disable_raw_mode_without_error();
+    test_get_terminal_size_without_error();
+    test_get_cursor_position_without_error();
+}
+
+
+
 int main(int argc, char *argv[])
 {
     test_suite_file_io();
+    test_suite_terminal();
     TEST_ALL_OK
     return EXIT_SUCCESS;
 }
