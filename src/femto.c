@@ -19,22 +19,12 @@ int main(int argc, char *argv[])
 
     size_t file_size = fe_file_load(filename, &content);
 
-    printf("Read %lu bytes\n", file_size);
-
-    printf("File content ---\n%s\n---\n",content);
-
-    // Get terminal info (buffer resolution)
-    // Print file on screen
-
-    printf("Write file to test.txt\n");
-    fe_file_save("test.txt", content, file_size);
 
     // Set terminal mode to raw in order to disable unwanted behaviour
     fe_enable_raw_mode();
 
-    fe_refresh_screen();
 
-    sleep(4);
+    fe_refresh_screen();
 
 
     // Restore old terminal mode
