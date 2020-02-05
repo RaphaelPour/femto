@@ -1,4 +1,5 @@
 #include "femto.h"
+#include <unistd.h>
 
 int main(int argc, char *argv[])
 {
@@ -30,6 +31,11 @@ int main(int argc, char *argv[])
 
     // Set terminal mode to raw in order to disable unwanted behaviour
     fe_enable_raw_mode();
+
+    fe_refresh_screen();
+
+    sleep(4);
+
 
     // Restore old terminal mode
     fe_disable_raw_mode();
