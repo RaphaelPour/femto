@@ -1,3 +1,6 @@
+#ifndef SCREEN_H
+#define SCREEN_H
+
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -11,3 +14,5 @@
 #define NEW_LINE "\r\n"
 
 void fe_refresh_screen();
+
+#endif //SCREEN_H

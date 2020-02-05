@@ -1,7 +1,5 @@
 #include "screen.h"
 
-
-
 void fe_refresh_screen(){
     buffer *screen_buffer = fe_create_buffer();
 
