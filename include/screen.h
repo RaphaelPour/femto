@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "buffer.h"
-#include "terminal.h"
+#include <buffer.h>
+#include <terminal.h>
 
 #define ESC_HIDE_CURSOR "\x1b[?251"
 #define ESC_SHOW_CURSOR "\x1b[25h"

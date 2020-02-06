@@ -5,9 +5,9 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include "../src/file_io.h"
-#include "../src/terminal.h"
-#include "../src/buffer.h"
+#include <file_io.h>
+#include <terminal.h>
+#include <buffer.h>
 
 #define OK 1
 #define FAIL 0
