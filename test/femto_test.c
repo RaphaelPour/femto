@@ -5,15 +5,92 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include "../src/file_io.h"
-#include "../src/terminal.h"
+#include <file_io.h>
+#include <terminal.h>
+#include <buffer.h>
+
+#define OK 1
+#define FAIL 0
 
 #define TEST_SUITE_NAME(name) printf("---- %s\n",name);
 #define TEST_SKIP puts("\e[33m   SKIP\e[0m");return;
 #define TEST_ALL_OK puts("\n\e[32mALL OK\e[0m\n");
 #define TEST_OK puts("\e[32m   OK\e[0m");
-#define TEST_FAIL puts("\e31m    FAIL\e[0m");
+#define TEST_FAIL puts("\e[31m    FAIL\e[0m");
+#define TEST_FATALITY puts("\e[31m FATALITY\e[0m");
 #define TEST_IT_NAME(name) printf("it %s ",name);
+
+int expect_i_eq(int expection, int actual, char *fail_msg)
+{
+    if(expection == actual) return OK;
+
+    TEST_FAIL
+    puts(fail_msg);
+    printf("expected %d, got %d\n", expection, actual);
+    return FAIL;
+}
+
+
+int expect_i_not_eq(int expection, int actual, char *fail_msg)
+{
+    if(expection != actual) return OK;
+
+    TEST_FAIL
+    puts(fail_msg);
+    printf("expected not %d, got %d either way\n", expection, actual);
+    return FAIL;
+}
+
+int expect_s_eq(char* expection, char* actual, char *fail_msg)
+{
+    if(strcmp(expection,actual) == 0) return OK;
+
+    TEST_FAIL
+    puts(fail_msg);
+    printf("expected '%s', got '%s'\n", expection, actual);
+    return FAIL;
+}
+
+
+int expect_s_not_eq(char* expection, char* actual, char *fail_msg)
+{
+    if(strcmp(expection,actual) != 0) return OK;
+
+    TEST_FAIL
+    puts(fail_msg);
+    printf("expected not '%s', got '%s' either way\n", expection, actual);
+    return FAIL;
+}
+
+int expect_s_included(char *haystack, char *needle, char *fail_msg)
+{
+    if(strstr(haystack, needle)) return OK;
+    
+    TEST_FAIL
+    puts(fail_msg);
+    printf("expected '%s' in '%s' but wasn't\n", needle, haystack);
+    return FAIL;
+}
+
+int expect_not_null(void* actual, char *fail_msg)
+{
+    if(actual) return OK;
+
+    TEST_FAIL
+    puts(fail_msg);
+    puts("expected not null, got null");
+    return FAIL;
+}
+
+int expect_null(void* actual, char *fail_msg)
+{
+    if(actual == NULL) return OK;
+
+    TEST_FAIL
+    puts(fail_msg);
+    puts("expected null, got not null");
+    return FAIL;
+}
 
 void test_load_file()
 {
@@ -124,8 +201,6 @@ void test_get_terminal_size_without_error()
     assert(s.cols>0 && "Cols are empty");
 
     TEST_OK
-    
-    printf("\tNOTE: %d rows and %d cols\n", s.rows, s.cols);
 }
 
 void test_get_cursor_position_without_error()
@@ -154,7 +229,6 @@ void test_set_and_get_cursor_position_without_error()
     // Get current cursor position
     fe_disable_raw_mode();
 
-
     // Check if the cursor posistion is right
     assert(p.x == 0 && "X position is wrong");
     assert(p.y == 0 && "Y position is wrong");
@@ -171,12 +245,80 @@ void test_suite_terminal()
     test_get_cursor_position_without_error();
 }
 
+void test_create_buffer()
+{
+    TEST_IT_NAME("creates a buffer");
 
+    buffer *buf = fe_create_buffer();
+    assert(buf && "Buffer is NULL");
+
+    fe_free_buffer(buf);
+    assert(!buf->data && "Buffer is not freed correctly");
+    TEST_OK
+}
+
+void test_append_to_buffer()
+{
+    TEST_IT_NAME("appends to a buffer");
+    TEST_SKIP;
+    const char *test_string = "const char *test_string";
+    buffer *buf = fe_create_buffer();
+    assert(buf && "Buffer is NULL");
+
+    fe_append_to_buffer(buf, test_string, strlen(test_string));
+    
+    assert( strcmp(buf->data, test_string) == 0 && "Strings differ");
+    fe_free_buffer(buf);
+    assert(buf->data == NULL && "Buffer is not freed correctly");
+
+    TEST_OK
+}
+
+void test_append_to_buffer_multiple_times()
+{
+    TEST_IT_NAME("appends to a buffer multiple times");
+    TEST_SKIP;
+    char *test_strings[] = 
+    {
+        "A common mistake that people make",
+        "when trying to design something ",
+        "completely foolproof is to underestimate",
+        "the ingenuity of complete fools."
+    };
+    
+    buffer *buf = fe_create_buffer();
+    assert(buf && "Buffer is NULL");
+
+    int i;
+    for(i=0;i<4;i++)
+        fe_append_to_buffer(buf, test_strings[i], strlen(test_strings[i]));
+    
+    for(i=0;i<4;i++)
+        if(expect_s_included(buf->data, test_strings[i], "String missing in buffer") == FAIL)
+        {
+            TEST_FATALITY
+            exit(EXIT_FAILURE);
+        }
+
+    fe_free_buffer(buf);
+    assert(!buf->data && "Buffer is not freed correctly");
+
+    TEST_OK
+}
+void test_suite_buffer()
+{
+    TEST_SUITE_NAME("Buffer");
+
+    test_create_buffer();
+    test_append_to_buffer();
+    test_append_to_buffer_multiple_times();
+}
 
 int main(int argc, char *argv[])
 {
     test_suite_file_io();
     test_suite_terminal();
+    test_suite_buffer();
     TEST_ALL_OK
     return EXIT_SUCCESS;
 }
