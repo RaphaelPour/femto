@@ -8,6 +8,7 @@
 #include <file_io.h>
 #include <terminal.h>
 #include <buffer.h>
+#include <session.h>
 
 #define OK 1
 #define FAIL 0
@@ -102,6 +103,7 @@ void test_load_file()
        "Huge success!\n";
 
     char *temp_filename = "/tmp/femto.testdata";
+    size_t line_count = 3;
 
     FILE *temp_fd = fopen(temp_filename, "w+");
 
@@ -119,19 +121,66 @@ void test_load_file()
 
     fclose(temp_fd);
 
-    Buffer *b = fe_file_load(temp_filename);
+    Session *s = fe_init_session(temp_filename);
 
     unlink(temp_filename);
 
     // Then its content must equal to one prepared
-    assert((b->length == strlen(test_content)) && 
+    
+    // Subtract number of new lines which equals the line count
+    assert((s->content_length == strlen(test_content) - line_count) &&
             "Content sizes differ");
 
-    assert((strcmp(b->data,test_content) == 0) &&
-            "Content differs");
+    assert((s->line_count == line_count) && "Lines missing");
     
     TEST_OK
 }
+
+void test_load_file_with_long_lines()
+{
+    TEST_IT_NAME("loads a file with long lines");
+
+    // Given a temp file and test content
+    char test_content[1026] = {'\0'};
+    
+    int i;
+    for(i=0;i<1025;i++)
+        test_content[i] = 'x';
+    
+        char *temp_filename = "/tmp/femto.testdata";
+    size_t line_count = 1;
+
+    FILE *temp_fd = fopen(temp_filename, "w+");
+
+    if(!temp_fd)
+    {
+        perror("Create temp file");
+        exit(EXIT_FAILURE);
+    }
+
+    if(fwrite(test_content, 1, strlen(test_content), temp_fd) < strlen(test_content))
+    {
+        perror("Write temp file");
+        exit(EXIT_FAILURE);
+    }
+
+    fclose(temp_fd);
+
+    Session *s = fe_init_session(temp_filename);
+
+    unlink(temp_filename);
+
+    // Then its content must equal to one prepared
+    assert((s->content_length == strlen(test_content)) &&
+            "Content sizes differ");
+
+    // And we get one line more since the file read algorithm will
+    // create a new line when the line length exeeds the buffer size
+    assert((s->line_count == line_count+1) && "Lines missing");
+    
+    TEST_OK
+}
+
 
 void test_save_file()
 {
@@ -180,6 +229,7 @@ void test_suite_file_io()
 {
     TEST_SUITE_NAME("FileIO");
     test_load_file();
+    test_load_file_with_long_lines();
     test_save_file();
 }
 
@@ -197,7 +247,7 @@ void test_get_terminal_size_without_error()
 {
     TEST_IT_NAME("gets terminal size without an error");
 
-    terminal_size s = fe_terminal_size();
+    TerminalSize s = fe_terminal_size();
 
     assert(s.rows>0 && "Rows are empty");
     assert(s.cols>0 && "Cols are empty");
@@ -210,7 +260,7 @@ void test_get_cursor_position_without_error()
     TEST_IT_NAME("gets the cursor position without an error");
 
     fe_enable_raw_mode();
-    position p = fe_get_cursor_position();
+    TerminalPosition p = fe_get_cursor_position();
     fe_disable_raw_mode();
 
     assert(p.x == 0 && "X position is wrong");
@@ -226,7 +276,7 @@ void test_set_and_get_cursor_position_without_error()
     fe_enable_raw_mode();
     
     // Set random cursor position
-    position p = fe_get_cursor_position();
+    TerminalPosition p = fe_get_cursor_position();
 
     // Get current cursor position
     fe_disable_raw_mode();
@@ -251,7 +301,7 @@ void test_create_buffer()
 {
     TEST_IT_NAME("creates a buffer");
 
-    buffer *buf = fe_create_buffer();
+    Buffer *buf = fe_create_buffer();
     assert(buf && "Buffer is NULL");
 
     fe_free_buffer(buf);
@@ -264,7 +314,7 @@ void test_append_to_buffer()
     TEST_IT_NAME("appends to a buffer");
     TEST_SKIP;
     const char *test_string = "const char *test_string";
-    buffer *buf = fe_create_buffer();
+    Buffer *buf = fe_create_buffer();
     assert(buf && "Buffer is NULL");
 
     fe_append_to_buffer(buf, test_string, strlen(test_string));
@@ -288,7 +338,7 @@ void test_append_to_buffer_multiple_times()
         "the ingenuity of complete fools."
     };
     
-    buffer *buf = fe_create_buffer();
+    Buffer *buf = fe_create_buffer();
     assert(buf && "Buffer is NULL");
 
     int i;
