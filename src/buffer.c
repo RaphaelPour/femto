@@ -1,14 +1,14 @@
 #include "buffer.h"
 
-buffer* fe_create_buffer()
+Buffer* fe_create_buffer()
 {
-    buffer *buf = (buffer*)malloc(sizeof(buffer));
+    Buffer *buf = (Buffer*)malloc(sizeof(Buffer));
     buf->data = NULL;
     buf->length = 0;
     return buf;
 }
 
-void fe_append_to_buffer(buffer *buffer, const char *appendix, unsigned length)
+void fe_append_to_buffer(Buffer *buffer, const char *appendix, unsigned length)
 {
     char * resized_data = realloc(buffer->data, buffer->length + length);
 
@@ -20,7 +20,7 @@ void fe_append_to_buffer(buffer *buffer, const char *appendix, unsigned length)
     buffer->length += length;
 }
 
-void fe_free_buffer(buffer *buffer)
+void fe_free_buffer(Buffer *buffer)
 {
     free(buffer->data);
 }

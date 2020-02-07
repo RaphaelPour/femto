@@ -1,12 +1,12 @@
 #include "screen.h"
 
 void fe_refresh_screen(){
-    buffer *screen_buffer = fe_create_buffer();
+    Buffer *screen_buffer = fe_create_buffer();
 
     fe_append_to_buffer(screen_buffer, ESC_HIDE_CURSOR, strlen(ESC_HIDE_CURSOR));
     fe_append_to_buffer(screen_buffer, ESC_RESET_CURSOR, strlen(ESC_RESET_CURSOR));
 
-    terminal_size ts = fe_terminal_size();
+    TerminalSize ts = fe_terminal_size();
     unsigned row;
 
     for(row=0; row < ts.rows-1; row++)

@@ -105,29 +105,15 @@
 
 // Terminal size struct
 
-typedef struct terminal_size
-{
-    union{
-        unsigned cols;
-        unsigned width;
-    };
-    union{
-        unsigned rows;
-        unsigned height;
-    };
-}terminal_size;
+typedef struct {
+   union { unsigned width, cols; };
+   union { unsigned height, rows; };
+} TerminalSize;
 
-typedef struct position
-{
-    union{
-        unsigned x;
-        unsigned col;
-    };
-    union{
-        unsigned y;
-        unsigned row;
-    };
-}position;
+typedef struct {
+    union { unsigned x, col; };
+    union { unsigned y, row; };
+} TerminalPosition;
 
 
 // Store the original termios in order to restore it on exit
@@ -136,8 +122,8 @@ static struct termios original_termios;
 void fe_enable_raw_mode();
 void fe_disable_raw_mode();
 
-terminal_size fe_terminal_size();
-position fe_get_cursor_position();
+TerminalSize fe_terminal_size();
+TerminalPosition fe_get_cursor_position();
 
 
 

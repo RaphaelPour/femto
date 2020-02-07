@@ -3,13 +3,19 @@
 
 #include <terminal.h>
 
+typedef struct{
+    size_t index;
+    size_t length;
+}Line;
+
 typedef struct {
     char *filename;
-    terminal_size size;
-    position position;
-} session;
+    TerminalSize size;
+    TerminalPosition position;
+    Line *lines;
+} Session;
 
-session* fe_init_session();
-void fe_free_session(session *s);
+Session* fe_init_session();
+void fe_free_session(Session *s);
 
 #endif // SESSION_H

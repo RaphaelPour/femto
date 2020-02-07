@@ -5,13 +5,13 @@
 
 
 // Screen buffer
-typedef struct buffer
+typedef struct
 {
     char *data;
     unsigned length;
-}buffer;
+}Buffer;
 
-buffer* fe_create_buffer();
-void fe_append_to_buffer(buffer *buffer, const char *appendix, unsigned length);
-void fe_free_buffer(buffer *buffer);
+Buffer* fe_create_buffer();
+void fe_append_to_buffer(Buffer *buffer, const char *appendix, unsigned length);
+void fe_free_buffer(Buffer *buffer);
 #endif // BUFFER_H

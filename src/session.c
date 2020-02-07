@@ -1,17 +1,17 @@
 #include "session.h"
 
-session* fe_init_session()
+Session* fe_init_session()
 {
-    session *s = (session*) malloc(sizeof(session));
+    Session *s = (Session*) malloc(sizeof(Session));
     
     s->filename = NULL;
-    s->size = (terminal_size){{0},{0}};
-    s->position = (position){{0},{0}};
+    s->size = (TerminalSize){{0},{0}};
+    s->position = (TerminalPosition){{0},{0}};
 
     return s;
 }
 
-void fe_free_session(session *s)
+void fe_free_session(Session *s)
 {
     free(s);
 }
