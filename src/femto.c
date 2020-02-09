@@ -14,10 +14,8 @@ int main(int argc, char *argv[])
     char *filename = argv[1];
     printf("Open file %s\n", filename);
 
-    // Load file (if exist)
-    char *content = NULL;
-
-    size_t file_size = fe_file_load(filename, &content);
+    // Load file
+    Buffer *b = fe_file_load(filename);
 
 
     // Set terminal mode to raw in order to disable unwanted behaviour
@@ -30,7 +28,7 @@ int main(int argc, char *argv[])
     // Restore old terminal mode
     fe_disable_raw_mode();
     // Free resources
-    free(content);
+    fe_free_buffer(b);
 
     return EXIT_SUCCESS;
 }

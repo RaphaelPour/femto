@@ -119,17 +119,15 @@ void test_load_file()
 
     fclose(temp_fd);
 
-    // When we load this file
-    char *content = NULL;
-    size_t bytes_read = fe_file_load(temp_filename, &content);
+    Buffer *b = fe_file_load(temp_filename);
 
     unlink(temp_filename);
 
     // Then its content must equal to one prepared
-    assert((bytes_read == strlen(test_content)) && 
+    assert((b->length == strlen(test_content)) && 
             "Content sizes differ");
 
-    assert((strcmp(content,test_content) == 0) &&
+    assert((strcmp(b->data,test_content) == 0) &&
             "Content differs");
     
     TEST_OK
@@ -145,7 +143,11 @@ void test_save_file()
 
     char *temp_filename = "/tmp/femto.testdata2";
 
-    fe_file_save(temp_filename, test_content, strlen(test_content));
+    Buffer *b = fe_create_buffer();
+    b->data = test_content;
+    b->length = strlen(test_content);
+
+    fe_file_save(temp_filename,b);
 
     FILE *temp_fd = fopen(temp_filename, "r");
 
@@ -162,7 +164,7 @@ void test_save_file()
     fclose(temp_fd);
     unlink(temp_filename);
 
-    assert((bytes_read == strlen(test_content)) &&
+    assert((bytes_read == b->length) &&
             "Content size differs");
 
     // Terminate string properly to avoid comparing to memory garbage
