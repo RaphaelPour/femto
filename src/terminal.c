@@ -67,7 +67,7 @@ void fe_disable_raw_mode()
    }
 }
 
-terminal_size fe_terminal_size()
+TerminalSize fe_terminal_size()
 {
     struct winsize ws;
 
@@ -77,17 +77,17 @@ terminal_size fe_terminal_size()
         exit(EXIT_FAILURE);
     }
     
-    terminal_size ts;
+    TerminalSize ts;
     ts.rows = ws.ws_row;
     ts.cols = ws.ws_col;
 
     return ts;
 }
 
-position fe_get_cursor_position()
+TerminalPosition fe_get_cursor_position()
 {
     char buf[32] = {0};
-    position p = {{0},{0}};
+    TerminalPosition p = {{0},{0}};
 
     // Query the current cursor position
     static const char *position_query = "\x1b[6n";

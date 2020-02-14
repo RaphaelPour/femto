@@ -12,25 +12,21 @@ int main(int argc, char *argv[])
     }
 
     char *filename = argv[1];
-    printf("Open file %s\n", filename);
 
-    // Load file (if exist)
-    char *content = NULL;
-
-    size_t file_size = fe_file_load(filename, &content);
-
+    // Create session with delivered file
+    Session *session= fe_init_session(filename);
 
     // Set terminal mode to raw in order to disable unwanted behaviour
     fe_enable_raw_mode();
 
-
-    fe_refresh_screen();
+    fe_refresh_screen(session);
 
 
     // Restore old terminal mode
     fe_disable_raw_mode();
+    
     // Free resources
-    free(content);
+    fe_free_session(session);
 
     return EXIT_SUCCESS;
 }

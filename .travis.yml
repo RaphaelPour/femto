@@ -3,5 +3,5 @@ compiler:
   - gcc
   
 script:
-  - make unittests
+  - make unittest
   - ./bin/femto_test

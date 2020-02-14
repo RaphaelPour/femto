@@ -1,15 +1,28 @@
 #ifndef SESSION_H
 #define SESSION_H
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <terminal.h>
+#include <buffer.h>
+
+typedef struct{
+    size_t index;
+    char *content;
+    size_t length;
+}Line;
 
 typedef struct {
-    char *filename;
-    terminal_size size;
-    position position;
-} session;
+    const char *filename;
+    TerminalSize terminal_size;
+    TerminalPosition cursor_position;
+    Line *lines;
+    size_t line_count;
+    size_t content_length;
+} Session;
 
-session* fe_init_session();
-void fe_free_session(session *s);
+Session* fe_init_session(const char* filename);
+void fe_file_load(const char *filename, Session *s);
+void fe_free_session(Session *s);
 
 #endif // SESSION_H
