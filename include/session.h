@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <terminal.h>
 #include <buffer.h>
+#include <helper.h>
 
 typedef struct{
     /* Line number beginning with zero.
@@ -39,9 +40,14 @@ typedef struct {
 
     /* Total length of all line lengths combined */
     size_t content_length;
+
+    /* Current mode to interpret the keys either literally or as commands */
+    unsigned char edit_mode;
 } Session;
 
 Session* fe_init_session(const char* filename);
+void fe_toggle_mode(Session *s);
+void fe_move(Session *s, int x, int y);
 void fe_file_load(const char *filename, Session *s);
 void fe_free_session(Session *s);
 

@@ -51,16 +51,16 @@ int main(int argc, char *argv[])
             switch(c)
             {
                 case 'w':
-                    fe_move_cursor(session,0,-1);
+                    fe_move(session,0,-1);
                     break;
                 case 'a':
-                    fe_move_cursor(session,-1,0);
+                    fe_move(session,-1,0);
                     break;
                 case 's':
-                    fe_move_cursor(session,0,1);
+                    fe_move(session,0,1);
                     break;
                 case 'd':
-                    fe_move_cursor(session,1,0);
+                    fe_move(session,1,0);
                     break;
                 case 'x':
                     exit_femto = 1;
