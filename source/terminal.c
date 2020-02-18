@@ -4,6 +4,9 @@
 // TERMINAL - CURSOR POSITIONING
 //
 
+// Store the original termios in order to restore it on exit
+static struct termios original_termios;
+
 void fe_enable_raw_mode()
 {
     struct termios raw;
