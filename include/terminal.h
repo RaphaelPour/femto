@@ -116,8 +116,6 @@ typedef struct {
 } TerminalPosition;
 
 
-// Store the original termios in order to restore it on exit
-static struct termios original_termios;
 
 void fe_enable_raw_mode();
 void fe_disable_raw_mode();
