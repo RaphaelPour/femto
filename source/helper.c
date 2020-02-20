@@ -8,7 +8,7 @@ void lopen(char* filename, LOG_LEVEL level)
     log_file = fopen(filename, "w");
     log_level = level;
 
-    lprintf(LOG_INFO, __FILE__,"femto");
+    lprintf(LOG_INFO, "femto init log");
 }
 
 static void print_timestamp()
@@ -28,6 +28,7 @@ static void print_timestamp()
 
 void lclose()
 {
+    lprintf(LOG_INFO, "femto close log");
     fclose(log_file);
 }
 
