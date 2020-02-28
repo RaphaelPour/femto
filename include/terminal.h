@@ -7,6 +7,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
+#include <sys/select.h>
 
 //
 // terminos(2)
@@ -116,13 +117,13 @@ typedef struct {
 } TerminalPosition;
 
 
-
 void fe_enable_raw_mode();
 void fe_disable_raw_mode();
 
 TerminalSize fe_terminal_size();
 TerminalPosition fe_get_cursor_position();
 
+int fe_get_user_input();
 
 
 #endif
