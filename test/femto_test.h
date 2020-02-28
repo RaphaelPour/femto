@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include "test_util.h"
 #include "buffer_test.h"
-#include "fileio_test.h"
+#include "session_test.h"
 #include "util_test.h"
 #include "terminal_test.h"
 

@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[])
 {
-    test_suite_file_io();
+    test_suite_session();
     test_suite_terminal();
     test_suite_buffer();
     test_suite_util();

@@ -1,4 +1,4 @@
-#include "fileio_test.h"
+#include "session_test.h"
 
 void test_load_file()
 {
@@ -132,9 +132,9 @@ void test_save_file()
     TEST_OK
 }
 
-void test_suite_file_io()
+void test_suite_session()
 {
-    TEST_SUITE_NAME("FileIO");
+    TEST_SUITE_NAME("Session");
     test_load_file();
     test_load_file_with_long_lines();
     test_save_file();
