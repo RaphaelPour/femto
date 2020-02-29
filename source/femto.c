@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     /*
      * CYCLING EXECUTIVE: Read user input, interpret them, render buffer 
      */
-    char c;
+    int c;
     int exit_femto = 0;
     while( !exit_femto )
     {
@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
         fe_refresh_screen(session);
         
         c = fe_get_user_input();
-        lprintf(LOG_INFO, "read user input '%c'", c);
+        lprintf(LOG_INFO, "read user input '%c' (%d)", c,c);
         
         if(c == 27)
         {
@@ -50,16 +50,16 @@ int main(int argc, char *argv[])
         {
             switch(c)
             {
-                case 'w':
+                case UP:
                     fe_move(session,0,-1);
                     break;
-                case 'a':
+                case LEFT:
                     fe_move(session,-1,0);
                     break;
-                case 's':
+                case DOWN:
                     fe_move(session,0,1);
                     break;
-                case 'd':
+                case RIGHT:
                     fe_move(session,1,0);
                     break;
                 case 'x':
