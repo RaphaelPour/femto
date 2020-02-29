@@ -123,14 +123,35 @@ TerminalPosition fe_get_cursor_position()
 }
 
 
+static int fe_read_char()
+{
+    char input_char;
+    int read_chars;
+    read_chars=read(STDIN_FILENO, &input_char, 1);
+
+    if(read_chars == -1)
+    {
+        printf("Error reading user input\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if(read_chars == 0)
+        return 0;
+
+    return input_char;
+}
+
 /*
  * Returns the next valid character from the user. Blocks until there
  * is something to read.
+ *
+ * Tries to parse an incoming escape sequence.
+ * (http://man7.org/linux/man-pages/man4/console_codes.4.html)
  */
 int fe_get_user_input()
 {
     char input_char;
-    int read_chars;
+
 
     /* Set up file descriptor set for the select syscall */
     fd_set read_fds;
@@ -155,22 +176,29 @@ int fe_get_user_input()
         exit(EXIT_FAILURE);
     }
 
-    read_chars=read(STDIN_FILENO, &input_char, 1);
+    
+    input_char = fe_read_char();
 
-    if(read_chars == -1)
+    
+    if(input_char == ESC)
     {
-        printf("Error reading user input\n");
-        exit(EXIT_FAILURE);
-    }
+        input_char = fe_read_char();
 
-    /*
-     * This case shoudln't happen since the select told us that there is
-     * something to read
-     */
-    if(read_chars == 0)
-    {
-        printf("Empty user input\n");
-        exit(EXIT_FAILURE);
+        if(input_char == 0)
+            return ESC;
+
+        if(input_char != '[')
+            return input_char;
+
+        input_char = fe_read_char();
+
+        switch(input_char)
+        {
+        case 'A':   return UP;
+        case 'B':   return DOWN;
+        case 'C':   return RIGHT;
+        case 'D':   return LEFT;
+        }
     }
 
 
