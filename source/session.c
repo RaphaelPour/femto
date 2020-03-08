@@ -38,17 +38,17 @@ static void fe_move_content_offset(Session *s, int x, int y)
      */
     
     /* DEBUG: Don't set any offset at all to fix the cursor positioning */
-    return;
+    //return;
 
-    if(x)
-        s->offset.x = CLAMP(s->offset.x + x,
+    if(y)
+        s->offset.y = CLAMP(s->offset.y + y,
                 0,
-                MAX(s->line_count, s->terminal_size.height - s->line_count));
+                MAX(s->line_count, s->terminal_size.height));
 
     
     /* TODO: Add max col length to session struct to handle it like x */ 
-    if(y)
-        s->offset.y = CLAMP(s->offset.y + y,
+    if(x)
+        s->offset.x = CLAMP(s->offset.x + x,
                 0,
                 s->terminal_size.width-1);
 }
@@ -64,7 +64,7 @@ static void fe_move_cursor(Session *s, int x, int y)
     s->cursor_position.y = 
         CLAMP(s->cursor_position.y + y,
         1,
-        MIN(s->terminal_size.height, s->line_count));
+        MIN(s->terminal_size.height, s->line_count - s->offset.y));
     
     s->cursor_position.x = 
         CLAMP(s->cursor_position.x + x,

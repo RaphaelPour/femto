@@ -63,3 +63,5 @@ void test_suite_terminal()
     test_get_terminal_size_without_error();
     test_get_cursor_position_without_error();
 }
+
+
