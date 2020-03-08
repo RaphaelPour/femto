@@ -1,5 +1,26 @@
 #include "session_test.h"
 
+void test_session_init()
+{
+    TEST_IT_NAME("inits a session");
+
+    Session *s = fe_init_session(NULL);
+
+    if(!expect_null((void*)s->filename,"Filename is not null")) return;
+    if(!expect_i_eq(1,s->cursor_position.x, "Position.x is not initialized to 1")) return;
+    if(!expect_i_eq(1,s->cursor_position.y, "Position.y is not initialized to 1")) return;
+    if(!expect_i_eq(0,s->offset.x, "Offset.x is not initialized to 0")) return;
+    if(!expect_i_eq(0,s->offset.y, "Offset.y is not initialized to 0")) return;
+
+    if(!expect_null(s->lines, "Lines are not empty")) return;
+    if(!expect_i_eq(0,s->content_length, "Content length is not 0")) return;
+    if(!expect_i_eq(0,s->line_count, "Line count is not 0")) return;
+    if(!expect_i_eq(0,s->edit_mode, "Edit mode is not disabled")) return;
+    
+    fe_free_session(s);
+    TEST_OK;
+}
+
 void test_load_file()
 {
     TEST_IT_NAME("loads a file");
@@ -132,10 +153,12 @@ void test_save_file()
     TEST_OK
 }
 
+
 void test_suite_session()
 {
     TEST_SUITE_NAME("Session");
     test_load_file();
     test_load_file_with_long_lines();
     test_save_file();
+    test_session_init();
 }
