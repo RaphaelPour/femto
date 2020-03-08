@@ -5,6 +5,7 @@
 #include <assert.h>
 #include <string.h>
 
+#include <session.h>
 #define OK 1
 #define FAIL 0
 
@@ -23,5 +24,7 @@ int expect_s_not_eq(char* expection, char* actual, char *fail_msg);
 int expect_s_included(char *haystack, char *needle, char *fail_msg);
 int expect_not_null(void* actual, char *fail_msg);
 int expect_null(void* actual, char *fail_msg);
+int expect_session_equal(Session expection, Session actual, char *fail_msg);
+int expect_line_equal(Line expected, Line actual, char *fail_msg);
 
 #endif // TEST_UTIL

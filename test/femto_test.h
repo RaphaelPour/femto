@@ -8,5 +8,6 @@
 #include "session_test.h"
 #include "util_test.h"
 #include "terminal_test.h"
+#include "cursor_test.h"
 
 #endif // FEMTO_TEST_H
