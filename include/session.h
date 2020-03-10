@@ -23,7 +23,7 @@ typedef struct{
 
 typedef struct {
     /* Name of the read file */
-    const char *filename;
+    char *filename;
 
     /* Dimensions of the terminal */
     TerminalSize terminal_size;
@@ -45,10 +45,10 @@ typedef struct {
     unsigned char edit_mode;
 } Session;
 
-Session* fe_init_session(const char* filename);
+Session* fe_init_session(char* filename);
 void fe_toggle_mode(Session *s);
 void fe_move(Session *s, int x, int y);
-void fe_file_load(const char *filename, Session *s);
+void fe_file_load(char *filename, Session *s);
 void fe_file_save(char *filename, Buffer *buffer);
 void fe_free_session(Session *s);
 

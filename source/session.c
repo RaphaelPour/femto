@@ -1,6 +1,6 @@
 #include "session.h"
 
-Session* fe_init_session(const char* filename)
+Session* fe_init_session(char* filename)
 {
     Session *s = (Session*) malloc(sizeof(Session));
 
@@ -108,7 +108,7 @@ void fe_move(Session *s, int x, int y)
             s->line_count);
 }
 
-void fe_file_load(const char *filename, Session *s)
+void fe_file_load(char *filename, Session *s)
 {
     FILE *file_handle = fopen(filename, "r");
     size_t read_bytes = 0;
