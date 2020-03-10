@@ -3,11 +3,11 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "test_util.h"
-#include "buffer_test.h"
-#include "session_test.h"
-#include "util_test.h"
-#include "terminal_test.h"
-#include "cursor_test.h"
+#include "cilicon.h"
 
+void test_suite_terminal();
+void test_suite_session();
+void test_suite_util();
+void test_suite_buffer();
+void test_suite_cursor();
 #endif // FEMTO_TEST_H
