@@ -1,4 +1,4 @@
-#include "terminal_test.h"
+#include "femto_test.h"
 
 void test_enable_and_disable_raw_mode_without_error()
 {

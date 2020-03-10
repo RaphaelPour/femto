@@ -313,11 +313,15 @@ void test_invalid_cursor_right()
 void test_suite_cursor()
 {
     TEST_SUITE_NAME("Cursor");
+
+    TEST_CONTEXT_NAME("Valid moves");
     test_valid_cursor_down_movement();
     test_valid_cursor_up_movement();
     test_valid_cursor_left();
     test_valid_cursor_right();
     test_valid_cursor_circle();
+
+    TEST_CONTEXT_NAME("Invalid moves");
     test_invalid_cursor_down_movement();
     test_invalid_cursor_up_movement();
     test_invalid_cursor_left();

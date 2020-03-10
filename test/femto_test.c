@@ -7,8 +7,6 @@
 
 #include "femto_test.h"
 
-
-
 int main(int argc, char *argv[])
 {
     test_suite_session();
@@ -16,6 +14,8 @@ int main(int argc, char *argv[])
     test_suite_buffer();
     test_suite_util();
     test_suite_cursor();
-    TEST_ALL_OK
-    return EXIT_SUCCESS;
+
+    test_print_result();
+
+    return (test_are_all_ok() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
