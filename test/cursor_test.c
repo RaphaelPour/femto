@@ -75,7 +75,7 @@ static Session* duplicate_session(Session *s)
 
 void test_valid_cursor_down_movement()
 {
-    TEST_IT_NAME("moves cursor downwards as it should. ts:2/2, lc:2, off:0/0, p:1/1 -> py:2");
+    TEST_IT_NAME("moves cursor downwards. ts:2/2, lc:2, off:0/0, p:1/1 -> py:2");
 
     char *lines[] = {
         "1","2"
@@ -108,7 +108,7 @@ void test_valid_cursor_down_movement()
 
 void test_valid_cursor_up_movement()
 {
-    TEST_IT_NAME("moves cursor upwards as it should. ts:2/2, lc:2, off:0/0, p:1/2 -> py:1");
+    TEST_IT_NAME("moves cursor upwards. ts:2/2, lc:2, off:0/0, p:1/2 -> py:1");
 
     char *lines[] = {
         "1","2"
@@ -134,7 +134,7 @@ void test_valid_cursor_up_movement()
 
 void test_valid_cursor_left()
 {
-    TEST_IT_NAME("moves cursor left as it should. ts:3/1, lc:1, off:0/0, p:2/1 -> px:1");
+    TEST_IT_NAME("moves cursor left. ts:3/1, lc:1, off:0/0, p:2/1 -> px:1");
 
     char *lines[] = {"123"};
 
@@ -156,7 +156,7 @@ void test_valid_cursor_left()
 
 void test_valid_cursor_right()
 {
-    TEST_IT_NAME("moves cursor right as it should. ts:3/1, lc:1, off:0/0, p:2/1 -> px:3");
+    TEST_IT_NAME("moves cursor right. ts:3/1, lc:1, off:0/0, p:2/1 -> px:3");
 
     char *lines[] = {"123"};
 
@@ -210,7 +210,7 @@ void test_valid_cursor_circle()
 
 void test_invalid_cursor_down_movement()
 {
-    TEST_IT_NAME("doesn't move cursor downwards (end of buffer). ts:2/2, lc:2, off:0/0, p:1/2 -> py:2");
+    TEST_IT_NAME("doesn't move cursor downwards (end of buffer). ts:2/2, lc:2, off:0/0, p:1/2 -> no change");
 
     char *lines[] = {
         "1","2"
@@ -240,7 +240,7 @@ void test_invalid_cursor_down_movement()
 
 void test_invalid_cursor_up_movement()
 {
-    TEST_IT_NAME("doesn't move cursor upwards (end of buffer). ts:2/2, lc:2, off:0/0, p:1/1 -> py:1");
+    TEST_IT_NAME("doesn't move cursor upwards (end of buffer). ts:2/2, lc:2, off:0/0, p:1/1 -> no change");
 
     char *lines[] = {
         "1","2"
