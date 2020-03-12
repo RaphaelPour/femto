@@ -72,6 +72,27 @@ static void fe_move_cursor(Session *s, int x, int y)
         MIN(s->terminal_size.width, s->lines[s->cursor_position.y-1].length+1));
 }
 
+static int fe_end_of_buffer_reached(Session *s, int x, int y)
+{
+    /*
+     * Check if the cursor would move out of the buffer
+     */
+
+    return (
+            /* Leftward movement lead to negative column? */
+            (x<0 && s->cursor_position.x <= 1) ||
+
+            /* Rightward movement lead to column buffer out-of-bounds? */
+           (x>0 && s->cursor_position.x >= s->lines[s->cursor_position.y-1].length) ||
+
+           /* Upward moevement lead to negative row? */
+           (y<0 && s->cursor_position.y <= 1) ||
+
+           /* Downward moevement lead to row buffer out-of-bounds?*/
+           (y>0 && s->cursor_position.y >= s->line_count - s->offset.y)
+           );
+}
+
 void fe_move(Session *s, int x, int y)
 {
     int offx=0,offy=0,curx=0,cury=0;
@@ -81,6 +102,13 @@ void fe_move(Session *s, int x, int y)
             s->offset.x, s->offset.y,
             s->terminal_size.width, s->terminal_size.height,
             s->line_count);
+
+    if(fe_end_of_buffer_reached(s, x, y)) 
+    {
+        lprintf(LOG_INFO, "Enf of buffer. Ignore move.");
+        return;
+    }
+
     /* 
      * Determine whenever the cursor must be moved or the content
      * must be scrolled
