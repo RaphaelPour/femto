@@ -38,7 +38,7 @@ static void fe_move_content_offset(Session *s, int x, int y)
      */
     
     /* DEBUG: Don't set any offset at all to fix the cursor positioning */
-    return;
+    //return;
 
     if(y)
         s->offset.y = CLAMP(s->offset.y + y,
