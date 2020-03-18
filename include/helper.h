@@ -8,7 +8,7 @@
 
 #define MIN(x,y) (x<y ? x : y)
 #define MAX(x,y) (x>y ? x : y)
-#define CLAMP(x,l,h) (MAX(MIN(x,h),l))
+#define CLAMP(x,l,h) ( (h>l) ? (MAX(MIN(x,h),l)) : (MAX(MIN(x,l),h)))
 
 /* Fun-Fact: This directive is a really bad an imprecise log10 */
 #define DIGITS(x) ( x <   10 ? 1 :   \
