@@ -46,6 +46,7 @@ typedef struct {
 } Session;
 
 Session* fe_init_session(char* filename);
+void fe_dump_session(Session *s);
 void fe_toggle_mode(Session *s);
 void fe_move(Session *s, int x, int y);
 void fe_file_load(char *filename, Session *s);
