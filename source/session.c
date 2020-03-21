@@ -22,6 +22,18 @@ Session* fe_init_session(char* filename)
     return s;
 }
 
+void fe_dump_session(Session *s)
+{
+    lprintf(LOG_DEBUG, "----------- Session -----------");
+    lprintf(LOG_DEBUG, "Filename       : %s", s->filename);
+    lprintf(LOG_DEBUG, "Cursor         : %d/%d", s->cursor_position.x, s->cursor_position.y);
+    lprintf(LOG_DEBUG, "Offset         : %d/%d", s->offset.x, s->offset.y);
+    lprintf(LOG_DEBUG, "Content length : %d", s->content_length);
+    lprintf(LOG_DEBUG, "Line count     : %d", s->line_count);
+    lprintf(LOG_DEBUG, "Terminal size  : %d/%d", s->terminal_size.width, s->terminal_size.height);
+    lprintf(LOG_DEBUG, "Edit mode      : %s", (s->edit_mode) ? "ON" : "OFF");
+}
+
 void fe_toggle_mode(Session *s)
 {
     s->edit_mode = !s->edit_mode;
@@ -80,13 +92,13 @@ static int fe_end_of_buffer_reached(Session *s, int x, int y)
 
     return (
             /* Leftward movement lead to negative column? */
-            (x<0 && s->cursor_position.x <= 1) ||
+            (x<0 && s->cursor_position.x <= 1  && s->offset.x == 0) ||
 
             /* Rightward movement lead to column buffer out-of-bounds? */
            (x>0 && s->cursor_position.x >= s->lines[s->cursor_position.y-1].length) ||
 
            /* Upward moevement lead to negative row? */
-           (y<0 && s->cursor_position.y <= 1) ||
+           (y<0 && s->cursor_position.y <= 1 && s->offset.y == 0) ||
 
            /* Downward moevement lead to row buffer out-of-bounds?*/
            (y>0 && s->cursor_position.y >= s->line_count - s->offset.y)
@@ -114,26 +126,30 @@ void fe_move(Session *s, int x, int y)
      * must be scrolled
      */
     if( (x>0 && s->cursor_position.x + x > s->terminal_size.width) ||
-        (x<0 && s->cursor_position.x - x < 0) )
+        (x<0 && s->cursor_position.x + x < 1) /* We need + to not neutralize the -1 */
+      )
         offx = x;
     else
         curx = x;
 
     if( (y>0 && s->cursor_position.y + y > s->terminal_size.height) ||
-        (y<0 && s->cursor_position.y - y < 0) )
+        (y<0 && s->cursor_position.y + y < 1) /* We need + to not neutralize the -1 */
+      )
         offy = y;
     else
         cury = y;
 
+    lprintf(LOG_INFO, "∆off: %d/%d ∆cur: %d/%d\n", offx, offy, curx, cury);
+
     fe_move_cursor(s, curx, cury);
     fe_move_content_offset(s, offx, offy);
-    
     lprintf(LOG_INFO, "After mov: %2d/%2d, pos: %2d/%2d, off: %3d/%3d, size: %3d/%3d, lcount: %d",
             x,y,
             s->cursor_position.x, s->cursor_position.y,
             s->offset.x, s->offset.y,
             s->terminal_size.width, s->terminal_size.height,
             s->line_count);
+
 }
 
 void fe_file_load(char *filename, Session *s)
