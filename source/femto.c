@@ -1,16 +1,31 @@
 #include "femto.h"
 
+#ifndef BUILD_DATE
+#define BUILD_DATE "fix your makefile"
+#endif
+
+#ifndef BUILD_VERSION
+#define BUILD_VERSION "fix your makefile"
+#endif
+
 int main(int argc, char *argv[])
 {
-    lopen("femto.log", LOG_DEBUG);
 
     /* Argument parsing */
     if(argc != 2)
     {
-        printf("usage: femto <file>\n");
+        printf("usage: femto <file> | -v\n");
         return EXIT_FAILURE;
     }
 
+    if(strcmp(argv[1],"-v") == 0)
+    {
+        printf("BuildDate: %s\n", BUILD_DATE);
+        printf("BuildVersion: %s\n", BUILD_VERSION);
+        return EXIT_SUCCESS;
+    }
+
+    lopen("femto.log", LOG_DEBUG);
     char *filename = argv[1];
 
     /* Create session with delivered file */
