@@ -310,6 +310,123 @@ void test_invalid_cursor_right()
     if(!expect_session_equal( expectedSession, actualSession, "Invalid right movement failed.")) return;
     TEST_OK;
 }
+
+void test_valid_cursor_down_offset_movement()
+{
+    lprintf(LOG_INFO, "increases row offset on downward movement");
+    TEST_IT_NAME("increases row offset on downward movement");
+    
+    TEST_SKIP;
+    char *lines[] = {
+        "1",
+        "2",
+        "3"
+    };
+
+    /*
+     * Create session which perfectly fits for three lines and decrease
+     * termional height to two to test if the row offset increases when
+     * the cursor would otherwise exit the visible screen buffer.
+     */
+    Session *actualSession = create_session_perfect_fit_by_input(3, lines);
+    actualSession->terminal_size.height = 2;
+
+    Session *expectedSession = duplicate_session(actualSession);
+    expectedSession->offset.row = 1;
+    expectedSession->cursor_position.y = 2;
+
+    fe_move(actualSession, 0, 1);
+    fe_move(actualSession, 0, 1);
+
+    if(!expect_session_equal( expectedSession, actualSession, "Valid downward movement with row offset failed.")) return;
+    TEST_OK;
+}
+
+void test_valid_up_offset_movement()
+{
+    lprintf(LOG_INFO, "decreases only row offset on updward movement");
+    TEST_IT_NAME("decreases only row offset on updward movement");
+    
+    char *lines[] = {
+        "1",
+        "2",
+        "3"
+    };
+
+    Session *actualSession = create_session_perfect_fit_by_input(3, lines);
+    actualSession->terminal_size.height = 2;
+    actualSession->offset.row = 1;
+
+    Session *expectedSession = duplicate_session(actualSession);
+    expectedSession->offset.row = 0;
+
+    fe_move(actualSession,0,-1);
+
+    if(!expect_session_equal( expectedSession, actualSession, "Valid upward movement with only changing row offset failed.")) return;
+    TEST_OK;
+}
+
+void test_valid_cursor_up_offset_movement()
+{
+    lprintf(LOG_INFO, "decreases row offset on upward and up movement");
+    TEST_IT_NAME("decreases row offset on upward movement");
+
+    char *lines[] = {
+        "1",
+        "2",
+        "3"
+    };
+
+    /*
+     * Create session which perfectly fits for three lines and decrease
+     * termional height to two to test if the row offset increases when
+     * the cursor would otherwise exit the visible screen buffer.
+     */
+    Session *actualSession = create_session_perfect_fit_by_input(3, lines);
+    actualSession->terminal_size.height = 2;
+    actualSession->cursor_position.y = 2;
+    actualSession->offset.row = 1;
+    actualSession->offset.col = 0;
+    
+    Session *expectedSession = duplicate_session(actualSession);
+    expectedSession->offset.row = 0;
+    expectedSession->cursor_position.y = 1;
+    
+    fe_move(actualSession, 0, -1);
+    fe_move(actualSession, 0, -1);
+
+    if(!expect_session_equal( expectedSession, actualSession, "Valid upward movement with row offset failed.")) return;
+    TEST_OK;
+}
+
+void test_valid_cursor_down_up_offset_movement()
+{
+
+    TEST_IT_NAME("changes row offset on down and up movement");
+
+    char *lines[] = {
+        "1",
+        "2",
+    };
+
+    /*
+     * Create session which perfectly fits for three lines and decrease
+     * termional height to two to test if the row offset increases when
+     * the cursor would otherwise exit the visible screen buffer.
+     */
+    Session *actualSession = create_session_perfect_fit_by_input(2, lines);
+    actualSession->terminal_size.height = 1;
+
+    Session *expectedSession = duplicate_session(actualSession);
+
+    fe_move(actualSession, 0, 1);
+
+    fe_move(actualSession, 0, -1);
+
+    if(!expect_session_equal( expectedSession, actualSession, "Valid down-/upward movement with row offset failed.")) return;
+    TEST_OK;
+}
+
 void test_suite_cursor()
 {
     TEST_SUITE_NAME("Cursor");
@@ -326,4 +443,13 @@ void test_suite_cursor()
     test_invalid_cursor_up_movement();
     test_invalid_cursor_left();
     test_invalid_cursor_right();
+
+    TEST_CONTEXT_NAME("Valid moves with row offset");
+    test_valid_up_offset_movement();
+    test_valid_cursor_down_up_offset_movement();
+    test_valid_cursor_up_offset_movement();
+    
+    test_valid_cursor_down_offset_movement();
+    
+    
 }
