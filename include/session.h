@@ -53,4 +53,6 @@ void fe_file_load(char *filename, Session *s);
 void fe_file_save(char *filename, Buffer *buffer);
 void fe_free_session(Session *s);
 
+void fe_insert_char(Session *s, char c);
+void fe_remove_char_at_cursor(Session *s);
 #endif // SESSION_H

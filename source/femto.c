@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <ctype.h>
 
 #include <terminal.h>
 #include <screen.h>
@@ -70,10 +71,20 @@ int main(int argc, char *argv[])
             case RIGHT:
                 fe_move(session,1,0);
                 break;
-            case ESC:
+            case ESCAPE:
                 exit_femto = 1;
                 lprintf(LOG_INFO, "exited by user");
                 break;
+            case BACKSPACE:
+                fe_remove_char_at_cursor(session);
+                fe_move(session,-1,0);
+                break;
+            default:
+                if(isprint(c))
+                {
+                    fe_insert_char(session, c);
+                    fe_move(session,1,0);
+                }
         }
 
     }
