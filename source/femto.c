@@ -1,4 +1,10 @@
-#include "femto.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+
+#include <terminal.h>
+#include <screen.h>
+#include <helper.h>
 
 #ifndef BUILD_DATE
 #define BUILD_DATE "fix your makefile"
@@ -46,49 +52,35 @@ int main(int argc, char *argv[])
     {
         /* Render the current buffer to the terminal screen*/
         fe_refresh_screen(session);
-        
+
         c = fe_get_user_input();
         lprintf(LOG_INFO, "read user input '%c' (%d)", c,c);
-        
-        if(c == 27)
-        {
-            fe_toggle_mode(session);
-            lprintf(LOG_INFO, "toggle edit mode: %s", ((session->edit_mode) ? "ON":"OFF"));
-            continue;
-        }
 
-        if(session->edit_mode)
+        switch(c)
         {
-            /* Manipulate the real buffer */
-        }
-        else
-        {
-            switch(c)
-            {
-                case UP:
-                    fe_move(session,0,-1);
-                    break;
-                case LEFT:
-                    fe_move(session,-1,0);
-                    break;
-                case DOWN:
-                    fe_move(session,0,1);
-                    break;
-                case RIGHT:
-                    fe_move(session,1,0);
-                    break;
-                case 'x':
-                    exit_femto = 1;
-                    lprintf(LOG_INFO, "exited by user");
-                    break;
-            }
+            case UP:
+                fe_move(session,0,-1);
+                break;
+            case LEFT:
+                fe_move(session,-1,0);
+                break;
+            case DOWN:
+                fe_move(session,0,1);
+                break;
+            case RIGHT:
+                fe_move(session,1,0);
+                break;
+            case ESC:
+                exit_femto = 1;
+                lprintf(LOG_INFO, "exited by user");
+                break;
         }
 
     }
 
     /* Restore old terminal mode */
     fe_disable_raw_mode();
-    
+
     /* Free resources aka make valgrind happy */
     fe_free_session(session);
 
