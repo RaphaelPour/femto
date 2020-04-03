@@ -180,12 +180,12 @@ int fe_get_user_input()
     input_char = fe_read_char();
 
     
-    if(input_char == ESC)
+    if(input_char == ESCAPE)
     {
         input_char = fe_read_char();
 
         if(input_char == 0)
-            return ESC;
+            return ESCAPE;
 
         if(input_char != '[')
             return input_char;
