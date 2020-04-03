@@ -43,6 +43,7 @@ void fe_toggle_mode(Session *s)
 
 static void fe_move_content_offset(Session *s, int x, int y)
 {
+    lprintf(LOG_INFO, "Before offset: %d/%d", s->offset.x, s->offset.y);
     /* 
      * Move the offset withing [0,columns-width-1] and [0,rows-height-1]
      * Otherwise it would be possible to scrool down/right until
@@ -63,25 +64,51 @@ static void fe_move_content_offset(Session *s, int x, int y)
         s->offset.x = CLAMP(s->offset.x + x,
                 0,
                 s->terminal_size.width-1);
+    lprintf(LOG_INFO, "After offset: %d/%d", s->offset.x, s->offset.y);
 }
 
 static void fe_move_cursor(Session *s, int x, int y)
 {
+    lprintf(LOG_INFO, "Before cursor: %d/%d", s->cursor_position.x, s->cursor_position.y);
     /*
      * Move the cursor within [1,min(width, line_len+1] and [1,min(height,
      * line_count]
      * The user shouldn't scroll out of the buffer.
      */
 
-    s->cursor_position.y = 
-        CLAMP(s->cursor_position.y + y,
-        1,
-        MIN(s->terminal_size.height, s->line_count - s->offset.y));
+    int input = s->cursor_position.y + y;
+    int low = 1;
+    int high = MAX(1, MIN(s->terminal_size.height, s->line_count - s->offset.y));
+    s->cursor_position.y = CLAMP(input, low,high);
+    lprintf(LOG_INFO, "CLAMP(input=%d, low=%d, high=%d) = %d", input, low, high, s->cursor_position.y);
+
+
+    input = s->cursor_position.x + x;
+    low = 1;
+    int line_index = s->cursor_position.y-1;
     
-    s->cursor_position.x = 
-        CLAMP(s->cursor_position.x + x,
-        1,
-        MIN(s->terminal_size.width, s->lines[s->cursor_position.y-1].length+1));
+    if(line_index < 0)
+    {
+        lprintf(LOG_INFO, "Line index is negative.");
+        return;
+    }
+
+    if(line_index >= s->line_count)
+    {
+        lprintf(LOG_INFO, "Line index is greater than line count");
+        return;
+    }
+
+    Line line = s->lines[line_index];
+    int line_length = line.length;
+
+    lprintf(LOG_INFO, "Terminal width: %d", s->terminal_size.width);
+    high = MAX(1,MIN(s->terminal_size.width, line_length+1));
+
+    s->cursor_position.x = CLAMP(input, low, high);
+    lprintf(LOG_INFO, "CLAMP(input=%d, low=%d, high=%d) = %d", input, low, high, s->cursor_position.x);
+
+    lprintf(LOG_INFO, "After cursor: %d/%d", s->cursor_position.x, s->cursor_position.y);
 }
 
 static int fe_end_of_buffer_reached(Session *s, int x, int y)
