@@ -39,7 +39,88 @@ void fe_toggle_mode(Session *s)
     s->edit_mode = !s->edit_mode;
 }
 
+Line* fe_get_current_line(Session *s)
+{
+    return &s->lines[s->cursor_position.y -1 + s->offset.y];
+}
 
+void fe_insert_char(Session *s, char c)
+{
+    int x = s->cursor_position.x-1;
+    Line *line = fe_get_current_line(s);
+
+    /* Extend buffer by reallocating the lines memory */
+    line->content = (char*) realloc(line->content, line->length+1);
+
+    if( ! line->content )
+    {
+        lprintf(LOG_ERROR, "Error reallocating memory for new character '%c' in line %d\n", 
+                c, s->cursor_position.y -1 + s->offset.y);
+        return;
+    }
+    
+    /* Move memory if the cursor isn't at the last position */
+    if( x < line->length-1){
+        lprintf(LOG_DEBUG, "Moving %d chars of %*.s from %d to %d\n",
+                line->length-x, line->length, line->content, x, x+1);
+        if( ! memmove(line->content+x+1, line->content+x, line->length-x))
+        {
+            lprintf(LOG_ERROR, "Error moving memory for new character '%c' in line %d", 
+                   c, s->cursor_position.y -1 + s->offset.y);
+            return;
+        }
+
+    }
+
+    /* Update line length */
+    line->length++;
+
+    /* Update file content length */
+    s->content_length++;
+
+    /* Finally: Set the new character */
+    line->content[x] = c;
+
+    lprintf(LOG_DEBUG, "Inserting '%c' at pos %d. Line length increased from %d to %d", 
+            c, x, line->length-1, line->length);
+}
+
+void fe_remove_char_at_cursor(Session *s)
+{
+    int x = s->cursor_position.x-1;
+    Line *line = fe_get_current_line(s);
+
+    /* Move memory if cursor isn't at the last position */
+    if(x < line->length-1)
+    {
+        if( ! memmove(line->content+x, line->content+x+1, line->length-x-1))
+        {
+            lprintf(LOG_ERROR, "Error moving memory  in line %d", 
+                 s->cursor_position.y -1 + s->offset.y);
+            return;
+        }
+    }
+
+    /* Shrink buffer by reallocating the lines memory */
+    line->content = (char*) realloc(line->content, line->length-1);
+
+    if( ! line->content )
+    {
+        lprintf(LOG_ERROR, "Error reallocating memory in line %d", 
+            s->cursor_position.y -1 + s->offset.y);
+        return;
+    }
+
+    
+    /* Update line length */
+    line->length--;
+
+    /* Update file content length */
+    s->content_length--;
+    
+    lprintf(LOG_DEBUG, "Shrinking line from %d to %d at pos %d", 
+             line->length-1, line->length, x);
+}
 
 static void fe_move_content_offset(Session *s, int x, int y)
 {

@@ -126,7 +126,8 @@ TerminalPosition fe_get_cursor_position();
 int fe_get_user_input();
 
 enum KEYS {
-    ESC = 27,
+    ESCAPE = 27,
+    BACKSPACE = 127,
     UP = 128,
     DOWN,
     LEFT,
