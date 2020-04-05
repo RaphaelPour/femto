@@ -44,6 +44,71 @@ Line* fe_get_current_line(Session *s)
     return &s->lines[s->cursor_position.y -1 + s->offset.y];
 }
 
+
+static void fe_insert_empty_line(Session *s)
+{
+    int y = s->cursor_position.y-1;
+    
+    /* Add another line */
+    s->lines = (Line*) realloc(s->lines, sizeof(Line) * (s->line_count + 1));
+
+    if( ! s->lines )
+    {
+        lprintf(LOG_ERROR, "Error reallocating memory for a new line at %d\n", y);
+        return;
+    }
+    
+    /* Move lines if the cursor isn't at the last line */
+    if( y < s->line_count )
+    {
+        lprintf(LOG_DEBUG, "Moving %d lines from %d to %d\n",
+                s->line_count-y,y,y+1
+                );
+        if( ! memmove(s->lines+y+2, s->lines+y+1, sizeof(Line) * (s->line_count-y-1)))
+        {
+            lprintf(LOG_ERROR, "Error moving lines");
+            return;
+        }
+    }
+    
+    
+    /* Initialize line */
+    s->lines[y+1].index = 0;
+    s->lines[y+1].content = (char*) malloc(0);
+    s->lines[y+1].length = 0;
+
+    /* Update line count */
+    s->line_count++;
+}
+
+
+void fe_insert_line(Session *s)
+{
+    int x = s->cursor_position.x-1;
+
+    fe_insert_empty_line(s);
+    
+    /* If the cursor is already at the last position inserting a new empty line is enough */
+    if(x == fe_get_current_line(s)->length)
+        return;
+
+    /* Handle what happens when the cursor is in the middle of a line */
+    Line *oldLine = fe_get_current_line(s);
+    Line *newLine = &s->lines[s->cursor_position.y -1 + s->offset.y + 1];
+
+    int length = oldLine->length - x;
+
+    lprintf(LOG_DEBUG, "Breaking line at position %d with %d chars. Old line length: %d",x, length, oldLine->length);
+    /* Copy old line from the cursor to the end to the new line */
+    newLine->content = (char*) realloc(newLine->content, length);
+    memcpy(newLine->content, oldLine->content + x, length);
+    newLine->length = length;
+
+    /* Truncate the old line beginning at the cursor position */
+    oldLine->content = (char*) realloc(oldLine->content, oldLine->length - length);
+    oldLine->length -= length;
+}
+
 void fe_insert_char(Session *s, char c)
 {
     int x = s->cursor_position.x-1;
