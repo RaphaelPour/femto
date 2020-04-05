@@ -75,6 +75,11 @@ int main(int argc, char *argv[])
                 exit_femto = 1;
                 lprintf(LOG_INFO, "exited by user");
                 break;
+            case ENTER_MAC:
+            case ENTER:
+                fe_insert_line(session);
+                fe_move(session,0,1);
+                break;
             case BACKSPACE:
                 fe_remove_char_at_cursor(session);
                 fe_move(session,-1,0);
