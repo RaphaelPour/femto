@@ -155,6 +155,13 @@ void fe_remove_char_at_cursor(Session *s)
     int x = s->cursor_position.x-1;
     Line *line = fe_get_current_line(s);
 
+    if(x == 0)
+    {
+      lprintf(LOG_WARNING, "Can't remove char at the beginning of the line.\n");
+      return;
+    }
+
+
     /* Move memory if cursor isn't at the last position */
     if(x < line->length-1)
     {
