@@ -150,6 +150,65 @@ void fe_insert_char(Session *s, char c)
             c, x, line->length-1, line->length);
 }
 
+void fe_remove_line(Session *s)
+{
+    int y = s->cursor_position.y-1;
+    
+    /* We need at least two lines to remove one */
+    if(y == 0) return;
+
+    Line *oldLine = fe_get_current_line(s);
+    Line *newLine = &s->lines[y-1];
+    
+    /* 
+     * Check if the line to remove has still content. In this case
+     * the content has to be appended to the line above. 
+     */
+    if(oldLine->length > 0)
+    {
+
+        int length = oldLine->length;
+    
+        /* Extend line where the content should be moved to */
+        newLine->content = (char*) realloc(newLine->content, newLine->length + length);
+
+        /* Append content of the old line to the new one and update the length*/
+        memcpy(newLine->content + newLine->length, oldLine->content, length);
+        newLine->length += length;
+    }
+
+    /* Free content of the line which should be removed */
+    free(oldLine->content);
+    
+    /* 
+     * Set line to NULL so nobody can do bad things while the linesw
+     * get moved and reallocated
+     */
+    oldLine = NULL;
+    newLine = NULL;
+
+    /* 
+     * Move all lines from the cursor+1 one up 
+     * except the cursor is at the last line
+     */
+    if(y < s->line_count)
+    {
+        int linesToMove = s->line_count - y;
+        if( ! memmove(s->lines+y, s->lines+y+1, sizeof(Line) * (linesToMove)))
+        {
+            lprintf(LOG_ERROR, "Error moving lines for line remove.");
+            return;
+        }
+    }
+
+    /* 
+     * Remove the last line by simply reallocating the lines and decrease the
+     * line count by one
+     */
+    s->lines = (Line*) realloc(s->lines, sizeof(Line) * s->line_count-1);
+    s->line_count--;
+}
+
 void fe_remove_char_at_cursor(Session *s)
 {
     int x = s->cursor_position.x-1;
