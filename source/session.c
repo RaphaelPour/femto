@@ -234,12 +234,18 @@ void fe_remove_line(Session *s)
 
 void fe_remove_char_at_cursor(Session *s)
 {
-    int x = s->cursor_position.x-1;
+    /* 
+     * First -1 to correct the index. Position is 1-based and line representation
+     * 0-based.
+     * Second -1 because when we say "delete at cursor" we actually mean
+     * the next char _before_ the cursor.
+     */
+    int x = s->cursor_position.x -1 -1;
     Line *line = fe_get_current_line(s);
 
-    if(x == 0)
+    if(x < 0)
     {
-      lprintf(LOG_WARNING, "Can't remove char at the beginning of the line.\n");
+      fe_remove_line(s);
       return;
     }
 
