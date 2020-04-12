@@ -362,8 +362,13 @@ static int fe_end_of_buffer_reached(Session *s, int x, int y)
             /* Leftward movement lead to negative column? */
             (x<0 && s->cursor_position.x <= 1  && s->offset.x == 0) ||
 
-            /* Rightward movement lead to column buffer out-of-bounds? */
-           (x>0 && s->cursor_position.x >= s->lines[s->cursor_position.y-1].length) ||
+            /* 
+             * Rightward movement lead to column buffer out-of-bounds?
+             *
+             * Add one to the line length in order to allow the cursor be placed
+             * behind the last char. This allows to append input.
+             */
+           (x>0 && s->cursor_position.x >= s->lines[s->cursor_position.y-1].length + 1) ||
 
            /* Upward moevement lead to negative row? */
            (y<0 && s->cursor_position.y <= 1 && s->offset.y == 0) ||
