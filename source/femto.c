@@ -57,19 +57,31 @@ int main(int argc, char *argv[])
         c = fe_get_user_input();
         lprintf( LOG_INFO, "read user input '%c' (%d)", c, c );
 
+        /*
+         * Move cursor when the user types a direct navigation
+         * key. All buffer manipulating functions have to
+         * correct the cursor by themselves.
+         *
+         * As a rule of thumb:
+         * - Only one fe_ call per case
+         * - No direct session r/w access
+         * - No further logic
+         * - You manipulate the buffer and make the cursor
+         *   position incorrect? Fine, than fix that.
+         */
         switch( c )
         {
             case UP:
-                fe_move( session, 0, -1);
+                fe_move( session, 0, -1 );
                 break;
             case LEFT:
-                fe_move( session, -1, 0);
+                fe_move( session, -1, 0 );
                 break;
             case DOWN:
-                fe_move( session, 0, 1);
+                fe_move( session, 0, 1 );
                 break;
             case RIGHT:
-                fe_move( session, 1, 0);
+                fe_move( session, 1, 0 );
                 break;
             case ESCAPE:
                 exit_femto = 1;
@@ -78,7 +90,6 @@ int main(int argc, char *argv[])
             case ENTER_MAC:
             case ENTER:
                 fe_insert_line( session );
-                fe_move( session, 0, 1);
                 break;
             case BACKSPACE:
                 fe_remove_char_at_cursor( session );
@@ -86,10 +97,7 @@ int main(int argc, char *argv[])
                 break;
             default:
                 if( isprint( c ) )
-                {
                     fe_insert_char( session, c );
-                    fe_move( session, 1, 0);
-                }
         }
 
     }
