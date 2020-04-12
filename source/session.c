@@ -90,7 +90,16 @@ void fe_insert_line(Session *s)
     
     /* If the cursor is already at the last position inserting a new empty line is enough */
     if(x == fe_get_current_line(s)->length)
+    {
+        /* Correct cursor */
+
+        /* "Cariage return" */
+        s->cursor_position.x = 0;
+        s->offset.x = 0;
+
+        fe_move( s, 0, 1 );
         return;
+    }
 
     /* Handle what happens when the cursor is in the middle of a line */
     Line *oldLine = fe_get_current_line(s);
@@ -107,6 +116,16 @@ void fe_insert_line(Session *s)
     /* Truncate the old line beginning at the cursor position */
     oldLine->content = (char*) realloc(oldLine->content, oldLine->length - length);
     oldLine->length -= length;
+
+    /* Correct cursor */
+
+    /* "Cariage return" */
+    s->cursor_position.x = 0;
+    s->offset.x = 0;
+
+    fe_move( s, 0, 1 );
+    return;
+
 }
 
 void fe_insert_char(Session *s, char c)
@@ -145,6 +164,10 @@ void fe_insert_char(Session *s, char c)
 
     /* Finally: Set the new character */
     line->content[x] = c;
+
+    /* Correct cursor position */
+    fe_move( s, 1, 0);
+    
 
     lprintf(LOG_DEBUG, "Inserting '%c' at pos %d. Line length increased from %d to %d", 
             c, x, line->length-1, line->length);
