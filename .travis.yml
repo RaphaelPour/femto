@@ -4,4 +4,4 @@ compiler:
   
 script:
   - make unittest
-  - ./bin/femto_test
+  - ./ci-build/femto.test

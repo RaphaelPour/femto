@@ -1,0 +1,9 @@
+version: '2'
+output: 'prefixed'
+expansions: 3
+
+includes:
+    _: https://raw.githubusercontent.com/FasterArbeit/task/master/c.yml
+
+vars:
+  BINARY: 'femto'
