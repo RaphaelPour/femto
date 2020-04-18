@@ -1,3 +1,4 @@
 bin/
+ci-build/
 *.log
 *.file
