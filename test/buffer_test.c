@@ -49,7 +49,7 @@ void test_append_to_buffer_multiple_times()
         fe_append_to_buffer(buf, test_strings[i], strlen(test_strings[i]));
     
     for(i=0;i<4;i++)
-        if(expect_s_included(buf->data, test_strings[i], "String missing in buffer") == FAIL)
+        if(expect_s_included(buf->data, test_strings[i] ) == FAIL)
         {
             TEST_FATALITY
             exit(EXIT_FAILURE);
