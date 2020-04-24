@@ -18,6 +18,20 @@ Session* fe_init_session(char* filename)
 
     if(filename)
         fe_file_load(filename, s);
+    else
+    {
+        /* Prepare session for a new file from scratch */
+
+        lprintf(LOG_DEBUG, "New file");
+        Line *l = (Line*) malloc( sizeof( Line ));
+
+        l->index = 0;
+        l->length = 0;
+        l->content = NULL;
+        
+        s->lines = l;
+        s->line_count++;
+    }
 
     return s;
 }
