@@ -99,7 +99,7 @@ void test_valid_cursor_down_movement()
     // Move cursor 1 down
     fe_move(actualSession, 0, 1);
 
-    if(!expect_session_equal(expectedSession, actualSession, "Valid downward movement failed.")) return;
+    if(!expect_session_equal(expectedSession, actualSession )) return;
     TEST_OK
 
     clean_up_session(actualSession);
@@ -128,7 +128,7 @@ void test_valid_cursor_up_movement()
     // Move cursor 1 up
     fe_move(actualSession, 0, -1);
 
-    if(!expect_session_equal(expectedSession, actualSession, "Valid upwards movement failed.")) return;
+    if(!expect_session_equal(expectedSession, actualSession )) return;
     TEST_OK
 }
 
@@ -150,7 +150,7 @@ void test_valid_cursor_left()
 
     fe_move(actualSession, -1,0);
 
-    if(!expect_session_equal(expectedSession, actualSession, "Valid left movement failed.")) return;
+    if(!expect_session_equal(expectedSession, actualSession )) return;
     TEST_OK;
 }
 
@@ -172,7 +172,7 @@ void test_valid_cursor_right()
 
     fe_move(actualSession, 1,0);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Valid right movement failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK;
 }
 
@@ -204,7 +204,7 @@ void test_valid_cursor_circle()
     // Move up
     fe_move(actualSession, 0,-1);
     
-    if(!expect_session_equal( expectedSession, actualSession, "Circular movement failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK;
 }
 
@@ -230,7 +230,7 @@ void test_invalid_cursor_down_movement()
     // Move cursor 1 down
     fe_move(actualSession, 0, 1);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Inalid downward movement failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK
 
     free(actualSession);
@@ -260,7 +260,7 @@ void test_invalid_cursor_up_movement()
     // Move cursor 1 down
     fe_move(actualSession, 0,-1);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Inalid upward movement failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK
 
     free(actualSession);
@@ -286,7 +286,7 @@ void test_invalid_cursor_left()
 
     fe_move(actualSession, -1,0);
 
-    if(!expect_session_equal(expectedSession, actualSession, "Invalid left movement failed.")) return;
+    if(!expect_session_equal(expectedSession, actualSession )) return;
     TEST_OK;
 }
 
@@ -307,7 +307,7 @@ void test_invalid_cursor_right()
 
     fe_move(actualSession, 1,0);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Invalid right movement failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK;
 }
 
@@ -338,7 +338,7 @@ void test_valid_cursor_down_offset_movement()
     fe_move(actualSession, 0, 1);
     fe_move(actualSession, 0, 1);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Valid downward movement with row offset failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession)) return;
     TEST_OK;
 }
 
@@ -362,7 +362,7 @@ void test_valid_up_offset_movement()
 
     fe_move(actualSession,0,-1);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Valid upward movement with only changing row offset failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession)) return;
     TEST_OK;
 }
 
@@ -395,7 +395,7 @@ void test_valid_cursor_up_offset_movement()
     fe_move(actualSession, 0, -1);
     fe_move(actualSession, 0, -1);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Valid upward movement with row offset failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK;
 }
 

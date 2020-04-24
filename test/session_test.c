@@ -6,16 +6,16 @@ void test_session_init()
 
     Session *s = fe_init_session(NULL);
 
-    if(!expect_null((void*)s->filename,"Filename is not null")) return;
-    if(!expect_i_eq(1,s->cursor_position.x, "Position.x is not initialized to 1")) return;
-    if(!expect_i_eq(1,s->cursor_position.y, "Position.y is not initialized to 1")) return;
-    if(!expect_i_eq(0,s->offset.x, "Offset.x is not initialized to 0")) return;
-    if(!expect_i_eq(0,s->offset.y, "Offset.y is not initialized to 0")) return;
+    if(!expect_null((void*)s->filename)) return;
+    if(!expect_i_eq(1,s->cursor_position.x )) return;
+    if(!expect_i_eq(1,s->cursor_position.y )) return;
+    if(!expect_i_eq(0,s->offset.x )) return;
+    if(!expect_i_eq(0,s->offset.y )) return;
 
-    if(!expect_null(s->lines, "Lines are not empty")) return;
-    if(!expect_i_eq(0,s->content_length, "Content length is not 0")) return;
-    if(!expect_i_eq(0,s->line_count, "Line count is not 0")) return;
-    if(!expect_i_eq(0,s->edit_mode, "Edit mode is not disabled")) return;
+    if(!expect_null(s->lines )) return;
+    if(!expect_i_eq(0,s->content_length )) return;
+    if(!expect_i_eq(0,s->line_count )) return;
+    if(!expect_i_eq(0,s->edit_mode )) return;
     
     fe_free_session(s);
     TEST_OK;
