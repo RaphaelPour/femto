@@ -19,18 +19,30 @@ int main(int argc, char *argv[])
 {
 
     /* Argument parsing */
-    if( argc != 2 )
+    if( argc > 1 )
     {
-        printf( "usage: femto <file> | -v\n" );
-        return EXIT_FAILURE;
+        if( strcmp( argv[1], "-h") == 0 ||
+            strcmp( argv[1], "--help") == 0)
+        {
+            printf("Text-Editor\n\n"
+                   "Usage:\n"
+                   "femto                    New file\n"
+                   "femto [file]             Open file\n"
+                   "femto -h | --help        Show help\n"
+                   "femto -v | --version     Show version\n"
+            );
+            return EXIT_SUCCESS;
+        }
+
+        if( strcmp( argv[1], "-v" ) == 0 ||
+            strcmp( argv[1], "--version" ) == 0)
+        {
+            printf( "BuildDate: %s\n", BUILD_DATE );
+            printf( "BuildVersion: %s\n", BUILD_VERSION );
+            return EXIT_SUCCESS;
+        }
     }
 
-    if( strcmp( argv[1], "-v" ) == 0 )
-    {
-        printf( "BuildDate: %s\n", BUILD_DATE );
-        printf( "BuildVersion: %s\n", BUILD_VERSION );
-        return EXIT_SUCCESS;
-    }
 
     lopen( "femto.log", LOG_DEBUG );
     char *filename = argv[1];
