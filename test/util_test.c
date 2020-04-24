@@ -3,11 +3,11 @@
 void test_min()
 {
     TEST_IT_NAME("can find the minimum");
-    if(!expect_i_eq(1, MIN(1,10), "Actual 1 run away"))return;
-    if(!expect_i_eq(1, MIN(10,1), "Actual 2 run away"))return;
-    if(!expect_i_eq(-1, MIN(-1,10), "Actual 3 run away"))return;
-    if(!expect_i_eq(-1, MIN(10,-1), "Actual 4 run away"))return;
-    if(!expect_i_eq(1, MIN(1,1), "Actual 5 run away"))return;
+    if(!expect_i_eq(1, MIN(1,10) ))return;
+    if(!expect_i_eq(1, MIN(10,1) ))return;
+    if(!expect_i_eq(-1, MIN(-1,10) ))return;
+    if(!expect_i_eq(-1, MIN(10,-1) ))return;
+    if(!expect_i_eq(1, MIN(1,1) ))return;
     
     TEST_OK;
 }
@@ -15,11 +15,11 @@ void test_min()
 void test_max()
 {
     TEST_IT_NAME("can find the maximum");
-    if(!expect_i_eq(10, MAX(1,10), "Actual 1 run away"))return;
-    if(!expect_i_eq(10, MAX(10,1), "Actual 2 run away"))return;
-    if(!expect_i_eq(1, MAX(1,-10), "Actual 3 run away"))return;
-    if(!expect_i_eq(1, MAX(-10,1), "Actual 4 run away"))return;
-    if(!expect_i_eq(1, MAX(1,1), "Actual 5 run away"))return;
+    if(!expect_i_eq(10, MAX(1,10) ))return;
+    if(!expect_i_eq(10, MAX(10,1) ))return;
+    if(!expect_i_eq(1, MAX(1,-10) ))return;
+    if(!expect_i_eq(1, MAX(-10,1) ))return;
+    if(!expect_i_eq(1, MAX(1,1) ))return;
 
     TEST_OK;
 }
@@ -28,9 +28,9 @@ void test_clamp_valid()
 {
     TEST_IT_NAME("can clamp valid");
 
-    if(!expect_i_eq(1 , CLAMP(1, 0, 2), "Actual 1 run away")) return;
-    if(!expect_i_eq(1 , CLAMP(1, 1, 2), "Actual 2 run away")) return;
-    if(!expect_i_eq(2 , CLAMP(2, 1, 2), "Actual 3 run away")) return;
+    if(!expect_i_eq(1 , CLAMP(1, 0, 2) )) return;
+    if(!expect_i_eq(1 , CLAMP(1, 1, 2) )) return;
+    if(!expect_i_eq(2 , CLAMP(2, 1, 2) )) return;
 
     TEST_OK;
 }
@@ -46,7 +46,7 @@ void test_clamp_too_high()
 
     int actual = CLAMP(low,high,input);
 
-    if(!expect_i_eq(expection,actual, "Actual run away"))return;
+    if(!expect_i_eq(expection,actual ))return;
 
     TEST_OK;
 }
@@ -62,10 +62,10 @@ void test_clamp_range_inverted()
 
     int actual = CLAMP(input, high, low);
 
-    if(!expect_i_eq(expection,actual, "Actual run away")) return;
+    if(!expect_i_eq(expection,actual )) return;
 
     actual = CLAMP(input, low, high);
-    if(!expect_i_eq(expection,actual, "Actual run away")) return;
+    if(!expect_i_eq(expection,actual )) return;
 
     TEST_OK;
 }
