@@ -545,6 +545,8 @@ void fe_file_save(char *filename, Buffer *buffer)
 
 void fe_free_session(Session *s)
 {
+    free(s->filename);
+
     // Free lines
     int i;
     for(i=0;i<s->line_count;i++)
