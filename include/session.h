@@ -56,5 +56,4 @@ void fe_free_session(Session *s);
 void fe_insert_char(Session *s, char c);
 void fe_remove_char_at_cursor(Session *s);
 void fe_insert_line(Session *s);
-void fe_remove_line(Session *s);
 #endif // SESSION_H

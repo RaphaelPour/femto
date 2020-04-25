@@ -187,7 +187,7 @@ void fe_insert_char(Session *s, char c)
             c, x, line->length-1, line->length);
 }
 
-void fe_remove_line(Session *s)
+static void fe_remove_line(Session *s)
 {
     int y = s->cursor_position.y-1;
     
@@ -196,7 +196,12 @@ void fe_remove_line(Session *s)
 
     Line *oldLine = fe_get_current_line(s);
     Line *newLine = &s->lines[y-1];
-    
+
+    /* 
+     * We need the original line length later to fix the cursor
+     * while we want the cursor to be at the joint.
+     */
+    int originalLength = newLine->length;
     /* 
      * Check if the line to remove has still content. In this case
      * the content has to be appended to the line above. 
@@ -244,6 +249,16 @@ void fe_remove_line(Session *s)
      */
     s->lines = (Line*) realloc(s->lines, sizeof(Line) * s->line_count-1);
     s->line_count--;
+
+    /* 
+     * Fix cursor 
+     */
+
+    /* Move one line up */
+    fe_move(s, 0, -1);
+
+    /* Move to the joint of both lines */
+    fe_move(s, originalLength, 0);
 }
 
 void fe_remove_char_at_cursor(Session *s)
@@ -291,6 +306,9 @@ void fe_remove_char_at_cursor(Session *s)
 
     /* Update file content length */
     s->content_length--;
+ 
+    /* Fix cursor */
+    fe_move( s, -1, 0 );
     
     lprintf(LOG_DEBUG, "Shrinking line from %d to %d at pos %d", 
              line->length-1, line->length, x);
