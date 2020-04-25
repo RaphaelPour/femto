@@ -2,7 +2,7 @@
 
 void test_session_init()
 {
-    TEST_IT_NAME("inits a session");
+    TEST_IT_NAME("inits an empty session");
 
     Session *s = fe_init_session(NULL);
 
@@ -12,9 +12,9 @@ void test_session_init()
     if(!expect_i_eq(0,s->offset.x )) return;
     if(!expect_i_eq(0,s->offset.y )) return;
 
-    if(!expect_null(s->lines )) return;
+    if(!expect_not_null(s->lines )) return;
     if(!expect_i_eq(0,s->content_length )) return;
-    if(!expect_i_eq(0,s->line_count )) return;
+    if(!expect_i_eq(1,s->line_count )) return;
     if(!expect_i_eq(0,s->edit_mode )) return;
     
     fe_free_session(s);
