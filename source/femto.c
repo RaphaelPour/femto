@@ -18,6 +18,8 @@
 int main(int argc, char *argv[])
 {
 
+    char *filename = NULL;
+
     /* Argument parsing */
     if( argc > 1 )
     {
@@ -41,11 +43,16 @@ int main(int argc, char *argv[])
             printf( "BuildVersion: %s\n", BUILD_VERSION );
             return EXIT_SUCCESS;
         }
+
+        /* Argument has to be the filename */
+        filename = strdup(argv[1]);
+        if( ! filename ) {
+            lprintf(LOG_ERROR, "Error allocating memory for filename");
+        }
     }
 
 
     lopen( "femto.log", LOG_DEBUG );
-    char *filename = argv[1];
 
     /* Create session with delivered file */
     Session *session= fe_init_session( filename );
@@ -105,7 +112,6 @@ int main(int argc, char *argv[])
                 break;
             case BACKSPACE:
                 fe_remove_char_at_cursor( session );
-                fe_move( session, -1, 0 );
                 break;
             default:
                 if( isprint( c ) )
