@@ -26,7 +26,7 @@ int expect_i_eq(int expection, int actual)
 
     TEST_FAIL
     
-    printf("Expected%d, got %d\n", expection, actual);
+    printf("Expected %d, got %d\n", expection, actual);
     failedExpects++;
     return FAIL;
 }
@@ -39,7 +39,7 @@ int expect_i_not_eq(int expection, int actual)
 
     TEST_FAIL
     
-    printf("Expectednot %d, got %d either way\n", expection, actual);
+    printf("Expected not %d, got %d either way\n", expection, actual);
     failedExpects++;
     return FAIL;
 }
@@ -51,7 +51,7 @@ int expect_s_eq(char* expection, char* actual)
 
     TEST_FAIL
     
-    printf("Expected'%s', got '%s'\n", expection, actual);
+    printf("Expected '%s', got '%s'\n", expection, actual);
     failedExpects++;
     return FAIL;
 }
@@ -64,7 +64,7 @@ int expect_s_not_eq(char* expection, char* actual)
 
     TEST_FAIL
     
-    printf("Expectednot '%s', got '%s' either way\n", expection, actual);
+    printf("Expected not '%s', got '%s' either way\n", expection, actual);
     failedExpects++;
     return FAIL;
 }
@@ -76,7 +76,7 @@ int expect_s_included(char *haystack, char *needle)
     
     TEST_FAIL
     
-    printf("Expected'%s' in '%s' but wasn't\n", needle, haystack);
+    printf("Expected '%s' in '%s' but wasn't\n", needle, haystack);
     failedExpects++;
     return FAIL;
 }
@@ -88,7 +88,7 @@ int expect_not_null(void* actual)
 
     TEST_FAIL
     
-    puts("Expectednot null, got null");
+    puts("Expected not null, got null");
     failedExpects++;
     return FAIL;
 }
@@ -100,7 +100,7 @@ int expect_null(void* actual)
 
     TEST_FAIL
     
-    puts("Expectednull, got not null");
+    puts("Expected null, got not null");
     failedExpects++;
     return FAIL;
 }
@@ -110,15 +110,15 @@ int expect_b_eq(void *expection, void *actual, int len_expection, int len_actual
     
     if( len_expection != len_actual ){
         TEST_FAIL;
-        printf("Expectedbuffer length %d, got %d\n", len_expection, len_actual);
+        printf("Expected buffer length %d, got %d\n", len_expection, len_actual);
         failedExpects++;
         return FAIL;
     }
 
-    if( ! memcmp( expection, actual, len_expection) )
+    if( memcmp( expection, actual, len_expection ))
     {
         TEST_FAIL;
-        printf("Expectedbuffer is unequal to the actual.\n");
+        printf( "Expected equal buffers, got unequal.\n" );
         failedExpects++;
         return FAIL;
     }
@@ -129,10 +129,10 @@ int expect_b_neq(void *expection, void *actual, int len_expection, int len_actua
 
     if( len_expection != len_actual ) return OK;
 
-    if( ! memcmp( expection, actual, len_expection ) ) return OK;
+    if( ! memcmp( expection, actual, len_expection )) return OK;
 
     TEST_FAIL;
-    printf("Expectedbuffer is equal to the actual.\n");
+    printf( "Expected unequal buffers, got equal.\n" );
     failedExpects++;
     return FAIL;
 }
@@ -143,17 +143,17 @@ int expect_line_equal(Line expected, Line actual)
     if(expected.index != actual.index)
     {
         TEST_FAIL
-        printf("Expectedindex %lu, got %lu\n", expected.index, actual.index);
+        printf("Expected index %lu, got %lu\n", expected.index, actual.index);
     }
     else if(expected.length != actual.length)
     {
         TEST_FAIL
-        printf("Expectedlength %lu, got %lu\n", expected.length, actual.length);
+        printf("Expected length %lu, got %lu\n", expected.length, actual.length);
     }
     else if(strcmp(expected.content, actual.content) != 0)
     {
         TEST_FAIL
-        printf("Expected content '%.*s', got '%.*s'\n", 
+        printf("Expected  content '%.*s', got '%.*s'\n", 
                 (int)expected.length, 
                 expected.content, 
                 (int)actual.length, 
@@ -176,62 +176,62 @@ int expect_session_equal(Session *expected, Session *actual)
     if(actual->filename == NULL && expected->filename != NULL)
     {
         TEST_FAIL
-        printf("Expectedfilename '%s', got null\n", expected->filename);
+        printf("Expected filename '%s', got null\n", expected->filename);
     }
     else if(actual->filename != NULL && expected->filename == NULL)
     {
         TEST_FAIL
-        printf("Expectedfilename null, got '%s'\n", actual->filename);
+        printf("Expected filename null, got '%s'\n", actual->filename);
     }
     else if(actual->filename && expected->filename && strcmp(actual->filename,expected->filename) != 0)
     {
         TEST_FAIL
-        printf("Expectedfilename %s, got %s\n", expected->filename, actual->filename);
+        printf("Expected filename %s, got %s\n", expected->filename, actual->filename);
     }
     else if(actual->terminal_size.width != expected->terminal_size.width)
     {
         TEST_FAIL
-        printf("Expectedterminal width %d, got %d\n", actual->terminal_size.width, expected->terminal_size.width);
+        printf("Expected terminal width %d, got %d\n", actual->terminal_size.width, expected->terminal_size.width);
     }
     else if(actual->terminal_size.height != expected->terminal_size.height)
     {
         TEST_FAIL
-        printf("Expectedterminal height %d, got %d\n", actual->terminal_size.height, expected->terminal_size.height);
+        printf("Expected terminal height %d, got %d\n", actual->terminal_size.height, expected->terminal_size.height);
     }
     else if(actual->cursor_position.x != expected->cursor_position.x)
     {
         TEST_FAIL
-        printf("Expectedcursor position x %d, got %d\n", expected->cursor_position.x, actual->cursor_position.x);
+        printf("Expected cursor position x %d, got %d\n", expected->cursor_position.x, actual->cursor_position.x);
     }
     else if(actual->cursor_position.y != expected->cursor_position.y)
     {
         TEST_FAIL
-        printf("Expectedcursor position y %d, got %d\n", expected->cursor_position.y, actual->cursor_position.y);
+        printf("Expected cursor position y %d, got %d\n", expected->cursor_position.y, actual->cursor_position.y);
     }
     else if(actual->offset.x != expected->offset.x)
     {
         TEST_FAIL
-        printf("Expectedoffset x %d, got %d\n", expected->offset.x, actual->offset.x);
+        printf("Expected offset x %d, got %d\n", expected->offset.x, actual->offset.x);
     }
     else if(actual->offset.y != expected->offset.y)
     {
         TEST_FAIL
-        printf("Expectedoffset y %d, got %d\n", expected->offset.y, actual->offset.y);
+        printf("Expected offset y %d, got %d\n", expected->offset.y, actual->offset.y);
     }
     else if(actual->line_count != expected->line_count)
     {
         TEST_FAIL
-        printf("Expectedline count %lu, got %lu\n", expected->line_count, actual->line_count);
+        printf("Expected line count %lu, got %lu\n", expected->line_count, actual->line_count);
     }
     else if(actual->content_length != expected->content_length)
     {
         TEST_FAIL
-        printf("Expectedcontent length %lu, got %lu\n", expected->content_length, actual->content_length);
+        printf("Expected content length %lu, got %lu\n", expected->content_length, actual->content_length);
     }
     else if(actual->edit_mode != expected->edit_mode)
     {
         TEST_FAIL
-        printf("Expectededit mode %s, got %s\n", 
+        printf("Expected edit mode %s, got %s\n", 
                 (expected->edit_mode) ? "ON" : "OFF",
                 (actual->edit_mode) ? "ON" : "OFF");
     }
