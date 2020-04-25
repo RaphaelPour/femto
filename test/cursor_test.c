@@ -10,7 +10,7 @@ static Session* create_session_zero_initialized()
     s->offset = (TerminalPosition){{0},{0}};
     s->line_count = 0;
     s->content_length = 0;
-    s->lines = 0;
+    s->lines = NULL;
     s->edit_mode = 0;
 
     return s;
@@ -415,7 +415,7 @@ void test_valid_cursor_down_up_offset_movement()
      * the cursor would otherwise exit the visible screen buffer.
      */
     Session *actualSession = create_session_perfect_fit_by_input(2, lines);
-    actualSession->terminal_size.height = 1;
+    actualSession->terminal_size.height= 1;
 
     Session *expectedSession = duplicate_session(actualSession);
 
@@ -423,7 +423,96 @@ void test_valid_cursor_down_up_offset_movement()
 
     fe_move(actualSession, 0, -1);
 
-    if(!expect_session_equal( expectedSession, actualSession, "Valid down-/upward movement with row offset failed.")) return;
+    if(!expect_session_equal( expectedSession, actualSession )) return;
+    TEST_OK;
+}
+
+void test_valid_char_insertion(){
+    
+    TEST_IT_NAME("inserts a char in a new session");
+    
+    /*
+     * Create session which perfectly fits for two characters in one line.
+     * When one character will be inserted at the end, the expected session
+     * should have an increased line length and cursor x position by one.
+     */
+
+    char input = '#';
+    Session *actualSession = fe_init_session( NULL );
+    
+    fe_insert_char( actualSession, input );
+
+    if( ! expect_b_eq( &input, actualSession->lines[0].content, 1, actualSession->lines[0].length )) return;
+    TEST_OK;
+}
+
+void test_valid_line_insertion(){
+    TEST_IT_NAME("insert an emtpy line in a new session");
+
+    Session *actualSession = fe_init_session( NULL );
+
+    fe_insert_line(actualSession);
+
+    if( ! expect_i_eq( 2, actualSession->line_count )) return;
+    TEST_OK;
+}
+
+void test_valid_line_in_text_insertion(){
+    TEST_IT_NAME("insert an emtpy line in the middle of a line");
+
+    TEST_SKIP;
+
+    char *linesGiven[] = {
+        "12"
+    };
+    Session *actualSession = create_session_perfect_fit_by_input(1, linesGiven);
+
+    fe_move(actualSession, 1, 0 );
+
+    if( ! expect_i_eq( 2, actualSession->cursor_position.x )) return;
+    if( ! expect_i_eq( 1, actualSession->cursor_position.y )) return;
+
+    fe_insert_line(actualSession);
+
+    if( ! expect_i_eq( 2, actualSession->line_count )) return;
+    if( ! expect_b_eq( "1", actualSession->lines[0].content, 1, actualSession->lines[0].length )) return;
+    if( ! expect_b_eq( "2", actualSession->lines[1].content, 1, actualSession->lines[1].length )) return;
+    TEST_OK;
+}
+
+void test_valid_char_insertion_and_remove(){
+    
+    TEST_IT_NAME("inserts and removes a char in a new session");
+    
+    /*
+     * Create session which perfectly fits for two characters in one line.
+     * When one character will be inserted at the end, the expected session
+     * should have an increased line length and cursor x position by one.
+     */
+
+    char input = '#';
+    Session *actualSession = fe_init_session( NULL );
+    Session *expectedSession = duplicate_session( actualSession );
+    
+    fe_insert_char( actualSession, input );
+    fe_remove_char_at_cursor( actualSession );
+
+    if( ! expect_session_equal( expectedSession, actualSession )) return;
+
+    TEST_OK;
+}
+
+void test_valid_line_insertion_and_remove(){
+    TEST_IT_NAME("insert and remove an emtpy line in a new session");
+    
+    TEST_SKIP;
+    Session *actualSession = fe_init_session( NULL );
+    Session *expectedSession = duplicate_session( actualSession );
+
+    fe_insert_line(actualSession);
+    fe_remove_char_at_cursor(actualSession);
+
+    if( ! expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK;
 }
 
@@ -450,6 +539,12 @@ void test_suite_cursor()
     test_valid_cursor_up_offset_movement();
     
     test_valid_cursor_down_offset_movement();
-    
-    
+
+    TEST_CONTEXT_NAME("Valid insertion");
+    test_valid_char_insertion();
+    test_valid_line_insertion();
+    test_valid_line_in_text_insertion();
+    test_valid_char_insertion_and_remove();
+    test_valid_line_insertion_and_remove();
+
 }
