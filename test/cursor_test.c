@@ -25,8 +25,8 @@ static Session* create_session_perfect_fit_by_input(int line_count, char *lines[
     int i, total_length = 0, longest_line_length = 0;
     for(i=0;i<line_count;i++)
     {
-        int len = strlen(lines[i]);
-        s->lines[i].content = (char*)malloc(len);
+        int len = strlen( lines[i] );
+        s->lines[i].content = (char*)malloc( len );
         memcpy(s->lines[i].content, lines[i], len);
 
         s->lines[i].index = i;
@@ -60,7 +60,7 @@ static void clean_up_session(Session *s)
         free(s->lines);
     }*/
 
-    free(s);
+    free( s );
 }
 
 static Session* duplicate_session(Session *s)
@@ -93,7 +93,7 @@ void test_valid_cursor_down_movement()
     actualSession->cursor_position.x = 1;
     actualSession->cursor_position.y = 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
     expectedSession->cursor_position.y = 2;
 
     // Move cursor 1 down
@@ -102,8 +102,8 @@ void test_valid_cursor_down_movement()
     if(!expect_session_equal(expectedSession, actualSession )) return;
     TEST_OK
 
-    clean_up_session(actualSession);
-    clean_up_session(expectedSession);
+    clean_up_session( actualSession );
+    clean_up_session( expectedSession );
 }
 
 void test_valid_cursor_up_movement()
@@ -122,7 +122,7 @@ void test_valid_cursor_up_movement()
     actualSession->cursor_position.x = 1;
     actualSession->cursor_position.y = 2;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
     expectedSession->cursor_position.y = 1;
 
     // Move cursor 1 up
@@ -145,7 +145,7 @@ void test_valid_cursor_left()
     actualSession->cursor_position.x = 2;
     actualSession->cursor_position.y = 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
     expectedSession->cursor_position.x = 1;    
 
     fe_move(actualSession, -1,0);
@@ -167,7 +167,7 @@ void test_valid_cursor_right()
     actualSession->cursor_position.x = 2;
     actualSession->cursor_position.y = 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
     expectedSession->cursor_position.x = 3;    
 
     fe_move(actualSession, 1,0);
@@ -190,7 +190,7 @@ void test_valid_cursor_circle()
     actualSession->cursor_position.x = 1;
     actualSession->cursor_position.y = 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
 
     // Move right
     fe_move(actualSession, 1,0);
@@ -225,7 +225,7 @@ void test_invalid_cursor_down_movement()
     actualSession->cursor_position.y = 2;
 
     // We expect no change of the original session
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
 
     // Move cursor 1 down
     fe_move(actualSession, 0, 1);
@@ -234,7 +234,7 @@ void test_invalid_cursor_down_movement()
     TEST_OK
 
     free(actualSession);
-    free(expectedSession);
+    free( expectedSession );
 }
 
 
@@ -255,7 +255,7 @@ void test_invalid_cursor_up_movement()
     actualSession->cursor_position.y = 1;
 
     // We expect no change of the original session
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
 
     // Move cursor 1 down
     fe_move(actualSession, 0,-1);
@@ -263,8 +263,8 @@ void test_invalid_cursor_up_movement()
     if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK
 
-    free(actualSession);
-    free(expectedSession);
+    free( actualSession );
+    free( expectedSession );
 }
 
 
@@ -282,7 +282,7 @@ void test_invalid_cursor_left()
     actualSession->cursor_position.x = 1;
     actualSession->cursor_position.y = 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
 
     fe_move(actualSession, -1,0);
 
@@ -303,7 +303,7 @@ void test_invalid_cursor_right()
     actualSession->cursor_position.x = 3;
     actualSession->cursor_position.y = 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
 
     fe_move(actualSession, 1,0);
 
@@ -331,7 +331,7 @@ void test_valid_cursor_down_offset_movement()
     Session *actualSession = create_session_perfect_fit_by_input(3, lines);
     actualSession->terminal_size.height = 2;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
     expectedSession->offset.row = 1;
     expectedSession->cursor_position.y = 2;
 
@@ -357,7 +357,7 @@ void test_valid_up_offset_movement()
     actualSession->terminal_size.height = 2;
     actualSession->offset.row = 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
     expectedSession->offset.row = 0;
 
     fe_move(actualSession,0,-1);
@@ -388,7 +388,7 @@ void test_valid_cursor_up_offset_movement()
     actualSession->offset.row = 1;
     actualSession->offset.col = 0;
     
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
     expectedSession->offset.row = 0;
     expectedSession->cursor_position.y = 1;
     
@@ -417,7 +417,7 @@ void test_valid_cursor_down_up_offset_movement()
     Session *actualSession = create_session_perfect_fit_by_input(2, lines);
     actualSession->terminal_size.height= 1;
 
-    Session *expectedSession = duplicate_session(actualSession);
+    Session *expectedSession = duplicate_session( actualSession );
 
     fe_move(actualSession, 0, 1);
 
@@ -451,7 +451,7 @@ void test_valid_line_insertion(){
 
     Session *actualSession = fe_init_session( NULL );
 
-    fe_insert_line(actualSession);
+    fe_insert_line( actualSession );
 
     if( ! expect_i_eq( 2, actualSession->line_count )) return;
     TEST_OK;
@@ -472,7 +472,7 @@ void test_valid_line_in_text_insertion(){
     if( ! expect_i_eq( 2, actualSession->cursor_position.x )) return;
     if( ! expect_i_eq( 1, actualSession->cursor_position.y )) return;
 
-    fe_insert_line(actualSession);
+    fe_insert_line( actualSession );
 
     if( ! expect_i_eq( 2, actualSession->line_count )) return;
     if( ! expect_b_eq( "1", actualSession->lines[0].content, 1, actualSession->lines[0].length )) return;
@@ -509,8 +509,8 @@ void test_valid_line_insertion_and_remove(){
     Session *actualSession = fe_init_session( NULL );
     Session *expectedSession = duplicate_session( actualSession );
 
-    fe_insert_line(actualSession);
-    fe_remove_char_at_cursor(actualSession);
+    fe_insert_line( actualSession );
+    fe_remove_char_at_cursor( actualSession );
 
     if( ! expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK;
@@ -518,7 +518,7 @@ void test_valid_line_insertion_and_remove(){
 
 void test_suite_cursor()
 {
-    TEST_SUITE_NAME("Cursor");
+    TEST_SUITE_NAME( "Cursor" );
 
     TEST_CONTEXT_NAME("Valid moves");
     test_valid_cursor_down_movement();
