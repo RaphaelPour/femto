@@ -5,10 +5,11 @@ void test_create_buffer()
     TEST_IT_NAME("creates a buffer");
 
     Buffer *buf = fe_create_buffer();
-    assert(buf && "Buffer is NULL");
+    if( ! expect_not_null( buf )) return;
 
     fe_free_buffer(buf);
-    assert(!buf->data && "Buffer is not freed correctly");
+    if( ! expect_null( buf->data )) return;
+    
     TEST_OK
 }
 

@@ -21,15 +21,28 @@
 int test_are_all_ok();
 void test_print_result();
 
+/* Integer */
 int expect_i_eq(int expection, int actual);
 int expect_i_not_eq(int expection, int actual);
+int expect_i_gt(int expection, int limit);
+int expect_i_gte(int expection, int limit);
+int expect_i_lt(int expection, int limit);
+int expect_i_lte(int expection, int limit);
+
+/* String */
 int expect_s_eq(char *expection, char *actual);
 int expect_s_not_eq(char *expection, char *actual);
 int expect_s_included(char *haystack, char *needle);
+
+/* Pointer */
 int expect_not_null(void *actual);
 int expect_null(void *actual);
+
+/* Buffer */
 int expect_b_eq(void *expection, void *actual, int len_expection, int len_actual);
 int expect_b_neq(void *expection, void *actual, int len_expection, int len_actual);
+
+/* Special types */
 int expect_session_equal(Session *expected, Session *actual);
 int expect_line_equal(Line expected, Line actual);
 
