@@ -56,10 +56,9 @@ void test_load_file()
     // Then its content must equal to one prepared
     
     // Subtract number of new lines which equals the line count
-    assert((s->content_length == strlen(test_content) - line_count) &&
-            "Content sizes differ");
+    if( ! expect_i_eq( s->content_length, strlen(test_content) - line_count )) return;
 
-    assert((s->line_count == line_count) && "Lines missing");
+    if( ! expect_i_eq( s->line_count, line_count )) return;
     
     TEST_OK
 }
@@ -99,12 +98,11 @@ void test_load_file_with_long_lines()
     unlink(temp_filename);
 
     // Then its content must equal to one prepared
-    assert((s->content_length == strlen(test_content)) &&
-            "Content sizes differ");
+    if( ! expect_i_eq( s->content_length, strlen( test_content ))) return;
 
     // And we get one line more since the file read algorithm will
     // create a new line when the line length exeeds the buffer size
-    assert((s->line_count == line_count+1) && "Lines missing");
+    if( ! expect_i_eq( s->line_count, line_count + 1 )) return;
     
     TEST_OK
 }
@@ -141,14 +139,12 @@ void test_save_file()
     fclose(temp_fd);
     unlink(temp_filename);
 
-    assert((bytes_read == b->length) &&
-            "Content size differs");
+    if( ! expect_i_eq( bytes_read, b->length)) return;
 
     // Terminate string properly to avoid comparing to memory garbage
     buffer[bytes_read] = 0;
 
-    assert((strcmp(buffer,test_content)==0) &&
-            "Content differs");
+    if( ! expect_s_eq( buffer,test_content)) return;
 
     TEST_OK
 }
