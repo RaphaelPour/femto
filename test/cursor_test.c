@@ -294,13 +294,18 @@ void test_invalid_cursor_right()
 {
     TEST_IT_NAME("doesn't move cursor right (end of buffer). ts:3/1, lc:1, off:0/0, p:3/1 -> no change");
 
-    char *lines[] = {"123"};
+    char *lines[] = {"1"};
 
     /*
-     * 12x -right-> 12x
+     * 1x -right-> 1x
+     *
+     * Note that the terminal has to have a one char wider width since the
+     * cursor can get behind the last char and this will cause the width offset
+     * to increase.
      */
     Session *actualSession = create_session_perfect_fit_by_input(1,lines);
-    actualSession->cursor_position.x = 3;
+    actualSession->terminal_size.width += 1;
+    actualSession->cursor_position.x = 2;
     actualSession->cursor_position.y = 1;
 
     Session *expectedSession = duplicate_session( actualSession );
