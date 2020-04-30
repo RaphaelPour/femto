@@ -264,7 +264,8 @@ static void fe_remove_line(Session *s)
     fe_move(s, 0, -1);
 
     /* Move to the joint of both lines */
-    fe_move(s, originalLength, 0);
+    if( originalLength > 0 )
+        fe_move( s, originalLength, 0 );
 }
 
 void fe_remove_char_at_cursor(Session *s)
