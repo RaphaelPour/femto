@@ -274,10 +274,9 @@ void fe_remove_char_at_cursor(Session *s)
      * First -1 to correct the index. Position is 1-based and line representation
      * 0-based.
      * Second -1 because when we say "delete at cursor" we actually mean
-     * the next char _before_ the cursor.
+     * the char _prior_ the cursor.
      */
     int x = s->cursor_position.x -1 -1;
-    Line *line = fe_get_current_line(s);
 
     if(x < 0)
     {
@@ -285,6 +284,7 @@ void fe_remove_char_at_cursor(Session *s)
       return;
     }
 
+    Line *line = fe_get_current_line(s);
 
     /* Move memory if cursor isn't at the last position */
     if(x < line->length-1)
@@ -409,10 +409,10 @@ static int fe_end_of_buffer_reached(Session *s, int x, int y)
              */
            (x>0 && s->cursor_position.x >= s->lines[s->cursor_position.y-1].length + 1) ||
 
-           /* Upward moevement lead to negative row? */
+           /* Upward movement lead to negative row? */
            (y<0 && s->cursor_position.y <= 1 && s->offset.y == 0) ||
 
-           /* Downward moevement lead to row buffer out-of-bounds?*/
+           /* Downward movement lead to row buffer out-of-bounds?*/
            (y>0 && s->cursor_position.y >= s->line_count - s->offset.y)
            );
 }
