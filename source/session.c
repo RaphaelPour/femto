@@ -55,6 +55,11 @@ void fe_toggle_mode(Session *s)
 
 Line* fe_get_current_line(Session *s)
 {
+    lprintf( LOG_DEBUG, "Requesting line: cursor.y=%d, offset.y=%d, index=%d",
+            s->cursor_position.y,
+            s->offset.y,
+            s->cursor_position.y - 1 + s->offset.y);
+
     return &s->lines[s->cursor_position.y -1 + s->offset.y];
 }
 
@@ -413,7 +418,7 @@ static int fe_end_of_buffer_reached(Session *s, int x, int y)
 void fe_move(Session *s, int x, int y)
 {
     int offx=0,offy=0,curx=0,cury=0;
-    lprintf(LOG_INFO, "Before mov: %2d/%2d, pos: %2d/%2d, off: %3d/%3d, size: %3d/%3d, lcount: %d",
+    lprintf(LOG_INFO, "Before move: x=%d y=%d, pos: x=%d y=%d, off: x=%d y=%d, size: w=%d h=%d, lines: %d",
             x,y,
             s->cursor_position.x, s->cursor_position.y,
             s->offset.x, s->offset.y,
@@ -444,11 +449,11 @@ void fe_move(Session *s, int x, int y)
     else
         cury = y;
 
-    lprintf(LOG_INFO, "∆off: %d/%d ∆cur: %d/%d\n", offx, offy, curx, cury);
+    lprintf(LOG_INFO, "∆off: x=%d y=%d ∆cur: x=%d y=%d", offx, offy, curx, cury);
 
     fe_move_cursor(s, curx, cury);
     fe_move_content_offset(s, offx, offy);
-    lprintf(LOG_INFO, "After mov: %2d/%2d, pos: %2d/%2d, off: %3d/%3d, size: %3d/%3d, lcount: %d",
+    lprintf(LOG_INFO, "After move: x=%d y=%d, pos: x=%d y=%d, off: x=%d y=%d, size: w=%d h=%d, lines: %d",
             x,y,
             s->cursor_position.x, s->cursor_position.y,
             s->offset.x, s->offset.y,
@@ -496,7 +501,7 @@ void fe_file_load(char *filename, Session *s)
         if(chunk[read_bytes-1] == '\n')
             read_bytes--;
 
-        lprintf(LOG_INFO, "R [%02zu] (%zu): %.*s", line_index+1, read_bytes, read_bytes, chunk);
+        //lprintf(LOG_INFO, "R [%02zu] (%zu): %.*s", line_index+1, read_bytes, read_bytes, chunk);
 
         // Realloc here since we need to fill the lines 
         s->lines = (Line*) realloc(s->lines,sizeof(Line) * (line_index+1));
@@ -509,8 +514,8 @@ void fe_file_load(char *filename, Session *s)
 
         s->content_length += read_bytes;
         
-        lprintf(LOG_INFO, "L [%02zu] (%zu): %.*s", s->lines[line_index].index, s->lines[line_index].length,
-            s->lines[line_index].length, s->lines[line_index].content);
+        //lprintf(LOG_INFO, "L [%02zu] (%zu): %.*s", s->lines[line_index].index, s->lines[line_index].length,
+        //    s->lines[line_index].length, s->lines[line_index].content);
         
         line_index++;
     }
