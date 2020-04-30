@@ -225,7 +225,8 @@ static void fe_remove_line(Session *s)
     }
 
     /* Free content of the line which should be removed */
-    free(oldLine->content);
+    if(oldLine->length > 0)
+        free(oldLine->content);
     
     /* 
      * Set line to NULL so nobody can do bad things while the linesw
