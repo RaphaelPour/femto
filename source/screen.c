@@ -38,14 +38,22 @@ void fe_refresh_screen(Session *s){
     {
         for(row=0; row < ts.rows-1; row++)
         {
-            if(row == ts.rows/2)
+            fe_append_to_buffer(screen_buffer, 
+                                SPARE_LINE, 
+                                strlen(SPARE_LINE));
+            
+            if(row == ts.rows/2){
                 fe_append_to_buffer(screen_buffer,
                                     WELCOME_LINE,
                                     strlen(WELCOME_LINE));
-            else
-                fe_append_to_buffer(screen_buffer, 
-                                    SPARE_LINE, 
-                                    strlen(SPARE_LINE));
+            }
+
+            fe_append_to_buffer(screen_buffer,
+                                ESC_DEL_TO_EOL,
+                                strlen(ESC_DEL_TO_EOL));
+            fe_append_to_buffer(screen_buffer, 
+                                NEW_LINE,
+                                strlen(NEW_LINE));
         }
     }
     else
@@ -55,21 +63,23 @@ void fe_refresh_screen(Session *s){
             unsigned line_index = row + s->offset.y;
             if(line_index < s->line_count)
             {
-                
                 fe_append_to_buffer(screen_buffer, 
                                     s->lines[line_index].content, 
                                     s->lines[line_index].length);
-                fe_append_to_buffer(screen_buffer,
-                                    ESC_DEL_TO_EOL,
-                                    strlen(ESC_DEL_TO_EOL));
-                fe_append_to_buffer(screen_buffer, 
-                                    NEW_LINE,
-                                    strlen(NEW_LINE));
             }
             else
+            {
                 fe_append_to_buffer(screen_buffer,
                                     SPARE_LINE,
                                     strlen(SPARE_LINE));
+            }
+
+            fe_append_to_buffer(screen_buffer,
+                                ESC_DEL_TO_EOL,
+                                strlen(ESC_DEL_TO_EOL));
+            fe_append_to_buffer(screen_buffer, 
+                                NEW_LINE,
+                                strlen(NEW_LINE));
         }
     }
     
