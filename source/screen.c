@@ -19,7 +19,7 @@ char* fe_create_set_cursor_command(Session *s)
              s->cursor_position.x);
 
 
-    lprintf(LOG_INFO, "set cursor command: '%x', pos: %3d/%3d", buf, s->cursor_position.x, s->cursor_position.y);
+    lprintf(LOG_INFO, "set cursor command: x=%d y=%d", s->cursor_position.x, s->cursor_position.y);
 
     return buf;
 }
