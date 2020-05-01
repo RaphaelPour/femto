@@ -212,9 +212,11 @@ void test_invalid_cursor_down_movement()
 {
     TEST_IT_NAME("doesn't move cursor downwards (end of buffer). ts:2/2, lc:2, off:0/0, p:1/2 -> no change");
 
+
     char *lines[] = {
         "1","2"
     };
+
 
     /*
      * 1 -down-> 1
@@ -233,7 +235,7 @@ void test_invalid_cursor_down_movement()
     if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK
 
-    free(actualSession);
+    //free( actualSession );
     free( expectedSession );
 }
 
@@ -263,7 +265,7 @@ void test_invalid_cursor_up_movement()
     if(!expect_session_equal( expectedSession, actualSession )) return;
     TEST_OK
 
-    free( actualSession );
+    //free( actualSession );
     free( expectedSession );
 }
 
@@ -321,7 +323,7 @@ void test_valid_cursor_down_offset_movement()
     lprintf(LOG_INFO, "increases row offset on downward movement");
     TEST_IT_NAME("increases row offset on downward movement");
     
-    TEST_SKIP;
+    TEST_SKIP
     char *lines[] = {
         "1",
         "2",
@@ -351,7 +353,8 @@ void test_valid_up_offset_movement()
 {
     lprintf(LOG_INFO, "decreases only row offset on updward movement");
     TEST_IT_NAME("decreases only row offset on updward movement");
-    
+
+
     char *lines[] = {
         "1",
         "2",
@@ -375,7 +378,7 @@ void test_valid_cursor_up_offset_movement()
 {
     lprintf(LOG_INFO, "decreases row offset on upward and up movement");
     TEST_IT_NAME("decreases row offset on upward movement");
-
+    TEST_SKIP;
     char *lines[] = {
         "1",
         "2",
@@ -408,7 +411,7 @@ void test_valid_cursor_down_up_offset_movement()
 {
 
     TEST_IT_NAME("changes row offset on down and up movement");
-
+    
     char *lines[] = {
         "1",
         "2",
@@ -441,7 +444,7 @@ void test_valid_char_insertion(){
      * When one character will be inserted at the end, the expected session
      * should have an increased line length and cursor x position by one.
      */
-
+    TEST_SKIP;
     char input = '#';
     Session *actualSession = fe_init_session( NULL );
     
@@ -453,7 +456,7 @@ void test_valid_char_insertion(){
 
 void test_valid_line_insertion(){
     TEST_IT_NAME("insert an emtpy line in a new session");
-
+    TEST_SKIP;
     Session *actualSession = fe_init_session( NULL );
 
     fe_insert_line( actualSession );
@@ -488,7 +491,6 @@ void test_valid_line_in_text_insertion(){
 void test_valid_char_insertion_and_remove(){
     
     TEST_IT_NAME("inserts and removes a char in a new session");
-    
     /*
      * Create session which perfectly fits for two characters in one line.
      * When one character will be inserted at the end, the expected session
