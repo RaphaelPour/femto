@@ -63,38 +63,40 @@ Line* fe_get_current_line(Session *s)
     return &s->lines[s->cursor_position.y -1 + s->offset.y];
 }
 
-
 static void fe_insert_empty_line(Session *s)
 {
-    int y = s->cursor_position.y-1;
+    int line_index = s->cursor_position.y + s->offset.y - 1;
     
     /* Add another line */
     s->lines = (Line*) realloc(s->lines, sizeof(Line) * (s->line_count + 1));
 
     if( ! s->lines )
     {
-        lprintf(LOG_ERROR, "Error reallocating memory for a new line at %d\n", y);
+        lprintf(LOG_ERROR, "Error reallocating memory for a new line at %d\n", line_index);
         return;
     }
     
     /* Move lines if the cursor isn't at the last line */
-    if( y < s->line_count )
+    if( line_index < s->line_count )
     {
         lprintf(LOG_DEBUG, "Moving %d lines from %d to %d\n",
-                s->line_count-y,y,y+1
+                s->line_count-line_index,
+                line_index,
+                line_index + 1
                 );
-        if( ! memmove(s->lines+y+2, s->lines+y+1, sizeof(Line) * (s->line_count-y-1)))
+        if( ! memmove( s->lines + line_index + 2, s->lines + line_index + 1, sizeof(Line) * ( s->line_count-line_index - 1 )))
         {
             lprintf(LOG_ERROR, "Error moving lines");
             return;
         }
     }
     
+    int new_line_index = line_index + 1;
     
     /* Initialize line */
-    s->lines[y+1].index = 0;
-    s->lines[y+1].content = (char*) malloc(0);
-    s->lines[y+1].length = 0;
+    s->lines[new_line_index].index = 0;
+    s->lines[new_line_index].content = (char*) malloc(0);
+    s->lines[new_line_index].length = 0;
 
     /* Update line count */
     s->line_count++;
@@ -122,7 +124,7 @@ void fe_insert_line(Session *s)
 
     /* Handle what happens when the cursor is in the middle of a line */
     Line *oldLine = fe_get_current_line(s);
-    Line *newLine = &s->lines[s->cursor_position.y -1 + s->offset.y + 1];
+    Line *newLine = &s->lines[s->cursor_position.y - 1 + s->offset.y + 1];
 
     int length = oldLine->length - x;
 
@@ -194,13 +196,13 @@ void fe_insert_char(Session *s, char c)
 
 static void fe_remove_line(Session *s)
 {
-    int y = s->cursor_position.y-1;
+    int line_index = s->cursor_position.y + s->offset.y - 1;
     
     /* We need at least two lines to remove one */
-    if(y == 0) return;
+    if( line_index == 0 ) return;
 
     Line *oldLine = fe_get_current_line(s);
-    Line *newLine = &s->lines[y-1];
+    Line *newLine = &s->lines[line_index-1];
 
     /* 
      * We need the original line length later to fix the cursor
@@ -239,10 +241,10 @@ static void fe_remove_line(Session *s)
      * Move all lines from the cursor+1 one up 
      * except the cursor is at the last line
      */
-    if(y < s->line_count)
+    if( line_index < s->line_count )
     {
-        int linesToMove = s->line_count - y;
-        if( ! memmove(s->lines+y, s->lines+y+1, sizeof(Line) * (linesToMove)))
+        int linesToMove = s->line_count - line_index;
+        if( ! memmove( s->lines + line_index, s->lines + line_index + 1, sizeof(Line) * (linesToMove)))
         {
             lprintf(LOG_ERROR, "Error moving lines for line remove.");
             return;
@@ -365,7 +367,7 @@ static void fe_move_cursor(Session *s, int x, int y)
 
     input = s->cursor_position.x + x;
     low = 1;
-    int line_index = s->cursor_position.y-1;
+    int line_index = s->cursor_position.y + s->offset.y - 1;
     
     if(line_index < 0)
     {
@@ -391,30 +393,47 @@ static void fe_move_cursor(Session *s, int x, int y)
     lprintf(LOG_INFO, "After cursor: %d/%d", s->cursor_position.x, s->cursor_position.y);
 }
 
+
 static int fe_end_of_buffer_reached(Session *s, int x, int y)
 {
     /*
      * Check if the cursor would move out of the buffer
      */
 
-    return (
-            /* Leftward movement lead to negative column? */
-            (x<0 && s->cursor_position.x <= 1  && s->offset.x == 0) ||
+    /* Leftward movement lead to negative column? */
+    if( x < 0 && s->cursor_position.x <= 1  && s->offset.x == 0 )
+    {
+        lprintf( LOG_DEBUG, "EOB: direction=LEFT, x to low" );
+        return 1;
+    }
 
-            /* 
-             * Rightward movement lead to column buffer out-of-bounds?
-             *
-             * Add one to the line length in order to allow the cursor be placed
-             * behind the last char. This allows to append input.
-             */
-           (x>0 && s->cursor_position.x >= s->lines[s->cursor_position.y-1].length + 1) ||
+    /* 
+     * Rightward movement lead to column buffer out-of-bounds?
+     *
+     * Add one to the line length in order to allow the cursor be placed
+     * behind the last char. This allows to append input.
+     */
+   if( x >  0 && s->cursor_position.x >= fe_get_current_line(s)->length + 1 )
+   {
+        lprintf( LOG_DEBUG, "EOB: direction=RIGHT, x to high" );
+        return 1;
+   }
 
-           /* Upward movement lead to negative row? */
-           (y<0 && s->cursor_position.y <= 1 && s->offset.y == 0) ||
+   /* Upward movement lead to negative row? */
+   if( y < 0 && s->cursor_position.y <= 1 && s->offset.y == 0 )
+   {
+        lprintf( LOG_DEBUG, "EOB: direction=UP, y to low" );
+        return 1;
+   }
 
-           /* Downward movement lead to row buffer out-of-bounds?*/
-           (y>0 && s->cursor_position.y >= s->line_count - s->offset.y)
-           );
+   /* Downward movement lead to row buffer out-of-bounds?*/
+   if( y > 0 && s->cursor_position.y >= s->line_count - s->offset.y )
+   {
+        lprintf( LOG_DEBUG, "EOB: direction=DOWN, y to high" );
+        return 1;
+   }
+
+   return 0;
 }
 
 void fe_move(Session *s, int x, int y)
@@ -427,11 +446,13 @@ void fe_move(Session *s, int x, int y)
             s->terminal_size.width, s->terminal_size.height,
             s->line_count);
 
+    /*
     if(fe_end_of_buffer_reached(s, x, y)) 
     {
         lprintf(LOG_INFO, "Enf of buffer. Ignore move.");
         return;
     }
+    */
 
     /* 
      * Determine whenever the cursor must be moved or the content
