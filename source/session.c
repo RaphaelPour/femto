@@ -360,8 +360,8 @@ static void fe_move_cursor(Session *s, int x, int y)
 
     int input = s->cursor_position.y + y;
     int low = 1;
-    int high = MAX(1, MIN(s->terminal_size.height, s->line_count - s->offset.y));
-    s->cursor_position.y = CLAMP(input, low,high);
+    int high = MAX(1, MIN(s->terminal_size.height, s->line_count - s->offset.y ));
+    s->cursor_position.y = CLAMP(input, low, high);
     lprintf(LOG_INFO, "CLAMP(input=%d, low=%d, high=%d) = %d", input, low, high, s->cursor_position.y);
 
 
@@ -446,13 +446,13 @@ void fe_move(Session *s, int x, int y)
             s->terminal_size.width, s->terminal_size.height,
             s->line_count);
 
-    /*
+   
     if(fe_end_of_buffer_reached(s, x, y)) 
     {
         lprintf(LOG_INFO, "Enf of buffer. Ignore move.");
         return;
     }
-    */
+    
 
     /* 
      * Determine whenever the cursor must be moved or the content
