@@ -36,7 +36,7 @@ void fe_refresh_screen(Session *s){
     // Show welcome screen when no file is loaded
     if(s->line_count == 0)
     {
-        for(row=0; row < ts.rows-1; row++)
+        for(row=0; row < ts.rows; row++)
         {
             fe_append_to_buffer(screen_buffer, 
                                 SPARE_LINE, 
@@ -51,14 +51,15 @@ void fe_refresh_screen(Session *s){
             fe_append_to_buffer(screen_buffer,
                                 ESC_DEL_TO_EOL,
                                 strlen(ESC_DEL_TO_EOL));
-            fe_append_to_buffer(screen_buffer, 
-                                NEW_LINE,
-                                strlen(NEW_LINE));
+            if(row < ts.rows - 1)
+                fe_append_to_buffer(screen_buffer, 
+                                    NEW_LINE,
+                                    strlen(NEW_LINE));
         }
     }
     else
     {
-        for(row=0;row < ts.rows-1;row++)
+        for(row=0;row < ts.rows;row++)
         {
             unsigned line_index = row + s->offset.y;
             if(line_index < s->line_count)
@@ -77,9 +78,11 @@ void fe_refresh_screen(Session *s){
             fe_append_to_buffer(screen_buffer,
                                 ESC_DEL_TO_EOL,
                                 strlen(ESC_DEL_TO_EOL));
-            fe_append_to_buffer(screen_buffer, 
-                                NEW_LINE,
-                                strlen(NEW_LINE));
+
+            if(row < ts.rows - 1)
+                fe_append_to_buffer(screen_buffer, 
+                                    NEW_LINE,
+                                    strlen(NEW_LINE));
         }
     }
     
