@@ -1,7 +1,11 @@
 language: c
 compiler:
   - gcc
+
+os:
+  - linux
   
 script:
-  - make unittest
-  - ./ci-build/femto.test
+  - curl -Ls https://git.io/ttask.sh | sh
+  - curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $(go env GOPATH)/bin
+  - "./bin/task ci"
