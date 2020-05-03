@@ -1,11 +1,28 @@
-# Femto
+# Femto [![Build Status](https://travis-ci.com/3vilcookie/femto.svg?branch=master)](https://travis-ci.com/3vilcookie/femto)
 
-Tiny texit-editor with minimal featureset written in Vanilla C.
+CLI Text-Editor in Vanila C.
 
-## Features
+# Usage
 
-- CRUD a file
-- line numbers
+Show help:
+
+```bash
+$ femto -u
+```
+Show version: 
+```bash
+$ femto -v
+```
+
+Open existing file:
+```bash
+$ femto README.md
+```
+
+New file:
+```bash
+$ femto
+```
 
 ## License
 
