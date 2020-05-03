@@ -567,7 +567,7 @@ void test_valid_char_insertion_and_remove(){
      * should have an increased line length and cursor x position by one.
      */
 
-    char input = '#';
+    int input = '#';
     Session *actualSession = fe_init_session( NULL );
     Session *expectedSession = duplicate_session( actualSession );
     
