@@ -22,5 +22,6 @@ void fe_append_to_buffer(Buffer *buffer, const char *appendix, unsigned length)
 
 void fe_free_buffer(Buffer *buffer)
 {
-    free(buffer->data);
+    free( buffer->data );
+    free( buffer );
 }
