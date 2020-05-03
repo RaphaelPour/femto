@@ -546,8 +546,20 @@ void fe_file_load(char *filename, Session *s)
         line_index++;
     }
 
-    s->line_count = line_index;
+    /* Even if the file is empty, the editor needs at least one line */
+    if( line_index == 0)
+    {
+        s->lines = (Line*) malloc( sizeof(Line) );
+        s->lines[0].index = 0;
+        s->lines[0].length = 0;
+        s->lines[0].content = (char*) malloc(0);
 
+        line_index++;
+    }
+
+
+
+    s->line_count = line_index;
     // Finish file operation by closing the file resource
     fclose(file_handle);
 

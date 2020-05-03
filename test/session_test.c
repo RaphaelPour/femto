@@ -111,6 +111,41 @@ void test_load_file_with_long_lines()
     TEST_OK
 }
 
+void test_load_empty_file()
+{
+    TEST_IT_NAME("loads an empty file");
+
+    char *temp_filename = "/tmp/femto.empty.testdata";
+    FILE *temp_fd = fopen(temp_filename, "w+");
+    
+    if(!temp_fd)
+    {
+        perror("Create temp file");
+        exit(EXIT_FAILURE);
+    }
+
+    fclose(temp_fd);
+
+    Session *s = fe_init_session(temp_filename);
+
+    unlink(temp_filename);
+
+    if( ! expect_i_eq( 0, s->content_length )) goto cleanup;
+    
+    /* 
+     * There should be one line which will be added automatically
+     * when a loaded file is empty. This is needed by the editor
+     * to work with a session.
+     */
+    if( ! expect_i_eq( 1, s->line_count )) goto cleanup;
+    
+
+    TEST_OK;
+
+cleanup:
+    fe_free_session( s );
+}
+
 
 void test_save_file()
 {
@@ -161,6 +196,7 @@ void test_suite_session()
     TEST_SUITE_NAME("Session");
     test_load_file();
     test_load_file_with_long_lines();
+    test_load_empty_file();
     test_save_file();
     test_session_init();
 }
