@@ -2,7 +2,6 @@
 #define CILICON_H
 #include <stdlib.h>
 #include <stdio.h>
-#include <assert.h>
 #include <string.h>
 
 #include <session.h>

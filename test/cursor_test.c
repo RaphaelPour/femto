@@ -45,24 +45,6 @@ static Session* create_session_perfect_fit_by_input(int line_count, char *lines[
     return s;
 }
 
-static void clean_up_session(Session *s)
-{
-    if(s->filename) free(s->filename);
-
-    /*
-    if(s->lines)
-    {   
-        int i;
-        for(i=0;i<s->line_count;i++)
-            if(s->lines[i].content)
-                free(s->lines[i].content);
-        
-        free(s->lines);
-    }*/
-
-    free( s );
-}
-
 static Session* duplicate_session(Session *s)
 {
     Session *other = (Session*) malloc(sizeof(Session));
@@ -122,11 +104,14 @@ void test_valid_cursor_down_movement()
     // Move cursor 1 down
     fe_move(actualSession, 0, 1);
 
-    if(!expect_session_equal(expectedSession, actualSession )) return;
-    TEST_OK
+    if(!expect_session_equal(expectedSession, actualSession )) goto cleanup;
 
-    clean_up_session( actualSession );
-    clean_up_session( expectedSession );
+    TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
+
 }
 
 void test_valid_cursor_up_movement()
@@ -151,8 +136,13 @@ void test_valid_cursor_up_movement()
     // Move cursor 1 up
     fe_move(actualSession, 0, -1);
 
-    if(!expect_session_equal(expectedSession, actualSession )) return;
-    TEST_OK
+    if(!expect_session_equal(expectedSession, actualSession )) goto cleanup;
+    
+    TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_cursor_left()
@@ -173,8 +163,13 @@ void test_valid_cursor_left()
 
     fe_move(actualSession, -1,0);
 
-    if(!expect_session_equal(expectedSession, actualSession )) return;
+    if(!expect_session_equal(expectedSession, actualSession )) goto cleanup;
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_cursor_right()
@@ -195,8 +190,13 @@ void test_valid_cursor_right()
 
     fe_move(actualSession, 1,0);
 
-    if(!expect_session_equal( expectedSession, actualSession )) return;
+    if(!expect_session_equal( expectedSession, actualSession )) goto cleanup;
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_cursor_circle()
@@ -227,8 +227,13 @@ void test_valid_cursor_circle()
     // Move up
     fe_move(actualSession, 0,-1);
     
-    if(!expect_session_equal( expectedSession, actualSession )) return;
+    if(!expect_session_equal( expectedSession, actualSession )) goto cleanup;
+    
     TEST_OK;
+    
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_invalid_cursor_down_movement()
@@ -255,11 +260,13 @@ void test_invalid_cursor_down_movement()
     // Move cursor 1 down
     fe_move(actualSession, 0, 1);
 
-    if(!expect_session_equal( expectedSession, actualSession )) return;
-    TEST_OK
+    if(!expect_session_equal( expectedSession, actualSession )) goto cleanup;
 
-    //free( actualSession );
-    free( expectedSession );
+    TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 
@@ -285,11 +292,13 @@ void test_invalid_cursor_up_movement()
     // Move cursor 1 down
     fe_move(actualSession, 0,-1);
 
-    if(!expect_session_equal( expectedSession, actualSession )) return;
-    TEST_OK
+    if(!expect_session_equal( expectedSession, actualSession )) goto cleanup;
+    
+    TEST_OK;
 
-    //free( actualSession );
-    free( expectedSession );
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 
@@ -311,8 +320,13 @@ void test_invalid_cursor_left()
 
     fe_move(actualSession, -1,0);
 
-    if(!expect_session_equal(expectedSession, actualSession )) return;
+    if(!expect_session_equal(expectedSession, actualSession )) goto cleanup;
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_invalid_cursor_right()
@@ -337,8 +351,13 @@ void test_invalid_cursor_right()
 
     fe_move(actualSession, 1,0);
 
-    if(!expect_session_equal( expectedSession, actualSession )) return;
+    if(!expect_session_equal( expectedSession, actualSession )) goto cleanup;
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_cursor_down_offset_movement()
@@ -346,7 +365,6 @@ void test_valid_cursor_down_offset_movement()
     lprintf(LOG_INFO, "increases row offset on downward movement");
     TEST_IT_NAME("increases row offset on downward movement");
     
-    TEST_SKIP
     char *lines[] = {
         "1",
         "2",
@@ -368,8 +386,13 @@ void test_valid_cursor_down_offset_movement()
     fe_move(actualSession, 0, 1);
     fe_move(actualSession, 0, 1);
 
-    if(!expect_session_equal( expectedSession, actualSession)) return;
+    if(!expect_session_equal( expectedSession, actualSession)) goto cleanup;
+
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_up_offset_movement()
@@ -393,15 +416,19 @@ void test_valid_up_offset_movement()
 
     fe_move(actualSession,0,-1);
 
-    if(!expect_session_equal( expectedSession, actualSession)) return;
+    if(!expect_session_equal( expectedSession, actualSession)) goto cleanup;
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_cursor_up_offset_movement()
 {
     lprintf(LOG_INFO, "decreases row offset on upward and up movement");
     TEST_IT_NAME("decreases row offset on upward movement");
-    TEST_SKIP;
     char *lines[] = {
         "1",
         "2",
@@ -426,8 +453,13 @@ void test_valid_cursor_up_offset_movement()
     fe_move(actualSession, 0, -1);
     fe_move(actualSession, 0, -1);
 
-    if(!expect_session_equal( expectedSession, actualSession )) return;
+    if(!expect_session_equal( expectedSession, actualSession )) goto cleanup;
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_cursor_down_up_offset_movement()
@@ -454,8 +486,13 @@ void test_valid_cursor_down_up_offset_movement()
 
     fe_move(actualSession, 0, -1);
 
-    if(!expect_session_equal( expectedSession, actualSession )) return;
+    if(!expect_session_equal( expectedSession, actualSession )) goto cleanup;
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_char_insertion(){
@@ -467,31 +504,35 @@ void test_valid_char_insertion(){
      * When one character will be inserted at the end, the expected session
      * should have an increased line length and cursor x position by one.
      */
-    TEST_SKIP;
     char input = '#';
     Session *actualSession = fe_init_session( NULL );
     
     fe_insert_char( actualSession, input );
 
-    if( ! expect_b_eq( &input, actualSession->lines[0].content, 1, actualSession->lines[0].length )) return;
+    if( ! expect_b_eq( &input, actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
+    
     TEST_OK;
+cleanup:
+    fe_free_session( actualSession );
 }
 
 void test_valid_line_insertion(){
     TEST_IT_NAME("insert an emtpy line in a new session");
-    TEST_SKIP;
     Session *actualSession = fe_init_session( NULL );
 
     fe_insert_line( actualSession );
 
-    if( ! expect_i_eq( 2, actualSession->line_count )) return;
+    if( ! expect_i_eq( 2, actualSession->line_count )) goto cleanup;
+
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
 }
 
 void test_valid_line_in_text_insertion(){
     TEST_IT_NAME("insert an emtpy line in the middle of a line");
 
-    TEST_SKIP;
 
     char *linesGiven[] = {
         "12"
@@ -500,20 +541,26 @@ void test_valid_line_in_text_insertion(){
 
     fe_move(actualSession, 1, 0 );
 
-    if( ! expect_i_eq( 2, actualSession->cursor_position.x )) return;
-    if( ! expect_i_eq( 1, actualSession->cursor_position.y )) return;
+    if( ! expect_i_eq( 2, actualSession->cursor_position.x )) goto cleanup;
+    if( ! expect_i_eq( 1, actualSession->cursor_position.y )) goto cleanup;
 
     fe_insert_line( actualSession );
 
-    if( ! expect_i_eq( 2, actualSession->line_count )) return;
-    if( ! expect_b_eq( "1", actualSession->lines[0].content, 1, actualSession->lines[0].length )) return;
-    if( ! expect_b_eq( "2", actualSession->lines[1].content, 1, actualSession->lines[1].length )) return;
+    if( ! expect_i_eq( 2, actualSession->line_count )) goto cleanup;
+    if( ! expect_b_eq( "1", actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( "2", actualSession->lines[1].content, 1, actualSession->lines[1].length )) goto cleanup;
+    
+    
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
 }
 
 void test_valid_char_insertion_and_remove(){
     
     TEST_IT_NAME("inserts and removes a char in a new session");
+    
     /*
      * Create session which perfectly fits for two characters in one line.
      * When one character will be inserted at the end, the expected session
@@ -527,23 +574,31 @@ void test_valid_char_insertion_and_remove(){
     fe_insert_char( actualSession, input );
     fe_remove_char_at_cursor( actualSession );
 
-    if( ! expect_session_equal( expectedSession, actualSession )) return;
+    if( ! expect_session_equal( expectedSession, actualSession )) goto cleanup;
 
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_valid_line_insertion_and_remove(){
     TEST_IT_NAME("insert and remove an emtpy line in a new session");
     
-    TEST_SKIP;
     Session *actualSession = fe_init_session( NULL );
     Session *expectedSession = duplicate_session( actualSession );
 
     fe_insert_line( actualSession );
     fe_remove_char_at_cursor( actualSession );
 
-    if( ! expect_session_equal( expectedSession, actualSession )) return;
+    if( ! expect_session_equal( expectedSession, actualSession )) goto cleanup;
+
     TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+    fe_free_session( expectedSession );
 }
 
 void test_suite_cursor()
