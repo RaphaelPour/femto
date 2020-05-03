@@ -8,11 +8,11 @@
 #include <buffer.h>
 #include <terminal.h>
 
-#define ESC_HIDE_CURSOR "\x1b[?25l"
-#define ESC_SHOW_CURSOR "\x1b[?25h"
-#define ESC_RESET_CURSOR "\x1b[H"
-#define ESC_SET_CURSOR "\x1b[%d;%dH"
-#define ESC_DEL_TO_EOL "\x1b[0K"
+#define ESC_HIDE_CURSOR "\033[?25l"
+#define ESC_SHOW_CURSOR "\033[?25h"
+#define ESC_RESET_CURSOR "\033[H"
+#define ESC_SET_CURSOR "\033[%d;%dH"
+#define ESC_DEL_TO_EOL "\033[0K"
 #define NEW_LINE "\r\n"
 #define SPARE_LINE "~"
 #define WELCOME_LINE "\t\t\t\t< femto >"
