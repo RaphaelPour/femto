@@ -20,7 +20,7 @@ static Session* create_session_perfect_fit_by_input(int line_count, char *lines[
 {
     Session *s = create_session_zero_initialized();
 
-    s->lines = calloc(line_count, sizeof(Line*));
+    s->lines = calloc(line_count, sizeof(Line));
 
     int i, total_length = 0, longest_line_length = 0;
     for(i=0;i<line_count;i++)
@@ -67,7 +67,30 @@ static Session* duplicate_session(Session *s)
 {
     Session *other = (Session*) malloc(sizeof(Session));
 
-    memcpy((void*)other, (void*) s, sizeof(Session));
+    memcpy( (void*)other, (void*) s, sizeof(Session));
+
+    other->filename = NULL;
+    other->lines = NULL;
+
+    if( s->filename )
+    {
+        other->filename = (char*) malloc( strlen( s->filename ) + 1 );
+        strcpy( other->filename, s->filename );
+        other->filename[strlen( s->filename )] = '\0';
+    }
+
+    if( s->line_count > 0 )
+    {
+        other->lines = (Line*) malloc( s->line_count * sizeof(Line) );
+        memcpy( other->lines, s->lines, s->line_count * sizeof(Line) );
+
+        for( int i = 0; i < s->line_count; i++ )
+        {
+            other->lines[i].content = (char*) malloc( s->lines[i].length );
+            memcpy( other->lines[i].content, s->lines[i].content, s->lines[i].length );
+            
+        }
+    }
 
     return other;
 }
