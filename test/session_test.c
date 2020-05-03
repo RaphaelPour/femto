@@ -60,6 +60,8 @@ void test_load_file()
 
     if( ! expect_i_eq( s->line_count, line_count )) return;
     
+    fe_free_session( s );
+
     TEST_OK
 }
 
@@ -104,6 +106,8 @@ void test_load_file_with_long_lines()
     // create a new line when the line length exeeds the buffer size
     if( ! expect_i_eq( s->line_count, line_count + 1 )) return;
     
+    fe_free_session( s );
+
     TEST_OK
 }
 
@@ -145,6 +149,8 @@ void test_save_file()
     buffer[bytes_read] = 0;
 
     if( ! expect_s_eq( buffer,test_content)) return;
+
+    free( b ); 
 
     TEST_OK
 }

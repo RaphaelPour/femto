@@ -198,7 +198,7 @@ int expect_line_equal( Line expected, Line actual )
         TEST_FAIL
         printf( "Expected length %lu, got %lu\n", expected.length, actual.length );
     }
-    else if( strcmp( expected.content, actual.content ) != 0 )
+    else if( memcmp( expected.content, actual.content, expected.length ) != 0 )
     {
         TEST_FAIL
         printf( "Expected  content '%.*s', got '%.*s'\n", 
