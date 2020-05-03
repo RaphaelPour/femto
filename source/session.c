@@ -309,16 +309,10 @@ void fe_remove_char_at_cursor(Session *s)
     }
 
     /* Shrink buffer by reallocating the lines memory */
-    line->content = (char*) realloc(line->content, line->length-1);
+    line->content = (char*) realloc( line->content, line->length - 1 );
 
-    if( ! line->content )
-    {
-        lprintf(LOG_ERROR, "Error reallocating memory in line %d", 
-            s->cursor_position.y -1 + s->offset.y);
-        return;
-    }
+    if( line->length - 1 == 0 ) line->content = NULL;
 
-    
     /* Update line length */
     line->length--;
 
