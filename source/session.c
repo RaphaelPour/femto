@@ -5,7 +5,7 @@ Session* fe_init_session(char* filename)
     Session *s = (Session*) malloc(sizeof(Session));
 
     // Initialize all content/file specific variables with zero
-    s->filename = filename;
+    s->filename = NULL;
     s->cursor_position = (TerminalPosition){{1},{1}};
     s->offset = (TerminalPosition){{0},{0}};
     s->lines = NULL;
@@ -13,11 +13,20 @@ Session* fe_init_session(char* filename)
     s->line_count = 0;
     s->edit_mode = 0;
 
+
     // Determine terminal properties
     s->terminal_size = fe_terminal_size();
 
     if(filename)
-        fe_file_load(filename, s);
+    {
+        // Duplicate filename
+        s->filename = (char*) malloc( strlen( filename ) + 1 );
+        strcpy( s->filename , filename );
+        s->filename[ strlen( filename )] = '\0';
+
+        // Load file
+        fe_file_load( filename, s );
+    }
     else
     {
         /* Prepare session for a new file from scratch */
@@ -576,13 +585,12 @@ void fe_free_session(Session *s)
     free(s->filename);
 
     // Free lines
-    int i;
-    for(i=0;i<s->line_count;i++)
+    for( int i=0; i < s->line_count; i++ )
     {
         Line *l = &s->lines[i];
-        if(l && l->content)
-            free(l->content);
+        free( l->content );
     }
 
-    free(s->lines);
+    free( s->lines );
+    free( s );
 }
