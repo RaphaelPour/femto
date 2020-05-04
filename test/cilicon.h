@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include <session.h>
 #define OK 1
@@ -27,6 +28,10 @@ int expect_i_gt(int expection, int limit);
 int expect_i_gte(int expection, int limit);
 int expect_i_lt(int expection, int limit);
 int expect_i_lte(int expection, int limit);
+
+/* Boolean  */
+int expect_true( bool actual );
+int expect_false( bool actual );
 
 /* String */
 int expect_s_eq(char *expection, char *actual);

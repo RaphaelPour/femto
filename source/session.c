@@ -19,13 +19,9 @@ Session* fe_init_session(char* filename)
 
     if(filename)
     {
-        // Duplicate filename
-        s->filename = (char*) malloc( strlen( filename ) + 1 );
-        strcpy( s->filename , filename );
-        s->filename[ strlen( filename )] = '\0';
-
+        fe_set_filename( s, filename );
         // Load file
-        fe_file_load( filename, s );
+        fe_file_load( s );
     }
     else
     {
@@ -43,6 +39,14 @@ Session* fe_init_session(char* filename)
     }
 
     return s;
+}
+
+void fe_set_filename(Session *s, const char *filename)
+{
+    /* Duplicate filename so we can definetly free it without a doubt. */
+    s->filename = (char*) malloc( strlen( filename ) + 1 );
+    strcpy( s->filename , filename );
+    s->filename[ strlen( filename )] = '\0';
 }
 
 void fe_dump_session(Session *s)
@@ -488,9 +492,9 @@ void fe_move(Session *s, int x, int y)
 
 }
 
-void fe_file_load(char *filename, Session *s)
+bool fe_file_load( Session *s )
 {
-    FILE *file_handle = fopen(filename, "r");
+    FILE *file_handle = fopen(s->filename, "r");
     size_t read_bytes = 0;
     char chunk[1024];
     size_t line_index = 0;
@@ -501,7 +505,7 @@ void fe_file_load(char *filename, Session *s)
     if(file_handle == NULL)
     {
         perror("open file for read");
-        exit(EXIT_FAILURE);
+        return false;
     }
 
     // Read lines until EOF
@@ -563,16 +567,29 @@ void fe_file_load(char *filename, Session *s)
     // Finish file operation by closing the file resource
     fclose(file_handle);
 
+    return true;
 }
 
-void fe_file_save(char *filename, Session *s)
+bool fe_file_save(Session *s)
 {
-    FILE *file_handle = fopen(filename, "w");
+    FILE *file_handle = fopen(s->filename, "w");
     
     if( ! file_handle )
     {
-        lprintf(LOG_ERROR, "Error opening file %s for saving", filename);
-        exit(EXIT_FAILURE);
+        lprintf(LOG_ERROR, "Error opening file %s for saving", s->filename);
+        return false;
+    }
+
+    /* 
+     * Don't write anything if the content includes only one empty line.
+     * Just touch the file and close it.
+     *
+     * Two lines are a valid 
+     */
+    if( s->line_count == 1 && s->lines[0].length == 0)
+    {
+        fclose( file_handle );
+        return false;
     }
 
     /* Iterate over all lines and write content with trailing new line to file */
@@ -588,7 +605,11 @@ void fe_file_save(char *filename, Session *s)
                      line->length,
                      bytes_written );
 
-        /* Add trailing new line */
+        /*
+         * Don't write a new line for the last line since new lines
+         * _join_ two lines.
+         */
+        if(i == s->line_count - 1) continue;
         char newLine = '\n';
         bytes_written = fwrite( &newLine, 1, 1, file_handle );
         
@@ -601,6 +622,8 @@ void fe_file_save(char *filename, Session *s)
     }
 
     fclose(file_handle);
+
+    return true;
 }
 
 void fe_free_session(Session *s)
