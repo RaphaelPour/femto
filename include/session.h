@@ -50,7 +50,7 @@ void fe_dump_session(Session *s);
 void fe_toggle_mode(Session *s);
 void fe_move(Session *s, int x, int y);
 void fe_file_load(char *filename, Session *s);
-void fe_file_save(char *filename, Buffer *buffer);
+void fe_file_save(char *filename, Session *s);
 void fe_free_session(Session *s);
 
 void fe_insert_char(Session *s, char c);
