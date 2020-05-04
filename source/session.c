@@ -565,22 +565,39 @@ void fe_file_load(char *filename, Session *s)
 
 }
 
-void fe_file_save(char *filename, Buffer *buffer)
+void fe_file_save(char *filename, Session *s)
 {
     FILE *file_handle = fopen(filename, "w");
     
-    if(file_handle == NULL)
+    if( ! file_handle )
     {
-        perror("open file for write");
+        lprintf(LOG_ERROR, "Error opening file %s for saving", filename);
         exit(EXIT_FAILURE);
     }
 
-    size_t bytes_written = fwrite(buffer->data, 1, buffer->length, file_handle);
-
-    if(bytes_written<buffer->length)
+    /* Iterate over all lines and write content with trailing new line to file */
+    for( int i = 0; i < s->line_count; i++)
     {
-        printf("Error writing file\n");
-        exit(EXIT_FAILURE);
+        Line *line = &s->lines[i];
+        
+        size_t bytes_written = fwrite(line->content, 1, line->length, file_handle);
+
+        if( bytes_written < line->length )
+            lprintf( LOG_WARNING, 
+                     "Wrote less bytes to file than expected. Line has %d, wrote %d bytes",
+                     line->length,
+                     bytes_written );
+
+        /* Add trailing new line */
+        char newLine = '\n';
+        bytes_written = fwrite( &newLine, 1, 1, file_handle );
+        
+        if( bytes_written != sizeof(newLine) )
+            lprintf( LOG_WARNING,
+                     "Worte less bytes to file than expected. New line has %d, wrote %d bytes",
+                     sizeof(newLine),
+                     bytes_written );
+                     
     }
 
     fclose(file_handle);
