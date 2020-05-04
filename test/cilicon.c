@@ -104,6 +104,31 @@ int expect_s_eq( char* expection, char* actual )
     return FAIL;
 }
 
+int expect_true( bool actual )
+{
+    totalExpects++;
+
+    if( actual ) return OK;
+
+    TEST_FAIL;
+
+    printf("Expected true, got false");
+    failedExpects++;
+    return FAIL;
+}
+
+int expect_false( bool actual )
+{
+    totalExpects++;
+
+    if( ! actual ) return OK;
+
+    TEST_FAIL;
+
+    printf("Expected false, got true");
+    failedExpects++;
+    return FAIL;
+}
 
 int expect_s_not_eq( char* expection, char* actual )
 {
