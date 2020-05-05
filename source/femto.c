@@ -113,6 +113,10 @@ int main(int argc, char *argv[])
             case BACKSPACE:
                 fe_remove_char_at_cursor( session );
                 break;
+            case CTRL_S:
+                if( ! fe_file_save( session ))
+                    lprintf(LOG_ERROR, "Error saving file");
+
             default:
                 if( isprint( c ) )
                     fe_insert_char( session, c );
