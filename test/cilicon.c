@@ -15,11 +15,11 @@ void test_print_result(){
     }
 }
 
-int test_are_all_ok(){
+bool test_are_all_ok(){
     return failedExpects == 0;
 }
 
-int expect_i_eq( int expection, int actual )
+bool expect_i_eq( int expection, int actual )
 {
     totalExpects++;
     if( expection == actual ) return OK;
@@ -32,7 +32,7 @@ int expect_i_eq( int expection, int actual )
 }
 
 
-int expect_i_not_eq( int expection, int actual )
+bool expect_i_not_eq( int expection, int actual )
 {
     totalExpects++;
     if( expection != actual ) return OK;
@@ -44,7 +44,7 @@ int expect_i_not_eq( int expection, int actual )
     return FAIL;
 }
 
-int expect_i_gt( int expection, int limit )
+bool expect_i_gt( int expection, int limit )
 {
     totalExpects++;
     if( expection > limit ) return OK;
@@ -56,7 +56,7 @@ int expect_i_gt( int expection, int limit )
     return FAIL;
 }
 
-int expect_i_gte( int expection, int limit )
+bool expect_i_gte( int expection, int limit )
 {
     totalExpects++;
     if( expection >= limit ) return OK;
@@ -68,7 +68,7 @@ int expect_i_gte( int expection, int limit )
     return FAIL;
 }
 
-int expect_i_lt( int expection, int limit )
+bool expect_i_lt( int expection, int limit )
 {
     totalExpects++;
     if( expection < limit ) return OK;
@@ -80,7 +80,7 @@ int expect_i_lt( int expection, int limit )
     return FAIL;
 }
 
-int expect_i_lte( int expection, int limit )
+bool expect_i_lte( int expection, int limit )
 {
     totalExpects++;
     if( expection <= limit ) return OK;
@@ -92,7 +92,7 @@ int expect_i_lte( int expection, int limit )
     return FAIL;
 }
 
-int expect_s_eq( char* expection, char* actual )
+bool expect_s_eq( char* expection, char* actual )
 {
     totalExpects++;
     if( strcmp( expection,actual ) == 0 ) return OK;
@@ -104,7 +104,7 @@ int expect_s_eq( char* expection, char* actual )
     return FAIL;
 }
 
-int expect_true( bool actual )
+bool expect_true( bool actual )
 {
     totalExpects++;
 
@@ -117,7 +117,7 @@ int expect_true( bool actual )
     return FAIL;
 }
 
-int expect_false( bool actual )
+bool expect_false( bool actual )
 {
     totalExpects++;
 
@@ -130,7 +130,7 @@ int expect_false( bool actual )
     return FAIL;
 }
 
-int expect_s_not_eq( char* expection, char* actual )
+bool expect_s_not_eq( char* expection, char* actual )
 {
     totalExpects++;
     if( strcmp( expection,actual ) != 0 ) return OK;
@@ -142,7 +142,7 @@ int expect_s_not_eq( char* expection, char* actual )
     return FAIL;
 }
 
-int expect_s_included( char *haystack, char *needle )
+bool expect_s_included( char *haystack, char *needle )
 {
     totalExpects++;
     if( strstr( haystack, needle )) return OK;
@@ -154,7 +154,7 @@ int expect_s_included( char *haystack, char *needle )
     return FAIL;
 }
 
-int expect_not_null( void* actual )
+bool expect_not_null( void* actual )
 {
     totalExpects++;
     if( actual ) return OK;
@@ -166,7 +166,7 @@ int expect_not_null( void* actual )
     return FAIL;
 }
 
-int expect_null( void* actual )
+bool expect_null( void* actual )
 {
     totalExpects++;
     if( actual == NULL ) return OK;
@@ -179,7 +179,7 @@ int expect_null( void* actual )
 }
 
 
-int expect_b_eq( void *expection, void *actual, int len_expection, int len_actual ){
+bool expect_b_eq( void *expection, void *actual, int len_expection, int len_actual ){
     
     if( len_expection != len_actual ){
         TEST_FAIL;
@@ -198,7 +198,7 @@ int expect_b_eq( void *expection, void *actual, int len_expection, int len_actua
 
     return OK;
 }
-int expect_b_neq( void *expection, void *actual, int len_expection, int len_actual ){
+bool expect_b_neq( void *expection, void *actual, int len_expection, int len_actual ){
 
     if( len_expection != len_actual ) return OK;
 
@@ -210,7 +210,7 @@ int expect_b_neq( void *expection, void *actual, int len_expection, int len_actu
     return FAIL;
 }
 
-int expect_line_equal( Line expected, Line actual )
+bool expect_line_equal( Line expected, Line actual )
 {
     totalExpects++;
     if( expected.index != actual.index )
@@ -241,7 +241,7 @@ int expect_line_equal( Line expected, Line actual )
     return FAIL;
 }
 
-int expect_session_equal( Session *expected, Session *actual )
+bool expect_session_equal( Session *expected, Session *actual )
 {
     totalExpects++;
     if( memcmp( actual, expected, sizeof( Session )) == 0 ) return OK;
