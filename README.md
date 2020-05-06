@@ -7,7 +7,7 @@ CLI Text-Editor in Vanila C.
 Show help:
 
 ```bash
-$ femto -u
+$ femto -h
 ```
 Show version: 
 ```bash
