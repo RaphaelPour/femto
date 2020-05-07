@@ -24,8 +24,43 @@ char* fe_create_set_cursor_command(Session *s)
     return buf;
 }
 
-void fe_render_status_bar( Session *s, Buffer *screen_buffer )
+Buffer* fe_generate_prompt_status_bar( Session *s, char *prompt, char *input )
 {
+    Buffer *buffer = fe_create_buffer();
+    char *status_bar = (char*) malloc( s->terminal_size.width );
+    memset( status_bar, 0, s->terminal_size.width );
+
+    snprintf( status_bar, s->terminal_size.width, "%s %s", prompt, input );
+
+    fe_append_to_buffer( buffer,
+                         STATUS_BAR_COLOR,
+                         strlen( STATUS_BAR_COLOR ));
+
+    fe_append_to_buffer( buffer,
+                         status_bar,
+                         s->terminal_size.width );
+
+    fe_append_to_buffer( buffer,
+                         ESC_DEL_TO_EOL,
+                         strlen( ESC_DEL_TO_EOL ));
+
+    fe_append_to_buffer( buffer,
+                         RESET_COLOR,
+                         strlen( RESET_COLOR ));
+
+    fe_append_to_buffer( buffer, 
+                         NEW_LINE,
+                         strlen( NEW_LINE ));
+
+    free( status_bar );
+    
+    return buffer;
+
+}
+
+Buffer* fe_generate_default_status_bar( Session *s )
+{
+    Buffer *buffer = fe_create_buffer();
     char *status_bar = (char*) malloc( s->terminal_size.width );
     memset( status_bar, 0, s->terminal_size.width );
 
@@ -34,31 +69,32 @@ void fe_render_status_bar( Session *s, Buffer *screen_buffer )
               s->cursor_position.row,
               s->cursor_position.col );
 
-    fe_append_to_buffer( screen_buffer,
+    fe_append_to_buffer( buffer,
                          STATUS_BAR_COLOR,
                          strlen( STATUS_BAR_COLOR ));
 
-    fe_append_to_buffer( screen_buffer,
+    fe_append_to_buffer( buffer,
                          status_bar,
                          s->terminal_size.width );
 
-    fe_append_to_buffer( screen_buffer,
+    fe_append_to_buffer( buffer,
                          ESC_DEL_TO_EOL,
                          strlen( ESC_DEL_TO_EOL ));
 
-    fe_append_to_buffer( screen_buffer,
+    fe_append_to_buffer( buffer,
                          RESET_COLOR,
                          strlen( RESET_COLOR ));
 
-    fe_append_to_buffer( screen_buffer, 
+    fe_append_to_buffer( buffer, 
                          NEW_LINE,
                          strlen( NEW_LINE ));
 
     free( status_bar );
     
+    return buffer;
 }
 
-void fe_refresh_screen(Session *s){
+void fe_refresh_screen(Session *s, Buffer *status_bar){
     Buffer *screen_buffer = fe_create_buffer();
 
     fe_append_to_buffer(screen_buffer, ESC_HIDE_CURSOR, strlen(ESC_HIDE_CURSOR));
@@ -68,7 +104,20 @@ void fe_refresh_screen(Session *s){
     unsigned row;
     TerminalSize ts = s->terminal_size;
 
-    fe_render_status_bar(s, screen_buffer );
+    if( status_bar )
+    {
+        fe_append_to_buffer( screen_buffer,
+                             status_bar->data,
+                             status_bar->length );
+    }
+    else
+    {
+        Buffer *default_status_bar = fe_generate_default_status_bar( s );
+        fe_append_to_buffer( screen_buffer,
+                             default_status_bar->data,
+                             default_status_bar->length );
+        fe_free_buffer( default_status_bar );
+    }
 
     // Show welcome screen when no file is loaded
     if(s->line_count == 0)
