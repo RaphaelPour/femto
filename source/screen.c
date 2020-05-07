@@ -7,7 +7,7 @@ char* fe_create_set_cursor_command(Session *s)
     
     /* Add count of digits for x and y */
     len += DIGITS(s->cursor_position.x) +
-           DIGITS(s->cursor_position.y);
+           DIGITS(s->cursor_position.y+1);
 
     /* Add one for the null terminator */
     len++;
@@ -15,13 +15,47 @@ char* fe_create_set_cursor_command(Session *s)
     char* buf = (char*) malloc( len+1 );
 
     snprintf(buf, len, ESC_SET_CURSOR, 
-             s->cursor_position.y,
+             s->cursor_position.y+1,
              s->cursor_position.x);
 
 
-    lprintf(LOG_INFO, "set cursor command: x=%d y=%d", s->cursor_position.x, s->cursor_position.y);
+    lprintf(LOG_INFO, "set cursor command: x=%d y=%d", s->cursor_position.x, s->cursor_position.y+1);
 
     return buf;
+}
+
+void fe_render_status_bar( Session *s, Buffer *screen_buffer )
+{
+    char *status_bar = (char*) malloc( s->terminal_size.width );
+    memset( status_bar, 0, s->terminal_size.width );
+
+    snprintf( status_bar, s->terminal_size.width, "%s %3d:%-3d", 
+              s->filename ? s->filename : "new file",
+              s->cursor_position.row,
+              s->cursor_position.col );
+
+    fe_append_to_buffer( screen_buffer,
+                         STATUS_BAR_COLOR,
+                         strlen( STATUS_BAR_COLOR ));
+
+    fe_append_to_buffer( screen_buffer,
+                         status_bar,
+                         s->terminal_size.width );
+
+    fe_append_to_buffer( screen_buffer,
+                         ESC_DEL_TO_EOL,
+                         strlen( ESC_DEL_TO_EOL ));
+
+    fe_append_to_buffer( screen_buffer,
+                         RESET_COLOR,
+                         strlen( RESET_COLOR ));
+
+    fe_append_to_buffer( screen_buffer, 
+                         NEW_LINE,
+                         strlen( NEW_LINE ));
+
+    free( status_bar );
+    
 }
 
 void fe_refresh_screen(Session *s){
@@ -33,10 +67,13 @@ void fe_refresh_screen(Session *s){
 
     unsigned row;
     TerminalSize ts = s->terminal_size;
+
+    fe_render_status_bar(s, screen_buffer );
+
     // Show welcome screen when no file is loaded
     if(s->line_count == 0)
     {
-        for(row=0; row < ts.rows; row++)
+        for(row=0; row < ts.rows-1; row++)
         {
             fe_append_to_buffer(screen_buffer, 
                                 SPARE_LINE, 
@@ -59,7 +96,7 @@ void fe_refresh_screen(Session *s){
     }
     else
     {
-        for(row=0;row < ts.rows;row++)
+        for(row=0;row < ts.rows-1;row++)
         {
             unsigned line_index = row + s->offset.y;
             if(line_index < s->line_count)
@@ -79,7 +116,7 @@ void fe_refresh_screen(Session *s){
                                 ESC_DEL_TO_EOL,
                                 strlen(ESC_DEL_TO_EOL));
 
-            if(row < ts.rows - 1)
+            if(row < ts.rows - 2)
                 fe_append_to_buffer(screen_buffer, 
                                     NEW_LINE,
                                     strlen(NEW_LINE));
