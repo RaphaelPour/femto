@@ -23,6 +23,7 @@
 #define WELCOME_LINE "\t\t\t\t< femto >"
 
 char* fe_create_set_cursor_command(Session *s);
-void fe_refresh_screen(Session *s);
+void fe_refresh_screen(Session *s, Buffer *status_bar);
+Buffer* fe_generate_prompt_status_bar( Session *s, char *prompt, char *input );
 
 #endif //SCREEN_H

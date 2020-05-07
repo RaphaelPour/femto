@@ -15,6 +15,8 @@
 #define BUILD_VERSION "fix your makefile"
 #endif
 
+char* fe_user_prompt( Session *s, char* prompt );
+
 int main(int argc, char *argv[])
 {
 
@@ -71,7 +73,7 @@ int main(int argc, char *argv[])
     while( ! exit_femto )
     {
         /* Render the current buffer to the terminal screen*/
-        fe_refresh_screen( session );
+        fe_refresh_screen( session, NULL );
 
         c = fe_get_user_input();
         lprintf( LOG_INFO, "read user input '%c' (%d)", c, c );
@@ -114,9 +116,14 @@ int main(int argc, char *argv[])
                 fe_remove_char_at_cursor( session );
                 break;
             case CTRL_S:
+                if( ! session->filename )
+                {
+                    fe_set_filename( session, fe_user_prompt( session, "Filename:" ));
+                    if( ! session->filename ) continue;
+                }
                 if( ! fe_file_save( session ))
                     lprintf(LOG_ERROR, "Error saving file");
-
+                break;
             default:
                 if( isprint( c ) )
                     fe_insert_char( session, c );
@@ -135,3 +142,29 @@ int main(int argc, char *argv[])
 }
 
 
+
+char* fe_user_prompt( Session *s, char* prompt )
+{
+    char c = 0;
+    char *answer = (char*) malloc(1);
+    answer[0] = '\0';
+    int length = 0;
+
+    do{
+        fe_refresh_screen( s, fe_generate_prompt_status_bar( s, prompt, answer ) );
+
+        c = fe_get_user_input();
+
+        if( c == ESCAPE ) return NULL;
+        if( isprint( c )){
+            answer = (char*) realloc(answer, length + 1);
+            answer[length-1] = c;
+            answer[length] = '\0';
+            length++;
+        }
+
+
+    }while( ! (c == ENTER_MAC || c == ENTER ));
+
+    return answer;
+}
