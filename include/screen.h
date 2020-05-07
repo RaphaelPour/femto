@@ -15,6 +15,11 @@
 #define ESC_DEL_TO_EOL "\033[0K"
 #define NEW_LINE "\r\n"
 #define SPARE_LINE "~"
+
+/* White status bar with black font */
+#define STATUS_BAR_COLOR "\033[30;107m"
+#define RESET_COLOR "\033[0m"
+
 #define WELCOME_LINE "\t\t\t\t< femto >"
 
 char* fe_create_set_cursor_command(Session *s);
