@@ -57,7 +57,7 @@ void fe_dump_session(Session *s)
     lprintf(LOG_DEBUG, "Offset         : %d/%d", s->offset.x, s->offset.y);
     lprintf(LOG_DEBUG, "Content length : %d", s->content_length);
     lprintf(LOG_DEBUG, "Line count     : %d", s->line_count);
-    lprintf(LOG_DEBUG, "Terminal size  : %d/%d", s->terminal_size.width, s->terminal_size.height);
+    lprintf(LOG_DEBUG, "Terminal size  : %d/%d", s->terminal_size.width, s->terminal_size.height-1);
     lprintf(LOG_DEBUG, "Edit mode      : %s", (s->edit_mode) ? "ON" : "OFF");
 }
 
@@ -342,10 +342,11 @@ static void fe_move_content_offset(Session *s, int x, int y)
     /* DEBUG: Don't set any offset at all to fix the cursor positioning */
     //return;
 
+    /* Subtract one for the status bar */
     if(y)
         s->offset.y = CLAMP(s->offset.y + y,
                 0,
-                MAX(s->line_count, s->terminal_size.height));
+                MAX(s->line_count, s->terminal_size.height-1));
 
     
     /* TODO: Add max col length to session struct to handle it like x */ 
@@ -367,7 +368,8 @@ static void fe_move_cursor(Session *s, int x, int y)
 
     int input = s->cursor_position.y + y;
     int low = 1;
-    int high = MAX(1, MIN(s->terminal_size.height, s->line_count - s->offset.y ));
+    /* Subtract one for the status bar */
+    int high = MAX(1, MIN(s->terminal_size.height-1, s->line_count - s->offset.y ));
     s->cursor_position.y = CLAMP(input, low, high);
     lprintf(LOG_INFO, "CLAMP(input=%d, low=%d, high=%d) = %d", input, low, high, s->cursor_position.y);
 
@@ -450,7 +452,7 @@ void fe_move(Session *s, int x, int y)
             x,y,
             s->cursor_position.x, s->cursor_position.y,
             s->offset.x, s->offset.y,
-            s->terminal_size.width, s->terminal_size.height,
+            s->terminal_size.width, s->terminal_size.height-1,
             s->line_count);
 
    
@@ -472,7 +474,8 @@ void fe_move(Session *s, int x, int y)
     else
         curx = x;
 
-    if( (y>0 && s->cursor_position.y + y > s->terminal_size.height) ||
+    /* Subtract one for the status bar */
+    if( (y>0 && s->cursor_position.y + y > s->terminal_size.height-1) ||
         (y<0 && s->cursor_position.y + y < 1) /* We need + to not neutralize the -1 */
       )
         offy = y;
@@ -487,7 +490,7 @@ void fe_move(Session *s, int x, int y)
             x,y,
             s->cursor_position.x, s->cursor_position.y,
             s->offset.x, s->offset.y,
-            s->terminal_size.width, s->terminal_size.height,
+            s->terminal_size.width, s->terminal_size.height-1,
             s->line_count);
 
 }

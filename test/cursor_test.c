@@ -39,7 +39,7 @@ static Session* create_session_perfect_fit_by_input(int line_count, char *lines[
     s->line_count = line_count;
     s->content_length = total_length;
 
-    s->terminal_size.height = line_count;
+    s->terminal_size.height = line_count+1;
     s->terminal_size.width = longest_line_length;
 
     return s;
@@ -377,7 +377,7 @@ void test_valid_cursor_down_offset_movement()
      * the cursor would otherwise exit the visible screen buffer.
      */
     Session *actualSession = create_session_perfect_fit_by_input(3, lines);
-    actualSession->terminal_size.height = 2;
+    actualSession->terminal_size.height = 2+1;
 
     Session *expectedSession = duplicate_session( actualSession );
     expectedSession->offset.row = 1;
