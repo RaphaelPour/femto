@@ -17,6 +17,7 @@
 
 char* fe_user_prompt( Session *s, char* prompt );
 void fe_safe_file_dialog( Session *s );
+bool fe_quit_dialog( Session *s );
 
 int main(int argc, char *argv[])
 {
@@ -106,8 +107,11 @@ int main(int argc, char *argv[])
                 fe_move( session, 1, 0 );
                 break;
             case ESCAPE:
-                exit_femto = 1;
-                lprintf( LOG_INFO, "exited by user" );
+                if( fe_quit_dialog( session ))
+                {
+                    exit_femto = 1;
+                    lprintf( LOG_INFO, "exited by user" );
+                }
                 break;
             case ENTER_MAC:
             case ENTER:
@@ -152,6 +156,23 @@ void fe_safe_file_dialog( Session *s )
 
     if( ! fe_file_save( s ))
         lprintf(LOG_ERROR, "Error saving file");
+}
+
+bool fe_quit_dialog( Session *s )
+{
+    if( ! s->dirty ) return true;
+
+    fe_refresh_screen( s, fe_generate_prompt_status_bar( s,  "Unsaved changes! [D]iscard,[S]ave or [A]bort?", "" ));
+
+    char choice = tolower(fe_get_user_input());
+
+    switch( choice )
+    {
+    case 'd': return true;
+    case 's': fe_safe_file_dialog( s );
+    case 'a':
+    default: return false;
+    }
 }
 
 char* fe_user_prompt( Session *s, char* prompt )
