@@ -16,6 +16,7 @@
 #endif
 
 char* fe_user_prompt( Session *s, char* prompt );
+void fe_safe_file_dialog( Session *s );
 
 int main(int argc, char *argv[])
 {
@@ -116,13 +117,7 @@ int main(int argc, char *argv[])
                 fe_remove_char_at_cursor( session );
                 break;
             case CTRL_S:
-                if( ! session->filename )
-                {
-                    fe_set_filename( session, fe_user_prompt( session, "Filename:" ));
-                    if( ! session->filename ) continue;
-                }
-                if( ! fe_file_save( session ))
-                    lprintf(LOG_ERROR, "Error saving file");
+                fe_safe_file_dialog( session );
                 break;
             default:
                 if( isprint( c ) )
@@ -141,26 +136,46 @@ int main(int argc, char *argv[])
     return EXIT_SUCCESS;
 }
 
+void fe_safe_file_dialog( Session *s )
+{
+    if( ! s->filename )
+    {
+        char * filename = fe_user_prompt( s, "Filename:" );
+        if( ! filename ){
+            free( filename );
+            return;
+        }
 
+        fe_set_filename( s, filename );
+        free( filename );
+    }
+
+    if( ! fe_file_save( s ))
+        lprintf(LOG_ERROR, "Error saving file");
+}
 
 char* fe_user_prompt( Session *s, char* prompt )
 {
     char c = 0;
     char *answer = (char*) malloc(1);
     answer[0] = '\0';
-    int length = 0;
+    int length = 1;
 
     do{
         fe_refresh_screen( s, fe_generate_prompt_status_bar( s, prompt, answer ) );
 
         c = fe_get_user_input();
 
-        if( c == ESCAPE ) return NULL;
-        if( isprint( c )){
-            answer = (char*) realloc(answer, length + 1);
-            answer[length-1] = c;
-            answer[length] = '\0';
-            length++;
+        switch( c )
+        {
+        case ESCAPE: return NULL;
+        default:
+            if( isprint( c )){
+                answer = (char*) realloc(answer, length + 1);
+                answer[length-1] = c;
+                answer[length] = '\0';
+                length++;
+            }
         }
 
 
