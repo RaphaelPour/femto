@@ -2,7 +2,7 @@
 
 CLI Text-Editor in Vanila C.
 
-# Usage
+## Usage
 
 Show help:
 
@@ -23,6 +23,16 @@ New file:
 ```bash
 $ femto
 ```
+
+## Key bindings
+
+| Key          | Description      |
+|--------------|------------------| 
+| `Arrow keys` | Navigation       |
+| `ENTER`      | New line         |
+| `BACKSPACE`  | Remove char/line |
+| `ESC`        | Quit             |
+| `Ctrl+C`     | Save             |
 
 ## License
 
