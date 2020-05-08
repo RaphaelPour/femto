@@ -64,7 +64,8 @@ Buffer* fe_generate_default_status_bar( Session *s )
     char *status_bar = (char*) malloc( s->terminal_size.width );
     memset( status_bar, 0, s->terminal_size.width );
 
-    snprintf( status_bar, s->terminal_size.width, "%s %3d:%-3d", 
+    snprintf( status_bar, s->terminal_size.width, "%1s%s %3d:%-3d", 
+              s->dirty ? "*" : "",
               s->filename ? s->filename : "new file",
               s->cursor_position.row,
               s->cursor_position.col );
