@@ -12,6 +12,7 @@ Session* fe_init_session(char* filename)
     s->content_length = 0;
     s->line_count = 0;
     s->edit_mode = 0;
+    s->dirty = false;
 
 
     // Determine terminal properties
@@ -151,6 +152,9 @@ void fe_insert_line(Session *s)
     oldLine->content = (char*) realloc(oldLine->content, oldLine->length - length);
     oldLine->length -= length;
 
+    /* Set dirty bit */
+    s->dirty = true;
+
     /* Correct cursor */
 
     /* "Cariage return" */
@@ -198,6 +202,9 @@ void fe_insert_char(Session *s, char c)
 
     /* Finally: Set the new character */
     line->content[x] = c;
+
+    /* Set dirty bit */
+    s->dirty = true;
 
     /* Correct cursor position */
     fe_move( s, 1, 0);
@@ -323,6 +330,9 @@ void fe_remove_char_at_cursor(Session *s)
     /* Update file content length */
     s->content_length--;
  
+    /* Set dirty bit */
+    s->dirty = true;
+
     /* Fix cursor */
     fe_move( s, -1, 0 );
     
@@ -567,6 +577,10 @@ bool fe_file_load( Session *s )
 
 
     s->line_count = line_index;
+
+    /* Clear dirty bit */
+    s->dirty = false;
+
     // Finish file operation by closing the file resource
     fclose(file_handle);
 
@@ -625,6 +639,10 @@ bool fe_file_save(Session *s)
     }
 
     fclose(file_handle);
+
+
+    /* Clear dirty bit */
+    s->dirty = false;
 
     return true;
 }
