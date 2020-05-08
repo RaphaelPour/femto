@@ -44,6 +44,9 @@ typedef struct {
 
     /* Current mode to interpret the keys either literally or as commands */
     unsigned char edit_mode;
+
+    /* Dirty flag */
+    bool dirty;
 } Session;
 
 Session* fe_init_session(char* filename);
