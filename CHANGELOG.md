@@ -1,3 +1,9 @@
+# Minor Release v0.3.0 (2020-05-09)
+  * **Raphael Pour**
+    * Restore terminal
+
+*Released by Raphael Pour <info@raphaelpour.de>*
+
 # Minor Release v0.2.0 (2020-05-09)
   * **Raphael Pour**
     * Add save file on Ctrl+S
