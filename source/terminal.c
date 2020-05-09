@@ -9,6 +9,11 @@ static struct termios original_termios;
 
 void fe_enable_raw_mode()
 {
+    /* 
+     * Activate altrernate screen buffer to keep the original
+     * terminal output
+     */
+    write( STDIN_FILENO, ALT_SCREEN, strlen( ALT_SCREEN ));
     struct termios raw;
 
     int ret = tcgetattr(STDIN_FILENO, &original_termios);
@@ -62,7 +67,10 @@ void fe_enable_raw_mode()
 
 void fe_disable_raw_mode()
 {
-   if(tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios) == -1)
+   int ret = tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_termios);
+
+    write( STDIN_FILENO, ORIG_SCREEN, strlen( ORIG_SCREEN ));
+   if( ret == -1 )
    {
         perror("Disabling terminals raw mode");
         puts("Oops, we are still in raw mode.. Sorry!");

@@ -104,6 +104,9 @@
 // VSTATUS       STATUS               ^T
 
 
+#define ALT_SCREEN "\033[?1049h"
+#define ORIG_SCREEN "\033[?1049l"
+
 // Terminal size struct
 
 typedef struct {
