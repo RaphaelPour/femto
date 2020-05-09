@@ -109,7 +109,7 @@ static void fe_insert_empty_line(Session *s)
     
     /* Initialize line */
     s->lines[new_line_index].index = 0;
-    s->lines[new_line_index].content = (char*) malloc(0);
+    s->lines[new_line_index].content = NULL;
     s->lines[new_line_index].length = 0;
 
     /* Update line count */

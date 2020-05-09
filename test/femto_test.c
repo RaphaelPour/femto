@@ -31,5 +31,6 @@ int main(int argc, char *argv[])
 
     test_print_result();
 
+    lclose();
     return (test_are_all_ok() ? EXIT_SUCCESS : EXIT_FAILURE);
 }
