@@ -21,7 +21,11 @@ Session* fe_init_session(char* filename)
     if(filename)
     {
         fe_set_filename( s, filename );
-        // Load file
+    }
+    
+    // Load file if existent
+    if(filename && access(filename, F_OK) != -1)
+    {
         fe_file_load( s );
     }
     else
