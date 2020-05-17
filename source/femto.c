@@ -118,6 +118,13 @@ int main(int argc, char *argv[])
             case ENTER:
                 fe_insert_line( session );
                 break;
+            case TAB:
+                /* Since we belong to the tab-over-space fraction and we are a
+                 * bit lazy, just insert two white-spaces per tab.
+                 */
+                fe_insert_char( session, ' ' );
+                fe_insert_char( session, ' ' );
+                break;
             case BACKSPACE:
                 fe_remove_char_at_cursor( session );
                 break;
