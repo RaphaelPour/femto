@@ -177,10 +177,11 @@ void test_save_new_file()
     fclose(temp_fd);
     unlink(temp_filename);
 
-    if( ! expect_i_eq( 1, bytes_read )) return;
+    if( ! expect_i_eq( 2, bytes_read )) return;
 
     /* Expect test content and new line */
     if( ! expect_i_eq( test_content, buffer[0] )) return;
+    if( ! expect_i_eq( '\n', buffer[1] )) return;
 
     TEST_OK;
 }
@@ -222,7 +223,7 @@ void test_save_existing_file_without_change()
 
     /* Create a new empty file */
     char *temp_filename = "/tmp/femto.testdata";
-    char *test_content = "#!/bin/bash\n\necho This was triumph!";
+    char *test_content = "#!/bin/bash\n\necho This was triumph!\n";
 
     FILE *temp_fd = fopen( temp_filename, "w" );
     if( ! temp_fd )
@@ -391,6 +392,51 @@ cleanup:
     fe_free_session( s );
 }
 
+
+void test_fixup_issue_26(){
+    TEST_IT_NAME("fixes #26 missing-last-line-on-save-if-empty");
+  
+    /* Create a new empty file */
+    char *temp_filename = "/tmp/femto.testdata";
+
+    FILE *temp_fd = fopen( temp_filename, "w" );
+    if( ! temp_fd )
+    {
+        lprintf( LOG_ERROR, "Error creating test file %s", temp_filename );
+        return;
+    }
+
+    fwrite("1\n", 1, 1, temp_fd);
+    fclose( temp_fd );
+
+    /* Read in new file and save it immediately */
+    Session *s = fe_init_session( temp_filename );
+
+    if( ! expect_i_eq( 1, s->line_count )) return;
+
+    fe_file_save( s );
+    fe_free_session( s );
+
+    temp_fd = fopen(temp_filename, "r");
+
+    if( ! temp_fd )
+    {
+        lprintf( LOG_ERROR, "Error open file %s", temp_filename );
+        return;
+    }
+
+    char buffer[8];
+
+    size_t bytes_read = fread(&buffer, 1, sizeof(buffer), temp_fd);
+    fclose(temp_fd);
+    unlink(temp_filename);
+    
+    if( ! expect_i_eq( 2, bytes_read )) return;
+    if( ! expect_b_eq( "1\n", buffer, 2, bytes_read )) return;
+
+    TEST_OK;
+}
+
 void test_suite_session()
 {
     TEST_SUITE_NAME("Session");
@@ -406,9 +452,12 @@ void test_suite_session()
     TEST_CONTEXT_NAME( "Valid save file" );
     test_save_new_file();
     test_save_empty_new_file();
+
+    TEST_CONTEXT_NAME( "Valid load+save file" );
     test_save_existing_file_without_change();
     test_save_empty_existing_file_without_change();
     test_truncates_existing_file();
+    test_fixup_issue_26();
 
     TEST_CONTEXT_NAME( "Invalid load/save file" );
     test_invalid_save_file_without_filename();

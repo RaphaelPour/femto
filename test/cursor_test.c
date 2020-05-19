@@ -601,6 +601,7 @@ cleanup:
     fe_free_session( expectedSession );
 }
 
+
 void test_suite_cursor()
 {
     TEST_SUITE_NAME( "Cursor" );
