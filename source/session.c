@@ -609,8 +609,11 @@ bool fe_file_save(Session *s)
      */
     if( s->line_count == 1 && s->lines[0].length == 0)
     {
+        /* Clear dirty bit */
+        s->dirty = false;
+
         fclose( file_handle );
-        return false;
+        return true;
     }
 
     /* Iterate over all lines and write content with trailing new line to file */
@@ -630,7 +633,7 @@ bool fe_file_save(Session *s)
          * Don't write a new line for the last line since new lines
          * _join_ two lines.
          */
-        if(i == s->line_count - 1) continue;
+        //if(i == s->line_count - 1) continue;
         char newLine = '\n';
         bytes_written = fwrite( &newLine, 1, 1, file_handle );
         
