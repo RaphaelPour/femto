@@ -128,6 +128,9 @@ int main(int argc, char *argv[])
             case BACKSPACE:
                 fe_remove_char_at_cursor( session );
                 break;
+            case DELETE:
+                fe_remove_char_after_cursor( session );
+                break;
             case CTRL_S:
                 fe_safe_file_dialog( session );
                 break;
