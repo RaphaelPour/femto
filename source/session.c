@@ -294,6 +294,58 @@ static void fe_remove_line(Session *s)
         fe_move( s, originalLength, 0 );
 }
 
+void fe_remove_char_after_cursor(Session *s)
+{
+    int x = s->cursor_position.x -1;
+    Line *line = fe_get_current_line(s);
+    
+    lprintf(LOG_DEBUG, "Remove char after cursor: x=%d, lineLnegth=%d",
+            x, line->length-1);
+
+    /* Do nothing if cursor is at the end of the line */
+    if(x == line->length)
+    {
+        if(s->cursor_position.y == s->line_count-2)return;
+
+        /*
+         * Joining the current with the line below is like
+         * joining the current with the line above from another perspective
+         */
+        fe_move(s, -x, 0);
+        fe_move(s, 0, 1);
+        fe_remove_line(s);
+        return;
+    }
+
+    /* Move memory if cursor isn't at the last position */
+    if(x < line->length-1)
+    {
+        if( ! memmove(line->content+x, line->content+x+1, line->length-x-1))
+        {
+            lprintf(LOG_ERROR, "Error moving memory  in line %d", 
+                 s->cursor_position.y -1 + s->offset.y);
+            return;
+        }
+    }
+
+    /* Shrink buffer by reallocating the lines memory */
+    line->content = (char*) realloc( line->content, line->length - 1 );
+
+    if( line->length - 1 == 0 ) line->content = NULL;
+
+    /* Update line length */
+    line->length--;
+
+    /* Update file content length */
+    s->content_length--;
+ 
+    /* Set dirty bit */
+    s->dirty = true;
+    
+    lprintf(LOG_DEBUG, "Shrinking line from %d to %d at pos %d", 
+             line->length-1, line->length, x);
+}
+
 void fe_remove_char_at_cursor(Session *s)
 {
     /* 
