@@ -26,13 +26,14 @@ $ femto
 
 ## Key bindings
 
-| Key          | Description      |
-|--------------|------------------| 
-| `Arrow keys` | Navigation       |
-| `ENTER`      | New line         |
-| `BACKSPACE`  | Remove char/line |
-| `ESC`        | Quit             |
-| `Ctrl+C`     | Save             |
+| Key          | Description                    |
+|--------------|--------------------------------| 
+| `Arrow keys` | Navigation                     |
+| `ENTER`      | New line                       |
+| `BACKSPACE`  | Remove char/line before cursor |
+| `DELETE`     | Remove char/line after cursor  |
+| `ESC`        | Quit                           |
+| `Ctrl+C`     | Save                           |
 
 ## License
 
