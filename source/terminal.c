@@ -207,6 +207,13 @@ int fe_get_user_input()
         case 'C':   return RIGHT;
         case 'D':   return LEFT;
         }
+
+        if(input_char >= '0' && input_char <= '9')
+        {
+          char next_char = fe_read_char();
+          if(next_char == 0) return ESCAPE;
+          if(next_char == '~' && input_char == '3') return DELETE;
+        }
     }
 
 

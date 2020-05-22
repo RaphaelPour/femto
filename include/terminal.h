@@ -138,7 +138,8 @@ enum KEYS {
     UP = 128,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT,
+    DELETE
 };
 
 #endif
