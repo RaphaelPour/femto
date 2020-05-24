@@ -127,34 +127,29 @@ void fe_insert_line(Session *s)
 
     fe_insert_empty_line(s);
     
-    /* If the cursor is already at the last position inserting a new empty line is enough */
-    if(x == fe_get_current_line(s)->length)
-    {
-        /* Correct cursor */
-
-        /* "Cariage return" */
-        s->cursor_position.x = 0;
-        s->offset.x = 0;
-
-        fe_move( s, 0, 1 );
-        return;
-    }
-
-    /* Handle what happens when the cursor is in the middle of a line */
     Line *oldLine = fe_get_current_line(s);
-    Line *newLine = &s->lines[s->cursor_position.y - 1 + s->offset.y + 1];
+    
+    /* If the cursor is already at the last position inserting a new empty line is enough */
+    lprintf(LOG_DEBUG, "insert new line: x=%d, lineLength=%d\n", x, oldLine->length);
 
-    int length = oldLine->length - x;
+    if(x < oldLine->length)
+    {
+        /* Handle what happens when the cursor is in the middle of a line */
+        Line *newLine = &s->lines[s->cursor_position.y - 1 + s->offset.y + 1];
 
-    lprintf(LOG_DEBUG, "Breaking line at position %d with %d chars. Old line length: %d",x, length, oldLine->length);
-    /* Copy old line from the cursor to the end to the new line */
-    newLine->content = (char*) realloc(newLine->content, length);
-    memcpy(newLine->content, oldLine->content + x, length);
-    newLine->length = length;
+        int length = oldLine->length - x;
 
-    /* Truncate the old line beginning at the cursor position */
-    oldLine->content = (char*) realloc(oldLine->content, oldLine->length - length);
-    oldLine->length -= length;
+        lprintf(LOG_DEBUG, "Breaking line at position %d with %d chars. Old line length: %d",x, length, oldLine->length);
+        /* Copy old line from the cursor to the end to the new line */
+        newLine->content = (char*) realloc(newLine->content, length);
+        memcpy(newLine->content, oldLine->content + x, length);
+        newLine->length = length;
+
+        /* Truncate the old line beginning at the cursor position */
+        oldLine->content = (char*) realloc(oldLine->content, oldLine->length - length);
+        oldLine->length -= length;
+
+    }
 
     /* Set dirty bit */
     s->dirty = true;
@@ -162,7 +157,7 @@ void fe_insert_line(Session *s)
     /* Correct cursor */
 
     /* "Cariage return" */
-    s->cursor_position.x = 0;
+    s->cursor_position.x = 1;
     s->offset.x = 0;
 
     fe_move( s, 0, 1 );
@@ -186,7 +181,7 @@ void fe_insert_char(Session *s, char c)
     }
     
     /* Move memory if the cursor isn't at the last position */
-    if( x < line->length-1){
+    if( x < line->length ){
         lprintf(LOG_DEBUG, "Moving %d chars of %*.s from %d to %d\n",
                 line->length-x, line->length, line->content, x, x+1);
         if( ! memmove(line->content+x+1, line->content+x, line->length-x))
