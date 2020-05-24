@@ -602,6 +602,69 @@ cleanup:
 }
 
 
+void test_fixup_21_disappearing_char_at_eol_1(){
+    TEST_IT_NAME("fixes #26 disappearing-char-at-eol with one char");
+
+    Session *actualSession = fe_init_session( NULL );
+
+    fe_insert_char( actualSession, '{' );
+    fe_insert_char( actualSession, '}' );
+    fe_move( actualSession, -1, 0 );
+    fe_insert_line( actualSession );
+    fe_insert_char( actualSession, ' ' );
+
+    if( ! expect_i_eq( 2, actualSession->line_count )) goto cleanup;
+    if( ! expect_b_eq( "{", actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( " }", actualSession->lines[1].content, 2, actualSession->lines[1].length )) goto cleanup;
+
+    TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+}
+
+void test_fixup_21_disappearing_char_at_eol_2(){
+    TEST_IT_NAME("fixes #26 disappearing-char-at-eol with two chars");
+
+    Session *actualSession = fe_init_session( NULL );
+
+    fe_insert_char( actualSession, '{' );
+    fe_insert_char( actualSession, ';' );
+    fe_insert_char( actualSession, '}' );
+    fe_move( actualSession, -2, 0 );
+    fe_insert_line( actualSession );
+    fe_insert_char( actualSession, ' ' );
+
+    if( ! expect_i_eq( 2, actualSession->line_count )) goto cleanup;
+    if( ! expect_b_eq( "{", actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( " ;}", actualSession->lines[1].content, 3, actualSession->lines[1].length )) goto cleanup;
+
+    TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+}
+
+void test_fixup_21_disappearing_char_at_eol_3(){
+    TEST_IT_NAME("fixes #26 disappearing-char-at-eol without new line");
+
+    Session *actualSession = fe_init_session( NULL );
+
+    fe_insert_char( actualSession, 'a' );
+    fe_insert_char( actualSession, 'b' );
+    fe_insert_char( actualSession, 'd' );
+    fe_move( actualSession, -1, 0 );
+    fe_insert_char( actualSession, 'c' );
+
+    if( ! expect_i_eq( 1, actualSession->line_count )) goto cleanup;
+    if( ! expect_b_eq( "abcd", actualSession->lines[0].content, 4, actualSession->lines[0].length )) goto cleanup;
+
+    TEST_OK;
+
+cleanup:
+    fe_free_session( actualSession );
+}
+
 void test_suite_cursor()
 {
     TEST_SUITE_NAME( "Cursor" );
@@ -632,5 +695,8 @@ void test_suite_cursor()
     test_valid_line_in_text_insertion();
     test_valid_char_insertion_and_remove();
     test_valid_line_insertion_and_remove();
+    test_fixup_21_disappearing_char_at_eol_1();
+    test_fixup_21_disappearing_char_at_eol_2();
+    test_fixup_21_disappearing_char_at_eol_3();
 
 }
