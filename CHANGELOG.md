@@ -1,3 +1,9 @@
+# Minor Release v0.4.0 (2020-05-26)
+  * **Raphael Pour**
+    * Add tab and delete
+
+*Released by Raphael Pour <info@raphaelpour.de>*
+
 # Minor Release v0.3.0 (2020-05-09)
   * **Raphael Pour**
     * Restore terminal
