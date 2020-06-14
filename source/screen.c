@@ -1,4 +1,11 @@
-#include "screen.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#include <terminal.h>
+#include <helper.h>
+#include <screen.h>
 
 char* fe_create_set_cursor_command(Session *s)
 {

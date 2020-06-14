@@ -1,12 +1,8 @@
 #ifndef SCREEN_H
 #define SCREEN_H
 
-#include <stdlib.h>
-#include <stdio.h>
-
 #include <session.h>
 #include <buffer.h>
-#include <terminal.h>
 
 #define ESC_HIDE_CURSOR "\033[?25l"
 #define ESC_SHOW_CURSOR "\033[?25h"

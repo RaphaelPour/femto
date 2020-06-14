@@ -1,11 +1,6 @@
 #ifndef HELPER_H
 #define HELPER_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <stdarg.h>
-
 #define MIN( x,y ) ( x<y ? x : y )
 #define MAX( x,y ) ( x>y ? x : y )
 #define CLAMP( x,l,h ) (( h>l ) ? ( MAX( MIN( x,h ), l )) : ( MAX( MIN( x, l ), h )))

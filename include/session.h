@@ -1,12 +1,9 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include <stdlib.h>
-#include <stdio.h>
+#include <unistd.h>
 #include <stdbool.h>
 #include <terminal.h>
-#include <buffer.h>
-#include <helper.h>
 
 typedef struct{
     /* Line number beginning with zero.
@@ -54,8 +51,6 @@ void fe_dump_session(Session *s);
 void fe_toggle_mode(Session *s);
 void fe_move(Session *s, int x, int y);
 void fe_set_filename( Session *s, const char *filename );
-bool fe_file_load( Session *s );
-bool fe_file_save( Session *s );
 void fe_free_session(Session *s);
 
 void fe_insert_char(Session *s, char c);

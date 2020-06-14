@@ -1,8 +1,5 @@
 #ifndef BUFFER_H
 #define BUFFER_H
-#include <stdlib.h>
-#include <string.h>
-
 
 // Screen buffer
 typedef struct

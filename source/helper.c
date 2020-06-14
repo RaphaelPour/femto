@@ -1,3 +1,8 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <time.h>
+#include <stdarg.h>
+
 #include <helper.h>
 
 static FILE* log_file;
