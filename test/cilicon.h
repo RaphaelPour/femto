@@ -1,8 +1,5 @@
 #ifndef CILICON_H
 #define CILICON_H
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
 
 #include <session.h>

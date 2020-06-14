@@ -1,3 +1,11 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <session.h>
+#include <fileio.h>
+#include <helper.h>
+
 #include "femto_test.h"
 
 void test_session_init()

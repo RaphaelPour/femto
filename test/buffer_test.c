@@ -1,3 +1,9 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <buffer.h>
+
 #include "femto_test.h"
 
 void test_create_buffer()

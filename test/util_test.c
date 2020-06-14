@@ -1,5 +1,7 @@
 #include "femto_test.h"
 
+#include <helper.h>
+
 void test_min()
 {
     TEST_IT_NAME("can find the minimum");

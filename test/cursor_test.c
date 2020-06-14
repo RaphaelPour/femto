@@ -1,4 +1,11 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <helper.h>
+
 #include "femto_test.h"
+
 
 static Session* create_session_zero_initialized()
 {
