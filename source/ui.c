@@ -1,7 +1,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "ui.h"
+#include <terminal.h>
+#include <screen.h>
+#include <fileio.h>
+#include <helper.h>
+#include <ui.h>
 
 static char* fe_user_prompt( Session *s, char* prompt );
 

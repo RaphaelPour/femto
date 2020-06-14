@@ -1,3 +1,6 @@
+#include <stdlib.h>
+#include <string.h>
+
 #include "buffer.h"
 
 Buffer* fe_create_buffer()
