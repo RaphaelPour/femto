@@ -16,9 +16,7 @@
 #define BUILD_VERSION "fix your makefile"
 #endif
 
-char* fe_user_prompt( Session *s, char* prompt );
-void fe_safe_file_dialog( Session *s );
-bool fe_quit_dialog( Session *s );
+const char *LOG_FILE = "femto.log";
 
 int main(int argc, char *argv[])
 {
@@ -57,7 +55,7 @@ int main(int argc, char *argv[])
     }
 
 
-    lopen( "femto.log", LOG_DEBUG );
+    //lopen( LOG_FILE, LOG_DEBUG );
 
     /* Create session with delivered file */
     Session *session= fe_init_session( filename );
