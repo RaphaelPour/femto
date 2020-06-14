@@ -1,9 +1,6 @@
 #ifndef FEMTO_TEST_H
 #define FEMTO_TEST_H
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdbool.h>
 #include "cilicon.h"
 
 void test_suite_terminal();

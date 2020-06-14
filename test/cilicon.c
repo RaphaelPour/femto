@@ -1,5 +1,8 @@
-#include "cilicon.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
+#include "cilicon.h"
 static int totalExpects = 0;
 static int failedExpects = 0; 
 
