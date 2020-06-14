@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
             printf("Text-Editor\n\n"
                    "Usage:\n"
                    "femto                    New file\n"
-                   "femto [file]             Open file\n"
+                   "femto {file}             Open file\n"
                    "femto -h | --help        Show help\n"
                    "femto -v | --version     Show version\n"
             );
