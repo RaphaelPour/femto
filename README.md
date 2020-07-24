@@ -33,7 +33,7 @@ $ femto
 | `BACKSPACE`  | Remove char/line before cursor |
 | `DELETE`     | Remove char/line after cursor  |
 | `ESC`        | Quit                           |
-| `Ctrl+C`     | Save                           |
+| `Ctrl+S`     | Save                           |
 
 ## License
 
