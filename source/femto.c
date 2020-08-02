@@ -22,6 +22,11 @@ const char *LOG_FILE = "femto.log";
 int main(int argc, char *argv[])
 {
 
+    /* Enable logging if env var is set */
+    if( getenv("FEMTO_DEBUG") ) {
+      lopen( LOG_FILE, LOG_DEBUG );
+    }
+
     char *filename = NULL;
 
     /* Argument parsing */
@@ -56,7 +61,6 @@ int main(int argc, char *argv[])
     }
 
 
-    //lopen( LOG_FILE, LOG_DEBUG );
 
     /* Create session with delivered file */
     Session *session= fe_init_session( filename );
@@ -146,7 +150,9 @@ int main(int argc, char *argv[])
     /* Free resources aka make valgrind happy */
     fe_free_session( session );
 
-    lclose();
+    if( getenv("FEMTO_DEBUG") ) {
+      lclose();
+    }
     return EXIT_SUCCESS;
 }
 
