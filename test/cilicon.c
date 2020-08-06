@@ -304,13 +304,6 @@ bool expect_session_equal( Session *expected, Session *actual )
         TEST_FAIL
         printf( "Expected content length %lu, got %lu\n", expected->content_length, actual->content_length );
     }
-    else if( actual->edit_mode != expected->edit_mode )
-    {
-        TEST_FAIL
-        printf( "Expected edit mode %s, got %s\n", 
-                ( expected->edit_mode ) ? "ON" : "OFF",
-                ( actual->edit_mode ) ? "ON" : "OFF" );
-    }
     else
     {
         int i;
