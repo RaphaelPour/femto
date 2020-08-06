@@ -43,7 +43,6 @@ Session* fe_init_session( char* filename )
         lprintf( LOG_DEBUG, "New file" );
         Line *l = (Line*) malloc( sizeof( Line ));
 
-        l->index = 0;
         l->length = 0;
         l->content = NULL;
         
@@ -114,7 +113,6 @@ static void fe_insert_empty_line( Session *s )
     int new_line_index = line_index + 1;
     
     /* Initialize line */
-    s->lines[new_line_index].index = 0;
     s->lines[new_line_index].content = NULL;
     s->lines[new_line_index].length = 0;
 

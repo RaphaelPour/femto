@@ -49,7 +49,6 @@ bool fe_file_load( Session *s )
         // Realloc here since we need to fill the lines 
         s->lines = (Line*) realloc( s->lines,sizeof(Line) * ( line_index+1 ));
 
-        s->lines[ line_index ].index = line_index;
         s->lines[ line_index ].length = read_bytes;
         s->lines[ line_index ].content = (char*) malloc( read_bytes );
 
@@ -67,7 +66,6 @@ bool fe_file_load( Session *s )
     if( line_index == 0 )
     {
         s->lines = (Line*) malloc( sizeof(Line) );
-        s->lines[0].index = 0;
         s->lines[0].length = 0;
         s->lines[0].content = (char*) malloc( 0 );
 

@@ -35,7 +35,6 @@ static Session* create_session_perfect_fit_by_input(int line_count, char *lines[
         s->lines[i].content = (char*)malloc( len );
         memcpy(s->lines[i].content, lines[i], len);
 
-        s->lines[i].index = i;
         s->lines[i].length = len;
 
         total_length += len;
