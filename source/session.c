@@ -19,7 +19,6 @@ Session* fe_init_session( char* filename )
     s->lines = NULL;
     s->content_length = 0;
     s->line_count = 0;
-    s->edit_mode = 0;
     s->dirty = false;
 
 
@@ -72,12 +71,6 @@ void fe_dump_session( Session *s )
     lprintf( LOG_DEBUG, "Content length : %d", s->content_length );
     lprintf( LOG_DEBUG, "Line count     : %d", s->line_count );
     lprintf( LOG_DEBUG, "Terminal size  : %d/%d", s->terminal_size.width, s->terminal_size.height-1 );
-    lprintf( LOG_DEBUG, "Edit mode      : %s", ( s->edit_mode) ? "ON" : "OFF" );
-}
-
-void fe_toggle_mode( Session *s )
-{
-    s->edit_mode = !s->edit_mode;
 }
 
 Line* fe_get_current_line( Session *s )

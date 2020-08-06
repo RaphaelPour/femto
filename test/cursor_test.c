@@ -18,7 +18,6 @@ static Session* create_session_zero_initialized()
     s->line_count = 0;
     s->content_length = 0;
     s->lines = NULL;
-    s->edit_mode = 0;
 
     return s;
 }

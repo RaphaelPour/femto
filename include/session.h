@@ -39,16 +39,12 @@ typedef struct {
     /* Total length of all line lengths combined */
     size_t content_length;
 
-    /* Current mode to interpret the keys either literally or as commands */
-    unsigned char edit_mode;
-
     /* Dirty flag */
     bool dirty;
 } Session;
 
 Session* fe_init_session(char* filename);
 void fe_dump_session(Session *s);
-void fe_toggle_mode(Session *s);
 void fe_move(Session *s, int x, int y);
 void fe_set_filename( Session *s, const char *filename );
 void fe_free_session(Session *s);
