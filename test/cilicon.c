@@ -216,12 +216,7 @@ bool expect_b_neq( void *expection, void *actual, int len_expection, int len_act
 bool expect_line_equal( Line expected, Line actual )
 {
     totalExpects++;
-    if( expected.index != actual.index )
-    {
-        TEST_FAIL
-        printf( "Expected index %lu, got %lu\n", expected.index, actual.index );
-    }
-    else if( expected.length != actual.length )
+    if( expected.length != actual.length )
     {
         TEST_FAIL
         printf( "Expected length %lu, got %lu\n", expected.length, actual.length );

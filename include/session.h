@@ -6,12 +6,6 @@
 #include <terminal.h>
 
 typedef struct{
-    /* Line number beginning with zero.
-     * TODO: This variable may be useless while the line itself
-     *       is only used within a line array which is indexed by design
-     */
-    size_t index;
-
     /* Raw content of the line excluding new-line and null-terminator */
     char *content;
 
