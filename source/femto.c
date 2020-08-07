@@ -81,6 +81,9 @@ int main(int argc, char *argv[])
         /* Render the current buffer to the terminal screen*/
         fe_refresh_screen( session, NULL );
 
+        /* React to window resize */
+        session->terminal_size = fe_terminal_size();
+
         c = fe_get_user_input();
         lprintf( LOG_INFO, "read user input '%c' (%d)", c, c );
 
