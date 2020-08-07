@@ -219,16 +219,16 @@ bool expect_line_equal( Line expected, Line actual )
     if( expected.length != actual.length )
     {
         TEST_FAIL
-        printf( "Expected length %lu, got %lu\n", expected.length, actual.length );
+        printf( "Expected length %u, got %u\n", expected.length, actual.length );
     }
-    else if( memcmp( expected.content, actual.content, expected.length ) != 0 )
+    else if( memcmp( expected.data, actual.data, expected.length ) != 0 )
     {
         TEST_FAIL
-        printf( "Expected  content '%.*s', got '%.*s'\n", 
+        printf( "Expected  data '%.*s', got '%.*s'\n", 
                 ( int )expected.length, 
-                expected.content, 
+                expected.data, 
                 ( int )actual.length, 
-                actual.content );
+                actual.data );
     }
     else
     {
@@ -319,7 +319,7 @@ bool expect_session_equal( Session *expected, Session *actual )
     return FAIL;
 }
 
-void create_testfile( const char *filename, const char *content )
+void create_testfile( const char *filename, const char *data )
 {
     FILE *temp_fd = fopen( filename, "w+" );
 
@@ -329,7 +329,7 @@ void create_testfile( const char *filename, const char *content )
         exit( EXIT_FAILURE );
     }
 
-    if( fwrite( content, 1, strlen( content ), temp_fd ) < strlen( content ))
+    if( fwrite( data, 1, strlen( data ), temp_fd ) < strlen( data ))
     {
         perror( "Write temp file" );
         exit( EXIT_FAILURE );

@@ -44,7 +44,7 @@ Session* fe_init_session( char* filename )
         Line *l = (Line*) malloc( sizeof( Line ));
 
         l->length = 0;
-        l->content = NULL;
+        l->data = NULL;
         
         s->lines = l;
         s->line_count++;
@@ -113,7 +113,7 @@ static void fe_insert_empty_line( Session *s )
     int new_line_index = line_index + 1;
     
     /* Initialize line */
-    s->lines[new_line_index].content = NULL;
+    s->lines[new_line_index].data = NULL;
     s->lines[new_line_index].length = 0;
 
     /* Update line count */
@@ -141,12 +141,12 @@ void fe_insert_line( Session *s )
 
         lprintf( LOG_DEBUG, "Breaking line at position %d with %d chars. Old line length: %d",x, length, oldLine->length );
         /* Copy old line from the cursor to the end to the new line */
-        newLine->content = (char*) realloc( newLine->content, length );
-        memcpy( newLine->content, oldLine->content + x, length );
+        newLine->data = (char*) realloc( newLine->data, length );
+        memcpy( newLine->data, oldLine->data + x, length );
         newLine->length = length;
 
         /* Truncate the old line beginning at the cursor position */
-        oldLine->content = (char*) realloc( oldLine->content, oldLine->length - length );
+        oldLine->data = (char*) realloc( oldLine->data, oldLine->length - length );
         oldLine->length -= length;
 
     }
@@ -171,9 +171,9 @@ void fe_insert_char( Session *s, char c )
     Line *line = fe_get_current_line( s );
 
     /* Extend buffer by reallocating the lines memory */
-    line->content = (char*) realloc( line->content, line->length+1 );
+    line->data = (char*) realloc( line->data, line->length+1 );
 
-    if( ! line->content )
+    if( ! line->data )
     {
         lprintf( LOG_ERROR, "Error reallocating memory for new character '%c' in line %d\n", 
                 c, s->cursor_position.y -1 + s->offset.y );
@@ -183,8 +183,8 @@ void fe_insert_char( Session *s, char c )
     /* Move memory if the cursor isn't at the last position */
     if( x < line->length ){
         lprintf( LOG_DEBUG, "Moving %d chars of %*.s from %d to %d\n",
-                line->length-x, line->length, line->content, x, x+1 );
-        if( ! memmove( line->content+x+1, line->content+x, line->length-x ))
+                line->length-x, line->length, line->data, x, x+1 );
+        if( ! memmove( line->data+x+1, line->data+x, line->length-x ))
         {
             lprintf( LOG_ERROR, "Error moving memory for new character '%c' in line %d", 
                    c, s->cursor_position.y -1 + s->offset.y );
@@ -196,11 +196,11 @@ void fe_insert_char( Session *s, char c )
     /* Update line length */
     line->length++;
 
-    /* Update file content length */
+    /* Update file data length */
     s->content_length++;
 
     /* Finally: Set the new character */
-    line->content[x] = c;
+    line->data[x] = c;
 
     /* Set dirty bit */
     s->dirty = true;
@@ -238,16 +238,16 @@ static void fe_remove_line( Session *s )
         int length = oldLine->length;
     
         /* Extend line where the content should be moved to */
-        newLine->content = (char*) realloc( newLine->content, newLine->length + length );
+        newLine->data = (char*) realloc( newLine->data, newLine->length + length );
 
-        /* Append content of the old line to the new one and update the length*/
-        memcpy( newLine->content + newLine->length, oldLine->content, length );
+        /* Append data of the old line to the new one and update the length*/
+        memcpy( newLine->data + newLine->length, oldLine->data, length );
         newLine->length += length;
     }
 
-    /* Free content of the line which should be removed */
+    /* Free data of the line which should be removed */
     if( oldLine->length > 0 )
-        free( oldLine->content );
+        free( oldLine->data );
     
     /* 
      * Set line to NULL so nobody can do bad things while the linesw
@@ -315,7 +315,7 @@ void fe_remove_char_after_cursor( Session *s )
     /* Move memory if cursor isn't at the last position */
     if(x < line->length-1)
     {
-        if( ! memmove(line->content+x, line->content+x+1, line->length-x-1))
+        if( ! memmove(line->data+x, line->data+x+1, line->length-x-1))
         {
             lprintf(LOG_ERROR, "Error moving memory  in line %d", 
                  s->cursor_position.y -1 + s->offset.y);
@@ -324,14 +324,14 @@ void fe_remove_char_after_cursor( Session *s )
     }
 
     /* Shrink buffer by reallocating the lines memory */
-    line->content = (char*) realloc( line->content, line->length - 1 );
+    line->data = (char*) realloc( line->data, line->length - 1 );
 
-    if( line->length - 1 == 0 ) line->content = NULL;
+    if( line->length - 1 == 0 ) line->data = NULL;
 
     /* Update line length */
     line->length--;
 
-    /* Update file content length */
+    /* Update file data length */
     s->content_length--;
  
     /* Set dirty bit */
@@ -362,7 +362,7 @@ void fe_remove_char_at_cursor( Session *s )
     /* Move memory if cursor isn't at the last position */
     if( x < line->length-1 )
     {
-        if( ! memmove( line->content+x, line->content+x+1, line->length-x-1 ))
+        if( ! memmove( line->data+x, line->data+x+1, line->length-x-1 ))
         {
             lprintf( LOG_ERROR, "Error moving memory  in line %d", 
                  s->cursor_position.y -1 + s->offset.y );
@@ -371,14 +371,14 @@ void fe_remove_char_at_cursor( Session *s )
     }
 
     /* Shrink buffer by reallocating the lines memory */
-    line->content = (char*) realloc( line->content, line->length - 1 );
+    line->data = (char*) realloc( line->data, line->length - 1 );
 
-    if( line->length - 1 == 0 ) line->content = NULL;
+    if( line->length - 1 == 0 ) line->data = NULL;
 
     /* Update line length */
     line->length--;
 
-    /* Update file content length */
+    /* Update file data length */
     s->content_length--;
  
     /* Set dirty bit */
@@ -564,7 +564,7 @@ void fe_free_session( Session *s )
     for( int i=0; i < s->line_count; i++ )
     {
         Line *l = &s->lines[i];
-        free( l->content );
+        free( l->data );
     }
 
     free( s->lines );

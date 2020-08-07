@@ -32,8 +32,8 @@ static Session* create_session_perfect_fit_by_input(int line_count, char *lines[
     for(i=0;i<line_count;i++)
     {
         int len = strlen( lines[i] );
-        s->lines[i].content = (char*)malloc( len );
-        memcpy(s->lines[i].content, lines[i], len);
+        s->lines[i].data = (char*)malloc( len );
+        memcpy(s->lines[i].data, lines[i], len);
 
         s->lines[i].length = len;
 
@@ -73,8 +73,8 @@ static Session* duplicate_session(Session *s)
 
         for( int i = 0; i < s->line_count; i++ )
         {
-            other->lines[i].content = (char*) malloc( s->lines[i].length );
-            memcpy( other->lines[i].content, s->lines[i].content, s->lines[i].length );
+            other->lines[i].data = (char*) malloc( s->lines[i].length );
+            memcpy( other->lines[i].data, s->lines[i].data, s->lines[i].length );
             
         }
     }
@@ -514,7 +514,7 @@ void test_valid_char_insertion(){
     
     fe_insert_char( actualSession, input );
 
-    if( ! expect_b_eq( &input, actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( &input, actualSession->lines[0].data, 1, actualSession->lines[0].length )) goto cleanup;
     
     TEST_OK;
 cleanup:
@@ -552,8 +552,8 @@ void test_valid_line_in_text_insertion(){
     fe_insert_line( actualSession );
 
     if( ! expect_i_eq( 2, actualSession->line_count )) goto cleanup;
-    if( ! expect_b_eq( "1", actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
-    if( ! expect_b_eq( "2", actualSession->lines[1].content, 1, actualSession->lines[1].length )) goto cleanup;
+    if( ! expect_b_eq( "1", actualSession->lines[0].data, 1, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( "2", actualSession->lines[1].data, 1, actualSession->lines[1].length )) goto cleanup;
     
     
     TEST_OK;
@@ -619,8 +619,8 @@ void test_fixup_21_disappearing_char_at_eol_1(){
     fe_insert_char( actualSession, ' ' );
 
     if( ! expect_i_eq( 2, actualSession->line_count )) goto cleanup;
-    if( ! expect_b_eq( "{", actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
-    if( ! expect_b_eq( " }", actualSession->lines[1].content, 2, actualSession->lines[1].length )) goto cleanup;
+    if( ! expect_b_eq( "{", actualSession->lines[0].data, 1, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( " }", actualSession->lines[1].data, 2, actualSession->lines[1].length )) goto cleanup;
 
     TEST_OK;
 
@@ -641,8 +641,8 @@ void test_fixup_21_disappearing_char_at_eol_2(){
     fe_insert_char( actualSession, ' ' );
 
     if( ! expect_i_eq( 2, actualSession->line_count )) goto cleanup;
-    if( ! expect_b_eq( "{", actualSession->lines[0].content, 1, actualSession->lines[0].length )) goto cleanup;
-    if( ! expect_b_eq( " ;}", actualSession->lines[1].content, 3, actualSession->lines[1].length )) goto cleanup;
+    if( ! expect_b_eq( "{", actualSession->lines[0].data, 1, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( " ;}", actualSession->lines[1].data, 3, actualSession->lines[1].length )) goto cleanup;
 
     TEST_OK;
 
@@ -662,7 +662,7 @@ void test_fixup_21_disappearing_char_at_eol_3(){
     fe_insert_char( actualSession, 'c' );
 
     if( ! expect_i_eq( 1, actualSession->line_count )) goto cleanup;
-    if( ! expect_b_eq( "abcd", actualSession->lines[0].content, 4, actualSession->lines[0].length )) goto cleanup;
+    if( ! expect_b_eq( "abcd", actualSession->lines[0].data, 4, actualSession->lines[0].length )) goto cleanup;
 
     TEST_OK;
 
