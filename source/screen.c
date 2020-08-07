@@ -159,7 +159,7 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
             if(line_index < s->line_count)
             {
                 fe_append_to_buffer(screen_buffer, 
-                                    s->lines[line_index].content, 
+                                    s->lines[line_index].data, 
                                     s->lines[line_index].length);
             }
             else

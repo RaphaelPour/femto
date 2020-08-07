@@ -4,14 +4,9 @@
 #include <unistd.h>
 #include <stdbool.h>
 #include <terminal.h>
+#include <buffer.h>
 
-typedef struct{
-    /* Raw content of the line excluding new-line and null-terminator */
-    char *content;
-
-    /* Length of the content */
-    size_t length;
-}Line;
+typedef Buffer Line;
 
 typedef struct {
     /* Name of the read file */

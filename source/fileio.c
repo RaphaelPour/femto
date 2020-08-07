@@ -50,14 +50,14 @@ bool fe_file_load( Session *s )
         s->lines = (Line*) realloc( s->lines,sizeof(Line) * ( line_index+1 ));
 
         s->lines[ line_index ].length = read_bytes;
-        s->lines[ line_index ].content = (char*) malloc( read_bytes );
+        s->lines[ line_index ].data = (char*) malloc( read_bytes );
 
-        memcpy( s->lines[ line_index ].content, &chunk, read_bytes );
+        memcpy( s->lines[ line_index ].data, &chunk, read_bytes );
 
         s->content_length += read_bytes;
         
         //lprintf(LOG_INFO, "L [%02zu] (%zu): %.*s", s->lines[line_index].index, s->lines[line_index].length,
-        //    s->lines[line_index].length, s->lines[line_index].content);
+        //    s->lines[line_index].length, s->lines[line_index].data);
         
         line_index++;
     }
@@ -67,7 +67,7 @@ bool fe_file_load( Session *s )
     {
         s->lines = (Line*) malloc( sizeof(Line) );
         s->lines[0].length = 0;
-        s->lines[0].content = (char*) malloc( 0 );
+        s->lines[0].data = (char*) malloc( 0 );
 
         line_index++;
     }
@@ -115,7 +115,7 @@ bool fe_file_save( Session *s )
     {
         Line *line = &s->lines[ i ];
         
-        size_t bytes_written = fwrite( line->content, 1, line->length, file_handle );
+        size_t bytes_written = fwrite( line->data, 1, line->length, file_handle );
 
         if( bytes_written < line->length )
             lprintf( LOG_WARNING, 
