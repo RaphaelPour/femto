@@ -74,8 +74,8 @@ Buffer* fe_generate_default_status_bar( Session *s )
     snprintf( status_bar, s->terminal_size.width, "%1s%s %3d:%-3d", 
               s->dirty ? "*" : "",
               s->filename ? s->filename : "new file",
-              s->cursor_position.row,
-              s->cursor_position.col );
+              s->cursor_position.row + s->offset.row,
+              s->cursor_position.col + s->offset.col);
 
     fe_append_to_buffer( buffer,
                          STATUS_BAR_COLOR,
