@@ -8,6 +8,9 @@
 #include <fileio.h>
 #include <session.h>
 
+static int get_current_index( Session *s );
+static Line* get_current_line( Session *s );
+
 Session* fe_init_session( char* filename )
 {
     Session *s = (Session*) malloc( sizeof( Session ));
@@ -72,19 +75,24 @@ void fe_dump_session( Session *s )
     lprintf( LOG_DEBUG, "Terminal size  : %d/%d", s->terminal_size.width, s->terminal_size.height-1 );
 }
 
-Line* fe_get_current_line( Session *s )
+static Line* get_current_line( Session *s )
 {
     lprintf( LOG_DEBUG, "Requesting line: cursor.y=%d, offset.y=%d, index=%d",
             s->cursor_position.y,
             s->offset.y,
-            s->cursor_position.y - 1 + s->offset.y );
+            get_current_index( s ));
 
-    return &s->lines[ s->cursor_position.y -1 + s->offset.y ];
+    return &s->lines[ get_current_index( s ) ];
+}
+
+static int get_current_index( Session *s)
+{
+    return s->cursor_position.y - 1 + s->offset.y;
 }
 
 static void fe_insert_empty_line( Session *s )
 {
-    int line_index = s->cursor_position.y + s->offset.y - 1;
+    int line_index = get_current_index( s );
     
     /* Add another line */
     s->lines = (Line*) realloc( s->lines, sizeof(Line) * ( s->line_count + 1 ));
@@ -127,7 +135,7 @@ void fe_insert_line( Session *s )
 
     fe_insert_empty_line( s );
     
-    Line *oldLine = fe_get_current_line( s );
+    Line *oldLine = get_current_line( s );
     
     /* If the cursor is already at the last position inserting a new empty line is enough */
     lprintf( LOG_DEBUG, "insert new line: x=%d, lineLength=%d\n", x, oldLine->length );
@@ -135,7 +143,7 @@ void fe_insert_line( Session *s )
     if( x < oldLine->length )
     {
         /* Handle what happens when the cursor is in the middle of a line */
-        Line *newLine = &s->lines[ s->cursor_position.y - 1 + s->offset.y + 1 ];
+        Line *newLine = &s->lines[ get_current_index( s ) + 1 ];
 
         int length = oldLine->length - x;
 
@@ -168,7 +176,7 @@ void fe_insert_line( Session *s )
 void fe_insert_char( Session *s, char c )
 {
     int x = s->cursor_position.x-1;
-    Line *line = fe_get_current_line( s );
+    Line *line = get_current_line( s );
 
     /* Extend buffer by reallocating the lines memory */
     line->data = (char*) realloc( line->data, line->length+1 );
@@ -176,7 +184,7 @@ void fe_insert_char( Session *s, char c )
     if( ! line->data )
     {
         lprintf( LOG_ERROR, "Error reallocating memory for new character '%c' in line %d\n", 
-                c, s->cursor_position.y -1 + s->offset.y );
+                c, get_current_index( s ));
         return;
     }
     
@@ -187,7 +195,7 @@ void fe_insert_char( Session *s, char c )
         if( ! memmove( line->data+x+1, line->data+x, line->length-x ))
         {
             lprintf( LOG_ERROR, "Error moving memory for new character '%c' in line %d", 
-                   c, s->cursor_position.y -1 + s->offset.y );
+                   c, get_current_index( s ));
             return;
         }
 
@@ -215,12 +223,12 @@ void fe_insert_char( Session *s, char c )
 
 static void fe_remove_line( Session *s )
 {
-    int line_index = s->cursor_position.y + s->offset.y - 1;
+    int line_index = get_current_index( s );
     
     /* We need at least two lines to remove one */
     if( line_index == 0 ) return;
 
-    Line *oldLine = fe_get_current_line( s );
+    Line *oldLine = get_current_line( s );
     Line *newLine = &s->lines[ line_index-1 ];
 
     /* 
@@ -292,7 +300,7 @@ static void fe_remove_line( Session *s )
 void fe_remove_char_after_cursor( Session *s )
 {
     int x = s->cursor_position.x -1;
-    Line *line = fe_get_current_line( s );
+    Line *line = get_current_line( s );
     
     lprintf( LOG_DEBUG, "Remove char after cursor: x=%d, lineLnegth=%d",
             x, line->length-1 );
@@ -318,7 +326,7 @@ void fe_remove_char_after_cursor( Session *s )
         if( ! memmove(line->data+x, line->data+x+1, line->length-x-1))
         {
             lprintf(LOG_ERROR, "Error moving memory  in line %d", 
-                 s->cursor_position.y -1 + s->offset.y);
+                 get_current_index( s ));
             return;
         }
     }
@@ -357,15 +365,15 @@ void fe_remove_char_at_cursor( Session *s )
       return;
     }
 
-    Line *line = fe_get_current_line( s );
+    Line *line = get_current_line( s );
 
     /* Move memory if cursor isn't at the last position */
     if( x < line->length-1 )
     {
         if( ! memmove( line->data+x, line->data+x+1, line->length-x-1 ))
         {
-            lprintf( LOG_ERROR, "Error moving memory  in line %d", 
-                 s->cursor_position.y -1 + s->offset.y );
+            lprintf( LOG_ERROR, "Error moving memory in line %d", 
+                 get_current_index( s ));
             return;
         }
     }
@@ -437,7 +445,7 @@ static void fe_move_cursor( Session *s, int x, int y )
 
     input = s->cursor_position.x + x;
     low = 1;
-    int line_index = s->cursor_position.y + s->offset.y - 1;
+    int line_index = get_current_index( s );
     
     if( line_index < 0 )
     {
@@ -483,7 +491,7 @@ static int fe_end_of_buffer_reached( Session *s, int x, int y )
      * Add one to the line length in order to allow the cursor be placed
      * behind the last char. This allows to append input.
      */
-   if( x >  0 && s->cursor_position.x >= fe_get_current_line(s)->length + 1 )
+   if( x >  0 && s->cursor_position.x >= get_current_line(s)->length + 1 )
    {
         lprintf( LOG_DEBUG, "EOB: direction=RIGHT, x to high" );
         return 1;
