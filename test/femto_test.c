@@ -1,10 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <sys/ioctl.h>
+#include <stdbool.h>
 
 #include <helper.h>
+
 #include "femto_test.h"
 
 #ifndef BUILD_DATE

@@ -1,3 +1,11 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#include <session.h>
+#include <fileio.h>
+#include <helper.h>
+
 #include "femto_test.h"
 
 void test_session_init()
@@ -15,7 +23,6 @@ void test_session_init()
     if(!expect_not_null(s->lines )) return;
     if(!expect_i_eq(0,s->content_length )) return;
     if(!expect_i_eq(1,s->line_count )) return;
-    if(!expect_i_eq(0,s->edit_mode )) return;
     
     fe_free_session(s);
     TEST_OK;

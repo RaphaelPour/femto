@@ -1,4 +1,23 @@
-#include "screen.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+
+#include <terminal.h>
+#include <helper.h>
+#include <screen.h>
+
+const char *welcome_message[] = {
+    "\t\tfemto ",
+    "",
+    "\t\t<arrow-keys>    Navigation",
+    "\t\t<enter>         New line",
+    "\t\t<backspace>     Remove char/line before cursor",
+    "\t\t<delete>        Remove char/line after cursor",
+    "\t\t<esc>           Quit",
+    "\t\t<ctrl+s>        Save",
+    NULL
+};
 
 char* fe_create_set_cursor_command(Session *s)
 {
@@ -67,8 +86,8 @@ Buffer* fe_generate_default_status_bar( Session *s )
     snprintf( status_bar, s->terminal_size.width, "%1s%s %3d:%-3d", 
               s->dirty ? "*" : "",
               s->filename ? s->filename : "new file",
-              s->cursor_position.row,
-              s->cursor_position.col );
+              s->cursor_position.row + s->offset.row,
+              s->cursor_position.col + s->offset.col);
 
     fe_append_to_buffer( buffer,
                          STATUS_BAR_COLOR,
@@ -120,19 +139,25 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
         fe_free_buffer( default_status_bar );
     }
 
-    // Show welcome screen when no file is loaded
-    if(s->line_count == 0)
+    /* Show welcome screen on new file with no content */
+    if(s->line_count == 1 && s->lines[0].length == 0 && !s->dirty)
     {
-        for(row=0; row < ts.rows-1; row++)
+        int welcome_index;
+        /* Overstep status bar */
+        for(row=1; row < ts.rows-1; row++)
         {
             fe_append_to_buffer(screen_buffer, 
                                 SPARE_LINE, 
                                 strlen(SPARE_LINE));
             
-            if(row == ts.rows/2){
-                fe_append_to_buffer(screen_buffer,
-                                    WELCOME_LINE,
-                                    strlen(WELCOME_LINE));
+            if(row > ts.rows/2){
+                if( welcome_message[welcome_index] )
+                {
+                    fe_append_to_buffer(screen_buffer,
+                                        welcome_message[welcome_index],
+                                        strlen(welcome_message[welcome_index]));
+                    welcome_index++;
+                }
             }
 
             fe_append_to_buffer(screen_buffer,
@@ -152,7 +177,7 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
             if(line_index < s->line_count)
             {
                 fe_append_to_buffer(screen_buffer, 
-                                    s->lines[line_index].content, 
+                                    s->lines[line_index].data, 
                                     s->lines[line_index].length);
             }
             else

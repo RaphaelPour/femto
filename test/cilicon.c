@@ -1,5 +1,8 @@
-#include "cilicon.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
+#include "cilicon.h"
 static int totalExpects = 0;
 static int failedExpects = 0; 
 
@@ -213,24 +216,19 @@ bool expect_b_neq( void *expection, void *actual, int len_expection, int len_act
 bool expect_line_equal( Line expected, Line actual )
 {
     totalExpects++;
-    if( expected.index != actual.index )
+    if( expected.length != actual.length )
     {
         TEST_FAIL
-        printf( "Expected index %lu, got %lu\n", expected.index, actual.index );
+        printf( "Expected length %u, got %u\n", expected.length, actual.length );
     }
-    else if( expected.length != actual.length )
+    else if( memcmp( expected.data, actual.data, expected.length ) != 0 )
     {
         TEST_FAIL
-        printf( "Expected length %lu, got %lu\n", expected.length, actual.length );
-    }
-    else if( memcmp( expected.content, actual.content, expected.length ) != 0 )
-    {
-        TEST_FAIL
-        printf( "Expected  content '%.*s', got '%.*s'\n", 
+        printf( "Expected  data '%.*s', got '%.*s'\n", 
                 ( int )expected.length, 
-                expected.content, 
+                expected.data, 
                 ( int )actual.length, 
-                actual.content );
+                actual.data );
     }
     else
     {
@@ -301,13 +299,6 @@ bool expect_session_equal( Session *expected, Session *actual )
         TEST_FAIL
         printf( "Expected content length %lu, got %lu\n", expected->content_length, actual->content_length );
     }
-    else if( actual->edit_mode != expected->edit_mode )
-    {
-        TEST_FAIL
-        printf( "Expected edit mode %s, got %s\n", 
-                ( expected->edit_mode ) ? "ON" : "OFF",
-                ( actual->edit_mode ) ? "ON" : "OFF" );
-    }
     else
     {
         int i;
@@ -328,7 +319,7 @@ bool expect_session_equal( Session *expected, Session *actual )
     return FAIL;
 }
 
-void create_testfile( const char *filename, const char *content )
+void create_testfile( const char *filename, const char *data )
 {
     FILE *temp_fd = fopen( filename, "w+" );
 
@@ -338,7 +329,7 @@ void create_testfile( const char *filename, const char *content )
         exit( EXIT_FAILURE );
     }
 
-    if( fwrite( content, 1, strlen( content ), temp_fd ) < strlen( content ))
+    if( fwrite( data, 1, strlen( data ), temp_fd ) < strlen( data ))
     {
         perror( "Write temp file" );
         exit( EXIT_FAILURE );

@@ -1,4 +1,13 @@
-#include "terminal.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <termios.h>
+#include <unistd.h>
+#include <sys/ioctl.h>
+#include <sys/select.h>
+
+#include <terminal.h>
+
 
 //
 // TERMINAL - CURSOR POSITIONING
