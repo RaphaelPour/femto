@@ -7,6 +7,18 @@
 #include <helper.h>
 #include <screen.h>
 
+const char *welcome_message[] = {
+    "\t\tfemto ",
+    "",
+    "\t\t<arrow-keys>    Navigation",
+    "\t\t<enter>         New line",
+    "\t\t<backspace>     Remove char/line before cursor",
+    "\t\t<delete>        Remove char/line after cursor",
+    "\t\t<esc>           Quit",
+    "\t\t<ctrl+s>        Save",
+    NULL
+};
+
 char* fe_create_set_cursor_command(Session *s)
 {
     /* Basic size including command characters only */
@@ -127,19 +139,25 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
         fe_free_buffer( default_status_bar );
     }
 
-    // Show welcome screen when no file is loaded
-    if(s->line_count == 0)
+    /* Show welcome screen on new file with no content */
+    if(s->line_count == 1 && s->lines[0].length == 0 && !s->dirty)
     {
-        for(row=0; row < ts.rows-1; row++)
+        int welcome_index;
+        /* Overstep status bar */
+        for(row=1; row < ts.rows-1; row++)
         {
             fe_append_to_buffer(screen_buffer, 
                                 SPARE_LINE, 
                                 strlen(SPARE_LINE));
             
-            if(row == ts.rows/2){
-                fe_append_to_buffer(screen_buffer,
-                                    WELCOME_LINE,
-                                    strlen(WELCOME_LINE));
+            if(row > ts.rows/2){
+                if( welcome_message[welcome_index] )
+                {
+                    fe_append_to_buffer(screen_buffer,
+                                        welcome_message[welcome_index],
+                                        strlen(welcome_message[welcome_index]));
+                    welcome_index++;
+                }
             }
 
             fe_append_to_buffer(screen_buffer,
