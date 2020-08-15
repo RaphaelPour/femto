@@ -111,7 +111,11 @@ static void fe_insert_empty_line( Session *s )
                 line_index,
                 line_index + 1 );
 
-        if( ! memmove( s->lines + line_index + 2, s->lines + line_index + 1, sizeof(Line) * ( s->line_count-line_index - 1 )))
+        /* Move <line_count> lines from <src> to <dst> and overstep one line */
+        Line *src = s->lines + line_index + 1;
+        Line *dst = s->lines + line_index + 2;
+        int line_count = s->line_count - line_index - 1;
+        if( ! memmove( dst, src, sizeof(Line) * line_count))
         {
             lprintf( LOG_ERROR, "Error moving lines" );
             return;
@@ -135,27 +139,27 @@ void fe_insert_line( Session *s )
 
     fe_insert_empty_line( s );
     
-    Line *oldLine = get_current_line( s );
+    Line *old_line = get_current_line( s );
     
     /* If the cursor is already at the last position inserting a new empty line is enough */
-    lprintf( LOG_DEBUG, "insert new line: x=%d, lineLength=%d\n", x, oldLine->length );
+    lprintf( LOG_DEBUG, "insert new line: x=%d, lineLength=%d\n", x, old_line->length );
 
-    if( x < oldLine->length )
+    if( x < old_line->length )
     {
         /* Handle what happens when the cursor is in the middle of a line */
-        Line *newLine = &s->lines[ get_current_index( s ) + 1 ];
+        Line *new_line = &s->lines[ get_current_index( s ) + 1 ];
 
-        int length = oldLine->length - x;
+        int length = old_line->length - x;
 
-        lprintf( LOG_DEBUG, "Breaking line at position %d with %d chars. Old line length: %d",x, length, oldLine->length );
+        lprintf( LOG_DEBUG, "Breaking line at position %d with %d chars. Old line length: %d",x, length, old_line->length );
         /* Copy old line from the cursor to the end to the new line */
-        newLine->data = (char*) realloc( newLine->data, length );
-        memcpy( newLine->data, oldLine->data + x, length );
-        newLine->length = length;
+        new_line->data = (char*) realloc( new_line->data, length );
+        memcpy( new_line->data, old_line->data + x, length );
+        new_line->length = length;
 
         /* Truncate the old line beginning at the cursor position */
-        oldLine->data = (char*) realloc( oldLine->data, oldLine->length - length );
-        oldLine->length -= length;
+        old_line->data = (char*) realloc( old_line->data, old_line->length - length );
+        old_line->length -= length;
 
     }
 
@@ -178,7 +182,7 @@ void fe_insert_char( Session *s, char c )
     int x = s->cursor_position.x-1;
     Line *line = get_current_line( s );
 
-    /* Extend buffer by reallocating the lines memory */
+    /* Extend buffer by one line */
     line->data = (char*) realloc( line->data, line->length+1 );
 
     if( ! line->data )
@@ -192,7 +196,10 @@ void fe_insert_char( Session *s, char c )
     if( x < line->length ){
         lprintf( LOG_DEBUG, "Moving %d chars of %*.s from %d to %d\n",
                 line->length-x, line->length, line->data, x, x+1 );
-        if( ! memmove( line->data+x+1, line->data+x, line->length-x ))
+
+        char *src = line->data + x;
+        char *dst = src + 1;
+        if( ! memmove( dst, src, line->length-x ))
         {
             lprintf( LOG_ERROR, "Error moving memory for new character '%c' in line %d", 
                    c, get_current_index( s ));
@@ -228,41 +235,42 @@ static void fe_remove_line( Session *s )
     /* We need at least two lines to remove one */
     if( line_index == 0 ) return;
 
-    Line *oldLine = get_current_line( s );
-    Line *newLine = &s->lines[ line_index-1 ];
-
     /* 
      * We need the original line length later to fix the cursor
      * while we want the cursor to be at the joint.
      */
-    int originalLength = newLine->length;
-    /* 
-     * Check if the line to remove has still content. In this case
-     * the content has to be appended to the line above. 
-     */
-    if( oldLine->length > 0 )
+    int original_length;
+
+    /* Limit scope of old/new_line */
     {
+        Line *old_line = get_current_line( s );
+        Line *new_line = &s->lines[ line_index-1 ];
 
-        int length = oldLine->length;
-    
-        /* Extend line where the content should be moved to */
-        newLine->data = (char*) realloc( newLine->data, newLine->length + length );
+        original_length = new_line->length;
+        /* 
+         * Check if the line to remove has still content. In this case
+         * the content has to be appended to the line above. 
+         */
+        if( old_line->length > 0 )
+        {
 
-        /* Append data of the old line to the new one and update the length*/
-        memcpy( newLine->data + newLine->length, oldLine->data, length );
-        newLine->length += length;
+            int length = old_line->length;
+        
+            /* Extend line where the content should be moved to */
+            new_line->data = (char*) realloc( 
+                    new_line->data, 
+                    new_line->length + length 
+            );
+
+            /* Append data of the old line to the new one and update the length*/
+            memcpy( new_line->data + new_line->length, old_line->data, length );
+            new_line->length += length;
+        }
+
+        /* Free data of the line which should be removed */
+        if( old_line->length > 0 )
+            free( old_line->data );
     }
-
-    /* Free data of the line which should be removed */
-    if( oldLine->length > 0 )
-        free( oldLine->data );
-    
-    /* 
-     * Set line to NULL so nobody can do bad things while the linesw
-     * get moved and reallocated
-     */
-    oldLine = NULL;
-    newLine = NULL;
 
     /* 
      * Move all lines from the cursor+1 one up 
@@ -270,8 +278,10 @@ static void fe_remove_line( Session *s )
      */
     if( line_index < s->line_count )
     {
-        int linesToMove = s->line_count - line_index;
-        if( ! memmove( s->lines + line_index, s->lines + line_index + 1, sizeof(Line) * ( linesToMove )))
+        Line *dst = s->lines + line_index;
+        Line *src = dst + 1;
+        int lines_to_move = s->line_count - line_index;
+        if( ! memmove( dst, src,  sizeof(Line) * lines_to_move ))
         {
             lprintf( LOG_ERROR, "Error moving lines for line remove." );
             return;
@@ -293,8 +303,8 @@ static void fe_remove_line( Session *s )
     fe_move( s, 0, -1 );
 
     /* Move to the joint of both lines */
-    if( originalLength > 0 )
-        fe_move( s, originalLength, 0 );
+    if( original_length > 0 )
+        fe_move( s, original_length, 0 );
 }
 
 void fe_remove_char_after_cursor( Session *s )
@@ -403,13 +413,10 @@ static void fe_move_content_offset( Session *s, int x, int y )
 {
     lprintf( LOG_INFO, "Before offset: %d/%d", s->offset.x, s->offset.y );
     /* 
-     * Move the offset withing [0,columns-width-1] and [0,rows-height-1]
+     * Move the offset within [0,columns-width-1] and [0,rows-height-1]
      * Otherwise it would be possible to scrool down/right until
      * only one line/col is visible which is useless
      */
-    
-    /* DEBUG: Don't set any offset at all to fix the cursor positioning */
-    //return;
 
     /* Subtract one for the status bar */
     if( y )
