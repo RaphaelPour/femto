@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 #include <ctype.h>
 
@@ -16,12 +17,15 @@
 #define BUILD_VERSION "fix your makefile"
 #endif
 
-char* fe_user_prompt( Session *s, char* prompt );
-void fe_safe_file_dialog( Session *s );
-bool fe_quit_dialog( Session *s );
+const char *LOG_FILE = "femto.log";
 
 int main(int argc, char *argv[])
 {
+
+    /* Enable logging if env var is set */
+    if( getenv("FEMTO_DEBUG") ) {
+      lopen( LOG_FILE, LOG_DEBUG );
+    }
 
     char *filename = NULL;
 
@@ -34,7 +38,7 @@ int main(int argc, char *argv[])
             printf("Text-Editor\n\n"
                    "Usage:\n"
                    "femto                    New file\n"
-                   "femto [file]             Open file\n"
+                   "femto {file}             Open file\n"
                    "femto -h | --help        Show help\n"
                    "femto -v | --version     Show version\n"
             );
@@ -57,7 +61,6 @@ int main(int argc, char *argv[])
     }
 
 
-    lopen( "femto.log", LOG_DEBUG );
 
     /* Create session with delivered file */
     Session *session= fe_init_session( filename );
@@ -77,6 +80,9 @@ int main(int argc, char *argv[])
     {
         /* Render the current buffer to the terminal screen*/
         fe_refresh_screen( session, NULL );
+
+        /* React to window resize */
+        session->terminal_size = fe_terminal_size();
 
         c = fe_get_user_input();
         lprintf( LOG_INFO, "read user input '%c' (%d)", c, c );
@@ -147,7 +153,9 @@ int main(int argc, char *argv[])
     /* Free resources aka make valgrind happy */
     fe_free_session( session );
 
-    lclose();
+    if( getenv("FEMTO_DEBUG") ) {
+      lclose();
+    }
     return EXIT_SUCCESS;
 }
 

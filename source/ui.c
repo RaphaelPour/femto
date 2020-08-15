@@ -1,18 +1,22 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#include "ui.h"
+#include <terminal.h>
+#include <screen.h>
+#include <fileio.h>
+#include <helper.h>
+#include <ui.h>
 
 static char* fe_user_prompt( Session *s, char* prompt );
 
-void fe_safe_file_dialog( Session *s )
+bool fe_safe_file_dialog( Session *s )
 {
     if( ! s->filename )
     {
         char * filename = fe_user_prompt( s, "Filename:" );
         if( ! filename ){
             free( filename );
-            return;
+            return false;
         }
 
         fe_set_filename( s, filename );
@@ -20,7 +24,12 @@ void fe_safe_file_dialog( Session *s )
     }
 
     if( ! fe_file_save( s ))
+    {
         lprintf(LOG_ERROR, "Error saving file");
+        return false;
+    }
+
+    return true;
 }
 
 bool fe_quit_dialog( Session *s )
@@ -34,7 +43,7 @@ bool fe_quit_dialog( Session *s )
     switch( choice )
     {
     case 'd': return true;
-    case 's': fe_safe_file_dialog( s );
+    case 's': return fe_safe_file_dialog( s );
     case 'a':
     default: return false;
     }
