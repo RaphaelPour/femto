@@ -1,4 +1,4 @@
-# Femto [![Build Status](https://travis-ci.com/3vilcookie/femto.svg?branch=master)](https://travis-ci.com/3vilcookie/femto)
+# Femto [![Build Status](https://travis-ci.com/RaphaelPour/femto.svg?branch=master)](https://travis-ci.com/RaphaelPour/femto)
 
 CLI Text-Editor in Vanila C.
 
