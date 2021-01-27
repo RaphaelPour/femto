@@ -2,6 +2,18 @@
 
 CLI Text-Editor in Vanila C.
 
+## Contents
+
+- [Setup](#setup)
+- [Usage](#usage)
+- [Key bindings](#key-bindings)
+- [License](#license)
+
+
+## Setup
+
+Gcc and [Tonobo's Task](https://github.com/tonobo/task) are required. `task bin` will build it to `ci-build`.
+
 ## Usage
 
 Show help:
