@@ -1,8 +1,8 @@
-# For next release
+# Patch Release v0.4.1 (2021-01-28)
   * **Raphael Pour**
     * **bugfix** Screen: Fix uninitialized index for the welcome screen causing a segfault
 
-*Not released yet*
+*Released by Raphael Pour <info@raphaelpour.de>*
 
 # Minor Release v0.4.0 (2020-05-26)
   * **Raphael Pour**
