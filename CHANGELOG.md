@@ -1,8 +1,8 @@
-# For next release
+# Patch Release v0.4.2 (2021-01-28)
   * **Raphael Pour**
     * test release
 
-*Not released yet*
+*Released by Raphael Pour <info@raphaelpour.de>*
 
 # Patch Release v0.4.1 (2021-01-28)
   * **Raphael Pour**
