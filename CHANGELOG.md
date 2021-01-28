@@ -1,3 +1,9 @@
+# For next release
+  * **Raphael Pour**
+    * **bugfix** Screen: Fix uninitialized index for the welcome screen causing a segfault
+
+*Not released yet*
+
 # Minor Release v0.4.0 (2020-05-26)
   * **Raphael Pour**
     * Add tab and delete
