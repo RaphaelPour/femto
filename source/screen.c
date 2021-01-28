@@ -142,7 +142,7 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
     /* Show welcome screen on new file with no content */
     if(s->line_count == 1 && s->lines[0].length == 0 && !s->dirty)
     {
-        int welcome_index;
+        int welcome_index = 0;
         /* Overstep status bar */
         for(row=1; row < ts.rows-1; row++)
         {
