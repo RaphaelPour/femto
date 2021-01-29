@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <termios.h>
+#include <time.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/select.h>
@@ -140,42 +141,34 @@ TerminalPosition fe_get_cursor_position()
 }
 
 
-static int fe_read_char()
+static int fe_read_char(int timeout)
 {
     char input_char;
     int read_chars;
-    read_chars=read(STDIN_FILENO, &input_char, 1);
-
-    if(read_chars == -1)
-    {
-        printf("Error reading user input\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if(read_chars == 0)
-        return 0;
-
-    return input_char;
-}
-
-/*
- * Returns the next valid character from the user. Blocks until there
- * is something to read.
- *
- * Tries to parse an incoming escape sequence.
- * (http://man7.org/linux/man-pages/man4/console_codes.4.html)
- */
-int fe_get_user_input()
-{
-    char input_char;
-
+    int ret;
 
     /* Set up file descriptor set for the select syscall */
     fd_set read_fds;
     FD_ZERO(&read_fds);
     FD_SET(STDIN_FILENO, &read_fds);
     
-    int ret = select(STDIN_FILENO+1, &read_fds, NULL, NULL, NULL);
+    /* In order to determmine if a char belongs to a key-combination
+     * or not, differnt timeout setups are used.
+     *
+     * The first one should be always blocking and all further reads of
+     * the parser should have a timeout. On timeout the parser knows that
+     * the key-combination is done. This is necessary for reading the
+     * buffer empty for unsupported combinations (e.g. F1-F4).
+     */
+    if(timeout){
+        struct timeval timeout = {.tv_usec = 100};
+        ret = select(STDIN_FILENO+1, &read_fds, NULL, NULL, &timeout);
+    } else { 
+        ret = select(STDIN_FILENO+1, &read_fds, NULL, NULL, NULL);
+    }
+
+    /* Early return on timeout */
+    if(ret == 0) return 0;
 
     /* 
      * On success, select should return exactly one because we set only
@@ -193,38 +186,69 @@ int fe_get_user_input()
         exit(EXIT_FAILURE);
     }
 
-    
-    input_char = fe_read_char();
+    read_chars=read(STDIN_FILENO, &input_char, 1);
 
-    
-    if(input_char == ESCAPE)
+    if(read_chars == -1)
     {
-        input_char = fe_read_char();
-
-        if(input_char == 0)
-            return ESCAPE;
-
-        if(input_char != '[')
-            return input_char;
-
-        input_char = fe_read_char();
-
-        switch(input_char)
-        {
-        case 'A':   return UP;
-        case 'B':   return DOWN;
-        case 'C':   return RIGHT;
-        case 'D':   return LEFT;
-        }
-
-        if(input_char >= '0' && input_char <= '9')
-        {
-          char next_char = fe_read_char();
-          if(next_char == 0) return ESCAPE;
-          if(next_char == '~' && input_char == '3') return DELETE;
-        }
+        printf("Error reading user input\n");
+        exit(EXIT_FAILURE);
     }
 
+    if(read_chars == 0)return 0;
 
     return input_char;
+}
+
+/*
+ * Returns the next valid character from the user. Blocks until there
+ * is something to read.
+ *
+ * Tries to parse an incoming escape sequence.
+ * (http://man7.org/linux/man-pages/man4/console_codes.4.html)
+ */
+int fe_get_user_input()
+{
+    char input_char = fe_read_char(0);
+
+    if(input_char != ESCAPE) return input_char;
+
+    input_char = fe_read_char(1);
+
+    if(input_char == 0)
+        return ESCAPE;
+
+    if(input_char != '[')
+    {
+        /* 
+         * Read buffer empty 
+         *
+         * F1 to F4 generate nasty ESC+x+y sequences
+         * where x and y are printable chars (P-S)
+         */
+
+        while(fe_read_char(1));
+        return -1;
+    }
+
+    input_char = fe_read_char(1);
+
+    switch(input_char)
+    {
+    case 'A':   return UP;
+    case 'B':   return DOWN;
+    case 'C':   return RIGHT;
+    case 'D':   return LEFT;
+    }
+
+    if(input_char >= '0' && input_char <= '9')
+    {
+      char next_char = fe_read_char(1);
+      if(next_char == 0) return ESCAPE;
+      if(next_char == '~' && input_char == '3') return DELETE;
+    }
+  
+    /* Read buffer empty */
+    while(fe_read_char(1));
+  
+    return -1;
 }

@@ -141,6 +141,12 @@ int main(int argc, char *argv[])
             case CTRL_S:
                 fe_safe_file_dialog( session );
                 break;
+            case UNKNOWN:
+                /* 
+                 * Do nothing if there wasn't anything useful to read like
+                 * unsupported escape characters.
+                 */
+                break;
             default:
                 if( isprint( c ) )
                     fe_insert_char( session, c );

@@ -1,6 +1,7 @@
 # For next release
   * **Raphael Pour**
     * logging: document feature
+    * **bugfix** terminal: Ignore unsupported special keys
 
 *Not released yet*
 
