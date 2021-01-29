@@ -129,6 +129,7 @@ TerminalPosition fe_get_cursor_position();
 int fe_get_user_input();
 
 enum KEYS {
+    UNKNOWN = -1,
     TAB = 9,
     ENTER_MAC = 10,
     ENTER = 13,
