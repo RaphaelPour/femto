@@ -1,3 +1,9 @@
+# For next release
+  * **Raphael Pour**
+    * logging: document feature
+
+*Not released yet*
+
 # Patch Release v0.4.2 (2021-01-28)
   * **Raphael Pour**
     * test release
