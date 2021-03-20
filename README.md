@@ -16,25 +16,16 @@ Gcc and [Tonobo's Task](https://github.com/tonobo/task) are required. `task bin`
 
 ## Usage
 
-Show help:
-
-```bash
-$ femto -h
 ```
-Show version: 
-```bash
-$ femto -v
-```
+Usage:
+femto                    New file
+femto {file}             Open file
+femto -h | --help        Show help
+femto -v | --version     Show version
 
-Open existing file:
-```bash
-$ femto README.md
+Enable logging by setting environment variable `FEMTO_DEBUG`.
 ```
 
-New file:
-```bash
-$ femto
-```
 
 ## Key bindings
 
