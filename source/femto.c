@@ -40,7 +40,8 @@ int main(int argc, char *argv[])
                    "femto                    New file\n"
                    "femto {file}             Open file\n"
                    "femto -h | --help        Show help\n"
-                   "femto -v | --version     Show version\n"
+                   "femto -v | --version     Show version\n\n"
+                   "Enable logging by setting env variable FEMTO_DEBUG.\n"
             );
             return EXIT_SUCCESS;
         }
