@@ -238,6 +238,8 @@ int fe_get_user_input()
     case 'B':   return DOWN;
     case 'C':   return RIGHT;
     case 'D':   return LEFT;
+    case 'H':   return HOME;
+    case 'F':   return END;
     }
 
     if(input_char >= '0' && input_char <= '9')
@@ -245,6 +247,19 @@ int fe_get_user_input()
       char next_char = fe_read_char(1);
       if(next_char == 0) return ESCAPE;
       if(next_char == '~' && input_char == '3') return DELETE;
+      if(next_char == ';' && input_char == '1'){
+        /* parse codes with prefix [1; */
+        input_char = fe_read_char(1);
+
+        if(input_char == '5') {
+            next_char = fe_read_char(1);
+            switch(next_char) {
+            case 'A': return HOME;
+            case 'B': return END;
+            }
+        }
+
+      }
     }
   
     /* Read buffer empty */

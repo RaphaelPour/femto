@@ -102,18 +102,10 @@ int main(int argc, char *argv[])
          */
         switch( c )
         {
-            case UP:
-                fe_move( session, 0, -1 );
-                break;
-            case LEFT:
-                fe_move( session, -1, 0 );
-                break;
-            case DOWN:
-                fe_move( session, 0, 1 );
-                break;
-            case RIGHT:
-                fe_move( session, 1, 0 );
-                break;
+            case UP: fe_move( session, 0, -1 ); break;
+            case LEFT: fe_move( session, -1, 0 ); break;
+            case DOWN: fe_move( session, 0, 1 ); break;
+            case RIGHT: fe_move( session, 1, 0 ); break;
             case ESCAPE:
                 if( fe_quit_dialog( session ))
                 {
@@ -122,9 +114,7 @@ int main(int argc, char *argv[])
                 }
                 break;
             case ENTER_MAC:
-            case ENTER:
-                fe_insert_line( session );
-                break;
+            case ENTER: fe_insert_line( session ); break;
             case TAB:
                 /* Since we belong to the tab-over-space fraction and we are a
                  * bit lazy, just insert two white-spaces per tab.
@@ -132,15 +122,11 @@ int main(int argc, char *argv[])
                 fe_insert_char( session, ' ' );
                 fe_insert_char( session, ' ' );
                 break;
-            case BACKSPACE:
-                fe_remove_char_at_cursor( session );
-                break;
-            case DELETE:
-                fe_remove_char_after_cursor( session );
-                break;
-            case CTRL_S:
-                fe_safe_file_dialog( session );
-                break;
+            case BACKSPACE: fe_remove_char_at_cursor( session ); break;
+            case DELETE: fe_remove_char_after_cursor( session ); break;
+            case HOME: fe_move_top( session ); break;
+            case END: fe_move_bottom( session ); break;
+            case CTRL_S: fe_safe_file_dialog( session ); break;
             case UNKNOWN:
                 /* 
                  * Do nothing if there wasn't anything useful to read like

@@ -571,6 +571,46 @@ void fe_move( Session *s, int x, int y )
 
 }
 
+void fe_move_top( Session *s )
+{
+    lprintf( LOG_INFO, "Before move: pos: x=%d y=%d, off: x=%d y=%d, size: w=%d h=%d, lines: %d",
+            s->cursor_position.x, s->cursor_position.y,
+            s->offset.x, s->offset.y,
+            s->terminal_size.width, s->terminal_size.height-1,
+            s->line_count );
+    
+    s->cursor_position.x = 1;
+    s->cursor_position.y = 1;
+    s->offset.x = 0;
+    s->offset.y = 0;
+
+    lprintf( LOG_INFO, "After move: pos: x=%d y=%d, off: x=%d y=%d, size: w=%d h=%d, lines: %d",
+            s->cursor_position.x, s->cursor_position.y,
+            s->offset.x, s->offset.y,
+            s->terminal_size.width, s->terminal_size.height-1,
+            s->line_count );
+}
+
+void fe_move_bottom( Session *s )
+{
+    lprintf( LOG_INFO, "Before move: pos: x=%d y=%d, off: x=%d y=%d, size: w=%d h=%d, lines: %d",
+            s->cursor_position.x, s->cursor_position.y,
+            s->offset.x, s->offset.y,
+            s->terminal_size.width, s->terminal_size.height-1,
+            s->line_count );
+    
+    s->cursor_position.x = 0;
+    s->cursor_position.y = s->line_count;
+    s->offset.x = 0;
+    s->offset.y = MAX( s->line_count - (s->terminal_size.height -1), 0 );
+
+    lprintf( LOG_INFO, "After move: pos: x=%d y=%d, off: x=%d y=%d, size: w=%d h=%d, lines: %d",
+            s->cursor_position.x, s->cursor_position.y,
+            s->offset.x, s->offset.y,
+            s->terminal_size.width, s->terminal_size.height-1,
+            s->line_count );
+}
+
 void fe_free_session( Session *s )
 {
     free( s->filename );
