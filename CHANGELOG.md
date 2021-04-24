@@ -2,6 +2,7 @@
   * **Raphael Pour**
     * logging: document feature
     * **bugfix** terminal: Ignore unsupported special keys
+    * session/terminal: add HOME+END key-binding 
 
 *Not released yet*
 

@@ -32,14 +32,16 @@ typedef struct {
     bool dirty;
 } Session;
 
-Session* fe_init_session(char* filename);
-void fe_dump_session(Session *s);
-void fe_move(Session *s, int x, int y);
+Session* fe_init_session( char* filename );
+void fe_dump_session( Session *s );
+void fe_move( Session *s, int x, int y );
+void fe_move_top( Session *s );
+void fe_move_bottom( Session *s );
 void fe_set_filename( Session *s, const char *filename );
-void fe_free_session(Session *s);
+void fe_free_session( Session *s );
 
-void fe_insert_char(Session *s, char c);
-void fe_remove_char_at_cursor(Session *s);
-void fe_remove_char_after_cursor(Session *s);
-void fe_insert_line(Session *s);
+void fe_insert_char( Session *s, char c );
+void fe_remove_char_at_cursor( Session *s );
+void fe_remove_char_after_cursor( Session *s );
+void fe_insert_line( Session *s );
 #endif // SESSION_H

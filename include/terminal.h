@@ -140,7 +140,9 @@ enum KEYS {
     DOWN,
     LEFT,
     RIGHT,
-    DELETE
+    DELETE,
+    HOME,
+    END
 };
 
 #endif
