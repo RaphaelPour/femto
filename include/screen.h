@@ -16,7 +16,7 @@
 #define STATUS_BAR_COLOR "\033[30;107m"
 #define RESET_COLOR "\033[0m"
 
-char* fe_create_set_cursor_command(Session *s);
+char* fe_create_set_cursor_command(Session *s, int offset_x, int offset_y);
 void fe_refresh_screen(Session *s, Buffer *status_bar);
 Buffer* fe_generate_prompt_status_bar( Session *s, char *prompt, char *input );
 
