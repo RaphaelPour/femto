@@ -37,6 +37,8 @@ void fe_dump_session( Session *s );
 void fe_move( Session *s, int x, int y );
 void fe_move_top( Session *s );
 void fe_move_bottom( Session *s );
+void fe_move_page_up( Session *s );
+void fe_move_page_down( Session *s );
 void fe_set_filename( Session *s, const char *filename );
 void fe_free_session( Session *s );
 
