@@ -19,14 +19,14 @@ const char *welcome_message[] = {
     NULL
 };
 
-char* fe_create_set_cursor_command(Session *s)
+char* fe_create_set_cursor_command(Session *s, int offset_x, int offset_y)
 {
     /* Basic size including command characters only */
     size_t len = 4;
     
     /* Add count of digits for x and y */
-    len += DIGITS(s->cursor_position.x) +
-           DIGITS(s->cursor_position.y+1);
+    len += DIGITS(s->cursor_position.x + offset_x ) +
+           DIGITS(s->cursor_position.y + 1 + offset_y );
 
     /* Add one for the null terminator */
     len++;
@@ -34,8 +34,8 @@ char* fe_create_set_cursor_command(Session *s)
     char* buf = (char*) malloc( len+1 );
 
     snprintf(buf, len, ESC_SET_CURSOR, 
-             s->cursor_position.y+1,
-             s->cursor_position.x);
+             s->cursor_position.y + 1 + offset_y,
+             s->cursor_position.x + offset_x );
 
 
     lprintf(LOG_INFO, "set cursor command: x=%d y=%d", s->cursor_position.x, s->cursor_position.y+1);
@@ -122,6 +122,7 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
 
 
     unsigned row;
+    unsigned line_no_len = DIGITS( s->line_count ) +1;
     TerminalSize ts = s->terminal_size;
 
     if( status_bar )
@@ -171,11 +172,22 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
     }
     else
     {
+        char *line_no = malloc( sizeof(char) * (line_no_len+1));
         for(row=0;row < ts.rows-1;row++)
         {
             unsigned line_index = row + s->offset.y;
+            
+
             if(line_index < s->line_count)
             {
+                /* Add line number */
+                snprintf(
+                    line_no,
+                    line_no_len+1,
+                    "%*d ",
+                    line_no_len-1,
+                    line_index+1);
+                fe_append_to_buffer( screen_buffer, line_no, line_no_len + 1 );
                 fe_append_to_buffer(screen_buffer, 
                                     s->lines[line_index].data, 
                                     s->lines[line_index].length);
@@ -196,10 +208,11 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
                                     NEW_LINE,
                                     strlen(NEW_LINE));
         }
+        free( line_no );
     }
     
     /* Show cursor on the right position */
-    char *command_buffer = fe_create_set_cursor_command(s);
+    char *command_buffer = fe_create_set_cursor_command(s, line_no_len, 0 );
     fe_append_to_buffer(screen_buffer, command_buffer, strlen(command_buffer));
     fe_append_to_buffer(screen_buffer, ESC_SHOW_CURSOR, strlen(ESC_SHOW_CURSOR));
     free(command_buffer);

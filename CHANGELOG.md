@@ -2,7 +2,8 @@
   * **Raphael Pour**
     * logging: document feature
     * **bugfix** terminal: Ignore unsupported special keys
-    * session/terminal: add HOME+END key-binding 
+    * session/terminal: add HOME+END key-binding
+    * screen: add line numbers
 
 *Not released yet*
 
