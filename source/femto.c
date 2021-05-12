@@ -126,6 +126,8 @@ int main(int argc, char *argv[])
             case DELETE: fe_remove_char_after_cursor( session ); break;
             case HOME: fe_move_top( session ); break;
             case END: fe_move_bottom( session ); break;
+            case PAGE_UP: fe_move_page_up( session ); break;
+            case PAGE_DOWN:  fe_move_page_down( session ); break;
             case CTRL_S: fe_safe_file_dialog( session ); break;
             case UNKNOWN:
                 /* 

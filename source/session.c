@@ -611,6 +611,29 @@ void fe_move_bottom( Session *s )
             s->line_count );
 }
 
+void fe_move_page_up( Session *s )
+{
+    int offset = MIN(
+            s->terminal_size.height, 
+            s->cursor_position.y + s->offset.y);
+
+    /* 
+     * Since bound-checking drops move if out-of-bound this has to be
+     * made iteratively 
+     */
+    while(offset--) fe_move( s, 0, -1 );
+}
+
+void fe_move_page_down( Session *s )
+{
+    int offset = MIN( 
+            s->terminal_size.height, 
+            s->line_count - ( s->cursor_position.y + s->offset.y ));
+
+    fe_move( s, 0, offset );
+}
+
+
 void fe_free_session( Session *s )
 {
     free( s->filename );

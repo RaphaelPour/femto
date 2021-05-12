@@ -142,7 +142,9 @@ enum KEYS {
     RIGHT,
     DELETE,
     HOME,
-    END
+    END,
+    PAGE_UP,
+    PAGE_DOWN
 };
 
 #endif

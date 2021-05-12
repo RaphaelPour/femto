@@ -246,7 +246,14 @@ int fe_get_user_input()
     {
       char next_char = fe_read_char(1);
       if(next_char == 0) return ESCAPE;
-      if(next_char == '~' && input_char == '3') return DELETE;
+
+      if(next_char == '~') {
+          switch(input_char) {
+            case '3': return DELETE;
+            case '5': return PAGE_UP;
+            case '6': return PAGE_DOWN;
+          }
+      }
       if(next_char == ';' && input_char == '1'){
         /* parse codes with prefix [1; */
         input_char = fe_read_char(1);
@@ -256,6 +263,8 @@ int fe_get_user_input()
             switch(next_char) {
             case 'A': return HOME;
             case 'B': return END;
+            case 'C': return PAGE_DOWN;
+            case 'D': return PAGE_UP;
             }
         }
 
