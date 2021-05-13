@@ -130,9 +130,11 @@ int fe_get_user_input();
 
 enum KEYS {
     UNKNOWN = -1,
+    CTRL_F = 6,
     TAB = 9,
     ENTER_MAC = 10,
     ENTER = 13,
+    CTRL_R = 18,
     CTRL_S = 19,
     ESCAPE = 27,
     BACKSPACE = 127,
