@@ -23,6 +23,7 @@ Session* fe_init_session( char* filename )
     s->content_length = 0;
     s->line_count = 0;
     s->dirty = false;
+    s->needle = NULL;
 
 
     /* Determine terminal properties */
