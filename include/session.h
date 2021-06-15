@@ -30,6 +30,9 @@ typedef struct {
 
     /* Dirty flag */
     bool dirty;
+
+    /* Search needle, NULL if no search is going on */
+    char* needle;
 } Session;
 
 Session* fe_init_session( char* filename );
