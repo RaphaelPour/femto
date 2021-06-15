@@ -32,6 +32,14 @@ bool fe_safe_file_dialog( Session *s )
     return true;
 }
 
+bool fe_search_fwd_dialog( Session *s )
+{
+  /* Check if a previous search is going on/ needle is already set */
+  char * needle = fe_user_prompt( s, "Needle:" );
+
+  
+}
+
 bool fe_quit_dialog( Session *s )
 {
     if( ! s->dirty ) return true;
@@ -49,8 +57,12 @@ bool fe_quit_dialog( Session *s )
     }
 }
 
-static char* fe_user_prompt( Session *s, char* prompt )
+static char* fe_user_prompt( Session *s, char* prompt)
 {
+    /* 
+     * Add pre-answer to the parameter list in order to have search dialogs
+     * with predefined needles.
+     */
     char c = 0;
     char *answer = (char*) malloc(1);
     answer[0] = '\0';
