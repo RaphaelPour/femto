@@ -133,7 +133,7 @@ bool fe_file_save( Session *s )
         
         if( bytes_written != sizeof(newLine) )
             lprintf( LOG_WARNING,
-                     "Worte less bytes to file than expected. New line has %d, wrote %d bytes",
+                     "Wrote less bytes to file than expected. New line has %d, wrote %d bytes",
                      sizeof(newLine),
                      bytes_written );
                      
