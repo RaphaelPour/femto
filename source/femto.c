@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     int exit_femto = 0;
     while( ! exit_femto )
     {
-        /* Render the current buffer to the terminal screen*/
+        /* Render the current buffer to the terminal screen */
         fe_refresh_screen( session, NULL );
 
         /* React to window resize */
