@@ -19,6 +19,7 @@ Session* fe_init_session( char* filename )
     s->filename = NULL;
     s->cursor_position = (TerminalPosition){{1},{1}};
     s->offset = (TerminalPosition){{0},{0}};
+    s->highlighter = NULL;
     s->lines = NULL;
     s->content_length = 0;
     s->line_count = 0;
@@ -62,6 +63,8 @@ void fe_set_filename( Session *s, const char *filename )
     s->filename = (char*) malloc( strlen( filename ) + 1 );
     strcpy( s->filename , filename );
     s->filename[ strlen( filename ) ] = '\0';
+    
+    s->highlighter = fe_init_highlighter(filename);
 }
 
 void fe_dump_session( Session *s )

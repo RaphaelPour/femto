@@ -180,6 +180,8 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
 
             if(line_index < s->line_count)
             {
+                Line *line = fe_highlight( s->highlighter, (Buffer*) &s->lines[line_index] );
+
                 /* Add line number */
                 snprintf(
                     line_no,
@@ -189,8 +191,8 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
                     line_index+1);
                 fe_append_to_buffer( screen_buffer, line_no, line_no_len + 1 );
                 fe_append_to_buffer(screen_buffer, 
-                                    s->lines[line_index].data, 
-                                    s->lines[line_index].length);
+                                    (line->data), 
+                                    line->length);
             }
             else
             {
