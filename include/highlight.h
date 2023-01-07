@@ -26,5 +26,5 @@ typedef struct {
 
 Highlighter *fe_init_highlighter( const char *filename );
 Buffer *fe_highlight( Highlighter *h, Buffer *text );
-
+void fe_free_highlighter(Highlighter *h);
 #endif

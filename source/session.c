@@ -649,5 +649,6 @@ void fe_free_session( Session *s )
     }
 
     free( s->lines );
+    fe_free_highlighter( s->highlighter );
     free( s );
 }
