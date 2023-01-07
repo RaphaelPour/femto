@@ -61,8 +61,6 @@ int main(int argc, char *argv[])
         }
     }
 
-
-
     /* Create session with delivered file */
     Session *session= fe_init_session( filename );
 

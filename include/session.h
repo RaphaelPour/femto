@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <terminal.h>
 #include <buffer.h>
+#include <highlight.h>
 
 typedef Buffer Line;
 
@@ -27,6 +28,9 @@ typedef struct {
 
     /* Total length of all line lengths combined */
     size_t content_length;
+
+    /* Struct used for highlighting */
+    Highlighter *highlighter;
 
     /* Dirty flag */
     bool dirty;
