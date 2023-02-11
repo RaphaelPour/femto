@@ -15,6 +15,11 @@
 /* White status bar with black font */
 #define STATUS_BAR_COLOR "\033[30;107m"
 #define RESET_COLOR "\033[0m"
+#define RED_COLOR "\033[0;31m"
+#define BLUE_COLOR "\033[0;34m"
+#define PURPLE_COLOR "\033[0;35m"
+#define YELLOW_COLOR "\033[0;33m"
+
 
 char* fe_create_set_cursor_command(Session *s, int offset_x, int offset_y);
 void fe_refresh_screen(Session *s, Buffer *status_bar);
