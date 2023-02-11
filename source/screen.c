@@ -180,6 +180,9 @@ void fe_refresh_screen(Session *s, Buffer *status_bar){
 
             if(line_index < s->line_count)
             {
+                /* highlight the line of code if the filename is present, 
+                 * otherwise the pointer to the default line (s->lines[line_index]) is returned
+                */
                 Line *line = fe_highlight( s->highlighter, (Buffer*) &s->lines[line_index] );
 
                 /* Add line number */
