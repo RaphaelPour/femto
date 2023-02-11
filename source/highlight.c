@@ -4,52 +4,32 @@
 
 #include <highlight.h>
 #include <buffer.h>
+#include <screen.h>
 
 
-static char *get_file_extension( const char *filename ) {
-    Buffer *buf = fe_create_buffer();
-
-    for( int i = 0; filename[i] != '\0'; i++ )
-    {
-        char c = filename[i];
-
-        if (c == '.')
-        {
-            fe_free_buffer(buf);
-            buf = fe_create_buffer();
-        } 
-        else 
-        {
-            fe_append_to_buffer(buf, &c, 1);
-        }
-    }
-
-    char nil = '\0';
-    fe_append_to_buffer( buf, &nil, 1 );
-    
-    return buf->data;
+static char* get_file_extension( const char *filename ) {
+    return strrchr(filename, '.') + 1;
 }
-
 
 static int str_empty( char *str ) {
     return str[0] == '\0';
 }
 
 static Buffer *apply_color( Highlighter *h, Buffer *buf_text ) {
-    char *str_text = malloc(sizeof( char ) * ( buf_text->length + 1 ));
-    memcpy(str_text, buf_text->data, buf_text->length);
-    str_text[buf_text->length] = '\0';
-
+    char *c_string_text = malloc(sizeof( char ) * ( buf_text->length + 1 ));
+    memcpy(c_string_text, buf_text->data, buf_text->length);
+    c_string_text[buf_text->length] = '\0';
+    lprintf(LOG_INFO, c_string_text);
     Buffer *new_text = fe_create_buffer();
 
     for( int i = 0; i < h->expressions_len; i++ ) 
     {
         HighlightExpression he = h->expressions[i];
-        int err = regexec( &he.expression, str_text, 0, NULL, 0 );
+        int err = regexec( &he.expression, c_string_text, 0, NULL, 0 );
 
         if ( ! err )
         {
-            char *ansii_end = "\E[0m";
+            char *ansii_end = RESET_COLOR;
             int ansii_end_len = 5;
 
             fe_append_to_buffer( new_text, he.color, strlen(he.color) ); 
@@ -73,7 +53,6 @@ static Buffer *apply_color( Highlighter *h, Buffer *buf_text ) {
 static HighlightExpression *fe_init_highlight_expression( char *str_expr, char *color ) {
     HighlightExpression *he = (HighlightExpression*) malloc( sizeof( HighlightExpression ));
 
-
     regcomp( &he->expression, str_expr, REG_EXTENDED );
     he->color = color;
 
@@ -85,15 +64,28 @@ Highlighter *fe_init_highlighter( const char *filename ) {
     Highlighter *h = (Highlighter*) malloc( sizeof( Highlighter ));
     h->filetype = get_file_extension( filename );
 
+    // c syntax highlighting
     if( strcmp(h->filetype, "c") || strcmp(h->filetype, "h") ) {
-        h->expressions = malloc( sizeof( HighlightExpression ) * 5 );
-        h->expressions[0] = *fe_init_highlight_expression( "^(void|struct|int|char|return|if|for|while|do|else|const)$", "\E[0;31m" );
-        h->expressions[1] = *fe_init_highlight_expression( "^[0-9]{1,}$", "\E[0;34m" );
-        h->expressions[2] = *fe_init_highlight_expression( "^[a-zA-Z0-9]{1,}\\(", "\E[0;35m" );
-        h->expressions[3] = *fe_init_highlight_expression( "^[A-Z][a-zA-Z]*$", "\E[0;33m" );
-        h->expressions[4] = *fe_init_highlight_expression( "^(\\+)$", "\E[0;33m" );
-        h->expressions_len = 5;
-    } else {
+        h->expressions_len = 7;
+
+        // if there are overlapping expressions, the one that is higher is prioritized
+        h->expressions = malloc( sizeof( HighlightExpression ) * h->expressions_len );
+        // keywords
+        h->expressions[0] = *fe_init_highlight_expression( "^(void|struct|int|char|return|if|for|while|do|else|const)$", RED_COLOR );
+        // numbers
+        h->expressions[1] = *fe_init_highlight_expression( "^[0-9]+$", BLUE_COLOR );
+        // hexadecimal
+        h->expressions[2] = *fe_init_highlight_expression( "^0x[0-9a-fA-F]+$", BLUE_COLOR );
+        // binary
+        h->expressions[3] = *fe_init_highlight_expression( "^0b[01]+$", BLUE_COLOR );
+        // functions
+        h->expressions[4] = *fe_init_highlight_expression( "^[a-zA-Z0-9]{1,}\\(", PURPLE_COLOR );
+        // "classes" / structs
+        h->expressions[5] = *fe_init_highlight_expression( "^[A-Z][a-zA-Z]*$", YELLOW_COLOR );
+        // strings
+        h->expressions[6] = *fe_init_highlight_expression( "^\"(.*)[^(\\\")]\"$", YELLOW_COLOR );
+    }
+    else {
         h->expressions_len = 0;
     }
 
@@ -112,11 +104,23 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
     for( int i = 0; i <= text->length; i++ ) {
         char c = i < text->length ? text->data[i] : ' ';
         
-        if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '(' || c == '_' )
+        if( buf->data != NULL && buf->data[0] == '"' )
+        {
+            fe_append_to_buffer( buf, &c, 1 );
+            if( c == '"' && buf->data[buf->length - 2] != '\\' )
+            {
+                Buffer *val = apply_color( h, buf );
+                fe_append_to_buffer( new_text, val->data, val->length );
+                fe_free_buffer( val );
+                fe_free_buffer( buf );
+                buf = fe_create_buffer();
+            }
+        }
+        else if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '(' || c == '_' )
         {
             fe_append_to_buffer( buf, &c, 1 );
         } 
-        else 
+        else
         {
             if ( buf->data != NULL && !str_empty( buf->data ) ) 
             {
