@@ -85,6 +85,13 @@ Highlighter *fe_init_highlighter( const char *filename ) {
         // strings
         h->expressions[6] = *fe_init_highlight_expression( "^\"(.*)[^(\\\")]\"$", YELLOW_COLOR );
     }
+    else if ( strcmp(h->filetype, "md") ) {
+        h->expressions_len = 1;
+
+        h->expressions = malloc( sizeof( HighlightExpression ) * h->expressions_len );
+        
+        h->expressions[0] = *fe_init_highlight_expression( "^#{1,} (.*)$", BLUE_COLOR );
+    } 
     else {
         h->expressions_len = 0;
         h->expressions = NULL;
@@ -108,7 +115,6 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
     for( int i = 0; i <= text->length; i++ ) {
         // Set c to the current character or ' ' for one additional cycle
         char c = i < text->length ? text->data[i] : ' ';
-            lprintf(LOG_INFO, "%c Fortnite %*s", c, buf->length, buf->data);
         
         // Check if the currently lexed chars represent a string
         if( (buf->length > 0 && buf->data[0] == '"') || (buf->length == 0 && c == '"') )
