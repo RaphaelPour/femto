@@ -8,11 +8,9 @@
 
 
 static char* get_file_extension( const char *filename ) {
-    return strrchr(filename, '.') + 1;
-}
-
-static int str_empty( char *str ) {
-    return str[0] == '\0';
+    char* ext = strrchr(filename, '.');
+    // If filename has an extension (ext is not NULL) remove extension dot (ext + 1)
+    return ext ? ext + 1 : NULL;
 }
 
 static Buffer *apply_color( Highlighter *h, Buffer *buf_text ) {
@@ -61,14 +59,16 @@ static HighlightExpression *fe_init_highlight_expression( char *str_expr, char *
 
 
 Highlighter *fe_init_highlighter( const char *filename ) {
-    Highlighter *h = (Highlighter*) malloc( sizeof( Highlighter ));
+    if ( ! filename ) return NULL;
+
+    Highlighter *h = (Highlighter*) malloc( sizeof( Highlighter ) );
     h->filetype = get_file_extension( filename );
 
-    // c syntax highlighting
+    // C syntax highlighting
     if( strcmp(h->filetype, "c") || strcmp(h->filetype, "h") ) {
         h->expressions_len = 7;
 
-        // if there are overlapping expressions, the one that is higher is prioritized
+        // If there are overlapping expressions, the one that is higher is prioritized
         h->expressions = malloc( sizeof( HighlightExpression ) * h->expressions_len );
         // keywords
         h->expressions[0] = *fe_init_highlight_expression( "^(void|struct|int|char|return|if|for|while|do|else|const)$", RED_COLOR );
@@ -87,27 +87,34 @@ Highlighter *fe_init_highlighter( const char *filename ) {
     }
     else {
         h->expressions_len = 0;
+        h->expressions = NULL;
     }
 
     return h;
 }
 
 Buffer *fe_highlight(Highlighter *h, Buffer *text) {
-    if ( h == NULL || h->expressions_len == 0 )
+    if ( ! h || h->expressions_len == 0 )
     {
         return text;
     }
 
+    // Buffer for the rendered text
     Buffer *new_text = fe_create_buffer();
+    // Buffer for the lexed sequences
     Buffer *buf = fe_create_buffer();
 
+    // Iterate over every character in the text
     for( int i = 0; i <= text->length; i++ ) {
+        // Set c to the current character or ' ' for one additional cycle
         char c = i < text->length ? text->data[i] : ' ';
+            lprintf(LOG_INFO, "%c Fortnite %*s", c, buf->length, buf->data);
         
-        if( buf->data != NULL && buf->data[0] == '"' )
+        // Check if the currently lexed chars represent a string
+        if( (buf->length > 0 && buf->data[0] == '"') || (buf->length == 0 && c == '"') )
         {
             fe_append_to_buffer( buf, &c, 1 );
-            if( c == '"' && buf->data[buf->length - 2] != '\\' )
+            if( buf->length > 1 && c == '"' && buf->data[buf->length - 2] != '\\' )
             {
                 Buffer *val = apply_color( h, buf );
                 fe_append_to_buffer( new_text, val->data, val->length );
@@ -122,7 +129,7 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
         } 
         else
         {
-            if ( buf->data != NULL && !str_empty( buf->data ) ) 
+            if ( buf->length > 0 ) 
             {
                 Buffer *val = apply_color( h, buf );
                 fe_append_to_buffer( new_text, val->data, val->length );
@@ -140,7 +147,8 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
 }
 
 void fe_free_highlighter(Highlighter *h) {
-    free( h->filetype );
+    if ( ! h ) return;
+
     free( h->expressions );
     free( h );
 }
