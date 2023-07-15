@@ -18,16 +18,15 @@ static char* get_file_extension( const char *filename ) {
 }
 
 static Buffer *apply_color( Highlighter *h, Buffer *buf_text ) {
-    char *c_string_text = malloc(sizeof( char ) * ( buf_text->length + 1 ));
-    memcpy(c_string_text, buf_text->data, buf_text->length);
-    c_string_text[buf_text->length] = '\0';
-    lprintf(LOG_INFO, c_string_text);
+    char *str = fe_buf_to_str(buf_text);
     Buffer *new_text = fe_create_buffer();
 
+    // Iterate over every registered expression
     for( int i = 0; i < h->expressions_len; i++ ) 
     {
         HighlightExpression he = h->expressions[i];
-        int err = regexec( &he.expression, c_string_text, 0, NULL, 0 );
+        // Check whether expression matches the token
+        int err = regexec( &he.expression, str, 0, NULL, 0 );
 
         if ( ! err )
         {
@@ -39,7 +38,7 @@ static Buffer *apply_color( Highlighter *h, Buffer *buf_text ) {
             fe_append_to_buffer( new_text, ansii_end, ansii_end_len );
 
             return new_text;
-        } 
+        }
         else if ( err != REG_NOMATCH )
         {
             char msgbuff[100];
@@ -93,6 +92,7 @@ Highlighter *fe_init_highlighter( const char *filename ) {
         // strings
         h->expressions[6] = *fe_init_highlight_expression( "^\"(.*)[^(\\\")]\"$", YELLOW_COLOR );
     }
+    // No language detected
     else {
         h->expressions_len = 0;
         h->expressions = NULL;
@@ -101,7 +101,7 @@ Highlighter *fe_init_highlighter( const char *filename ) {
     return h;
 }
 
-Buffer *fe_highlight(Highlighter *h, Buffer *text) {
+Buffer *fe_highlight( Highlighter *h, Buffer *text ) {
     if ( ! h || h->expressions_len == 0 )
     {
         return text;
@@ -131,10 +131,11 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
                 buf = fe_create_buffer();
             }
         }
+        // Check if character is non-terminator
         else if( char_between(c, 'a', 'z') || char_between(c, 'A', 'Z') || char_between(c, '0', '9') || c == '(' || c == '_' )
         {
             fe_append_to_buffer( buf, &c, 1 );
-        } 
+        }
         else
         {
             if ( buf->length > 0 ) 
@@ -142,6 +143,8 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
                 Buffer *val = apply_color( h, buf );
                 fe_append_to_buffer( new_text, val->data, val->length );
                 fe_free_buffer(val);
+
+                // Reset buffer
                 fe_free_buffer(buf);
                 buf = fe_create_buffer();
             }
