@@ -8,4 +8,5 @@ void test_suite_session();
 void test_suite_util();
 void test_suite_buffer();
 void test_suite_cursor();
+void test_suite_highlight();
 #endif // FEMTO_TEST_H

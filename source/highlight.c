@@ -6,6 +6,10 @@
 #include <buffer.h>
 #include <screen.h>
 
+static int char_between(char c, char min, char max)
+{
+    return c >= min && c <= max;
+}
 
 static char* get_file_extension( const char *filename ) {
     char* ext = strrchr(filename, '.');
@@ -65,7 +69,7 @@ Highlighter *fe_init_highlighter( const char *filename ) {
     h->filetype = get_file_extension( filename );
 
     // C syntax highlighting
-    if( strcmp(h->filetype, "c") || strcmp(h->filetype, "h") ) {
+    if( strcmp(h->filetype, "c") == 0 || strcmp(h->filetype, "h") == 0 ) {
         h->expressions_len = 7;
 
         // If there are overlapping expressions, the one that is higher is prioritized
@@ -85,13 +89,6 @@ Highlighter *fe_init_highlighter( const char *filename ) {
         // strings
         h->expressions[6] = *fe_init_highlight_expression( "^\"(.*)[^(\\\")]\"$", YELLOW_COLOR );
     }
-    else if ( strcmp(h->filetype, "md") ) {
-        h->expressions_len = 1;
-
-        h->expressions = malloc( sizeof( HighlightExpression ) * h->expressions_len );
-        
-        h->expressions[0] = *fe_init_highlight_expression( "^#{1,} (.*)$", BLUE_COLOR );
-    } 
     else {
         h->expressions_len = 0;
         h->expressions = NULL;
@@ -120,6 +117,7 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
         if( (buf->length > 0 && buf->data[0] == '"') || (buf->length == 0 && c == '"') )
         {
             fe_append_to_buffer( buf, &c, 1 );
+            // Check whether the string was terminated with an unescaped double quote
             if( buf->length > 1 && c == '"' && buf->data[buf->length - 2] != '\\' )
             {
                 Buffer *val = apply_color( h, buf );
@@ -129,7 +127,7 @@ Buffer *fe_highlight(Highlighter *h, Buffer *text) {
                 buf = fe_create_buffer();
             }
         }
-        else if( (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '(' || c == '_' )
+        else if( char_between(c, 'a', 'z') || char_between(c, 'A', 'Z') || char_between(c, '0', '9') || c == '(' || c == '_' )
         {
             fe_append_to_buffer( buf, &c, 1 );
         } 
