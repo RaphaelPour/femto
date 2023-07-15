@@ -90,7 +90,7 @@ Highlighter *fe_init_highlighter( const char *filename ) {
         // "classes" / structs
         h->expressions[5] = *fe_init_highlight_expression( "^[A-Z][a-zA-Z]*$", YELLOW_COLOR );
         // strings
-        h->expressions[6] = *fe_init_highlight_expression( "^\"(.*)[^(\\\")]\"$", YELLOW_COLOR );
+        h->expressions[6] = *fe_init_highlight_expression( "^\"(.*)?[^(\\\")]\"$", YELLOW_COLOR );
     }
     // No language detected
     else {
@@ -131,8 +131,13 @@ Buffer *fe_highlight( Highlighter *h, Buffer *text ) {
                 buf = fe_create_buffer();
             }
         }
-        // Check if character is non-terminator
-        else if( char_between(c, 'a', 'z') || char_between(c, 'A', 'Z') || char_between(c, '0', '9') || c == '(' || c == '_' )
+        // Check if character is non-terminating
+        else if( ( char_between(c, 'a', 'z') || 
+                char_between(c, 'A', 'Z') || 
+                char_between(c, '0', '9') || 
+                c == '_' || c == '(' ) &&
+                ( buf->length == 0 || (buf->length > 0 && buf->data[buf->length - 1] != '(') ) 
+                )
         {
             fe_append_to_buffer( buf, &c, 1 );
         }
@@ -151,6 +156,11 @@ Buffer *fe_highlight( Highlighter *h, Buffer *text ) {
 
             fe_append_to_buffer( new_text, &c, 1 );
         }
+    }
+
+    if ( buf->length > 0 )
+    {
+        fe_append_to_buffer( new_text, buf->data, buf->length );
     }
 
     fe_free_buffer(buf);
