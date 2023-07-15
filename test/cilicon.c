@@ -107,6 +107,18 @@ bool expect_s_eq( char* expection, char* actual )
     return FAIL;
 }
 
+bool expect_s_n_eq( char* expection, char* actual, int length )
+{
+    totalExpects++;
+    if ( strncmp( expection, actual, length ) == 0 ) return OK;
+
+    TEST_FAIL
+
+    printf( "Expected '%*s', got '%*s'\n", length, expection, length, actual );
+    failedExpects++;
+    return FAIL;
+}
+
 bool expect_true( bool actual )
 {
     totalExpects++;
