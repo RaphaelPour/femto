@@ -32,6 +32,7 @@ bool expect_false( bool actual );
 
 /* String */
 bool expect_s_eq(char *expection, char *actual);
+bool expect_s_n_eq(char *expection, char *actual, int length);
 bool expect_s_not_eq(char *expection, char *actual);
 bool expect_s_included(char *haystack, char *needle);
 

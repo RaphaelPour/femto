@@ -67,9 +67,13 @@ Highlighter *fe_init_highlighter( const char *filename ) {
 
     Highlighter *h = (Highlighter*) malloc( sizeof( Highlighter ) );
     h->filetype = get_file_extension( filename );
+    if ( ! h->filetype )
+    {
+        h->filetype = "";
+    }
 
     // C syntax highlighting
-    if( strcmp(h->filetype, "c") == 0 || strcmp(h->filetype, "h") == 0 ) {
+    if ( strcmp(h->filetype, "c") == 0 || strcmp(h->filetype, "h") == 0 ) {
         h->expressions_len = 7;
 
         // If there are overlapping expressions, the one that is higher is prioritized
