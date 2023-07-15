@@ -23,6 +23,15 @@ void fe_append_to_buffer(Buffer *buffer, const char *appendix, unsigned length)
     buffer->length += length;
 }
 
+char *fe_buf_to_str(Buffer *buffer)
+{
+    char *str = malloc( sizeof( char ) * ( buffer->length + 1 ) );
+    memcpy( str, buffer->data, buffer->length );
+    str[buffer->length] = '\0';
+    
+    return str;
+}
+
 void fe_free_buffer(Buffer *buffer)
 {
     free( buffer->data );

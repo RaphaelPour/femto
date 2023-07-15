@@ -10,5 +10,6 @@ typedef struct
 
 Buffer* fe_create_buffer();
 void fe_append_to_buffer(Buffer *buffer, const char *appendix, unsigned length);
+char *fe_buf_to_str(Buffer *buffer);
 void fe_free_buffer(Buffer *buffer);
 #endif // BUFFER_H
