@@ -4,6 +4,7 @@
     * **bugfix** terminal: Ignore unsupported special keys
     * session/terminal: add HOME+END key-binding
     * screen: add line numbers
+    * add highlighting
 
 *Not released yet*
 
