@@ -1,4 +1,4 @@
-# For next release
+# Minor Release v0.5.0 (2023-07-16)
   * **Raphael Pour**
     * logging: document feature
     * **bugfix** terminal: Ignore unsupported special keys
@@ -6,7 +6,7 @@
     * screen: add line numbers
     * add highlighting
 
-*Not released yet*
+*Released by Raphael Pour <info@raphaelpour.de>*
 
 # Patch Release v0.4.2 (2021-01-28)
   * **Raphael Pour**
