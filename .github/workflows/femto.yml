@@ -1,0 +1,11 @@
+name: test
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: install task
+        run: curl -Ls https://git.io/ttask.sh | sh
+      - name: Lint and Test
+        run: ./bin/task ci
