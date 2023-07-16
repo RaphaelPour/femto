@@ -92,7 +92,14 @@ TerminalSize fe_terminal_size()
 {
     struct winsize ws;
 
-    if(ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == -1)
+    const char* env_rows = getenv("ROWS");
+    const char* env_cols = getenv("COLS");
+    if( env_rows && env_cols ) 
+    {
+        ws.ws_row = strtol(env_rows, NULL, 10);
+        ws.ws_col = strtol(env_cols, NULL, 10);
+    } 
+    else if(ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == -1)
     {
         perror("Get terminal size");
         exit(EXIT_FAILURE);

@@ -9,3 +9,6 @@ jobs:
         run: curl -Ls https://git.io/ttask.sh | sh
       - name: Lint and Test
         run: ./bin/task ci
+        env:
+            ROWS: 10
+            COLS: 80
